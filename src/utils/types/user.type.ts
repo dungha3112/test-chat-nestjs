@@ -1,3 +1,6 @@
+import { Request } from 'express';
+import { User } from '../typeorm';
+
 type TFindUserParams = Partial<{
   id: string;
   username: string;
@@ -13,9 +16,7 @@ export type TFindUserDetails = {
   options: TFindUserOptions;
 };
 
-export type TUserReponse = {
-  id: string;
-  email: string;
-  username: string;
-  createdAt: Date;
-};
+//AuthenticatedRequest
+export interface AuthenticatedRequest extends Request {
+  user: User;
+}

@@ -5,9 +5,10 @@ import { Services } from 'src/utils/constants';
 import { User } from 'src/utils/typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from 'src/user/user.module';
+import { CustomJwtModule } from 'src/custom-jwt/custom-jwt.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), UserModule],
+  imports: [TypeOrmModule.forFeature([User]), UserModule, CustomJwtModule],
   controllers: [AuthController],
   providers: [
     {

@@ -1,3 +1,4 @@
+import { Expose } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
@@ -16,9 +17,11 @@ export class User {
   email: string;
 
   @Column({ select: false })
+  @Expose()
   password: string;
 
   @Column({ nullable: true, select: false })
+  @Expose()
   refreshToken?: string;
 
   @Column({ unique: true })

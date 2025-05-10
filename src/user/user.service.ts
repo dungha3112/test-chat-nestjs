@@ -29,4 +29,8 @@ export class UserService implements IUserService {
 
     return user;
   }
+
+  async saveUser(params: User): Promise<User> {
+    return await this._userRepository.save(params);
+  }
 }

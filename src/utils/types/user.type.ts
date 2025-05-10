@@ -12,3 +12,10 @@ export type TFindUserDetails = {
   params: TFindUserParams;
   options: TFindUserOptions;
 };
+
+export type TUserReponse = {
+  id: string;
+  email: string;
+  username: string;
+  createdAt: Date;
+};

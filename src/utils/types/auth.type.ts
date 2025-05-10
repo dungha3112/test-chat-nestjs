@@ -3,3 +3,8 @@ export type TRegisterParams = {
   password: string;
   username: string;
 };
+
+export type TLoginParams = {
+  email: string;
+  password: string;
+};

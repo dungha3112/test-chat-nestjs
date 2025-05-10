@@ -1,7 +1,8 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { Routes, Services } from 'src/utils/constants';
 import { IAuthService } from 'src/utils/interfaces';
-import { AuthRegisterDto } from './dtos/auth-register.dto';
+import { UserRegisterDto } from './dtos/user-register.dto';
+import { UserLoginDto } from './dtos/user-login.dto';
 
 @Controller(Routes.AUTH)
 export class AuthController {
@@ -10,7 +11,16 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  async registerUser(@Body() registerDto: AuthRegisterDto) {
-    return await this._authService.register(registerDto);
+  async registerUser(
+    @Body() registerDto: UserRegisterDto,
+  ): Promise<{ message: string }> {
+    const message = await this._authService.register(registerDto);
+
+    return { message };
+  }
+
+  @Post('login')
+  async loginUser(@Body() loginDto: UserLoginDto) {
+    return await this._authService.login(loginDto);
   }
 }

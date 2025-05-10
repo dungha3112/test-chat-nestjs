@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/utils/typeorm';
+import { Group, User } from 'src/utils/typeorm';
 
 @Module({
   imports: [
@@ -8,7 +8,7 @@ import { User } from 'src/utils/typeorm';
       useFactory: async () => ({
         type: 'postgres',
         url: process.env.DATABASE_URL,
-        entities: [User],
+        entities: [User, Group],
         synchronize: true,
       }),
     }),

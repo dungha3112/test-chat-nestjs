@@ -7,6 +7,7 @@ import {
   ManyToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  Relation,
 } from 'typeorm';
 import { User } from './user.entity';
 
@@ -15,13 +16,13 @@ export class Group {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToMany(() => User, (user) => user.groups)
+  @ManyToMany(() => User)
   @JoinTable()
-  users: User[];
+  users: Relation<User[]>;
 
   @OneToOne(() => User, { createForeignKeyConstraints: false })
   @JoinColumn()
-  owner: User;
+  owner: Relation<User>;
 
   @Column()
   title: string;

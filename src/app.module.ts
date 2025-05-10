@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { CustomJwtModule } from './custom-jwt/custom-jwt.module';
+import { GroupModule } from './group/group.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CustomJwtModule } from './custom-jwt/custom-jwt.module';
     AuthModule,
     UserModule,
     CustomJwtModule,
+    GroupModule,
   ],
   controllers: [],
   providers: [],

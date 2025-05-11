@@ -5,6 +5,7 @@ import {
   TGetMessagesParams,
   TGetMessagesGroupResponse,
   TDeleteMessageParams,
+  TEditMessageParams,
 } from '../types';
 
 export interface IGroupMessageService {
@@ -15,6 +16,8 @@ export interface IGroupMessageService {
   getMessagesByGroupId(
     params: TGetMessagesParams,
   ): Promise<TGetMessagesGroupResponse>;
+
+  editMessage(params: TEditMessageParams): Promise<GroupMessage>;
 
   deleteMessageGroupById(params: TDeleteMessageParams): Promise<GroupMessage>;
 

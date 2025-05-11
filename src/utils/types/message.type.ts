@@ -24,3 +24,10 @@ export type TDeleteMessageParams = {
   id: string;
   messageId: string;
 };
+
+export type TEditMessageParams = {
+  authorId: string;
+  id: string;
+  messageId: string;
+  content: string;
+};

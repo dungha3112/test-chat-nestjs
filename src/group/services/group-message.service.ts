@@ -7,6 +7,7 @@ import {
   TCreateGroupMessageResponse,
   TCreateMessageParams,
   TDeleteMessageParams,
+  TEditMessageParams,
   TGetMessagesGroupResponse,
   TGetMessagesParams,
 } from 'src/utils/types';
@@ -72,6 +73,34 @@ export class GroupMessageService implements IGroupMessageService {
       limit,
       totalPages: Math.ceil(total / limit),
     };
+  }
+
+  async editMessage(params: TEditMessageParams): Promise<GroupMessage> {
+    const { authorId, content, id, messageId } = params;
+
+    const messageDB = await this._messageGroupRepository.findOne({
+      where: { id: messageId, group: { id }, author: { id: authorId } },
+      relations: ['author'],
+    });
+    if (!messageDB)
+      throw new HttpException(
+        'Message not found or you can not edit message',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const group = await this._groupService.findGroupById(id);
+
+    messageDB.content = content;
+    const updatedMessage = await this.saveMessageGroup(messageDB);
+
+    if (group.lastMessageSent.id === messageId) {
+      await this._groupService.updateLastMessageGroup({
+        id,
+        lastMessageSent: updatedMessage,
+      });
+    }
+
+    return updatedMessage;
   }
 
   async deleteMessageGroupById(

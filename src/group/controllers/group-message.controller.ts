@@ -7,6 +7,7 @@ import {
   Inject,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -15,6 +16,7 @@ import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IGroupMessageService } from 'src/utils/interfaces';
 import { User } from 'src/utils/typeorm';
 import { GroupMessageCreateDto } from '../dtos/group-message-create.dto';
+import { GroupMessageEditDto } from '../dtos/group-message-edit.dto';
 
 @Controller(Routes.GROUP_MESSAGE)
 export class GroupMessageController {
@@ -50,10 +52,26 @@ export class GroupMessageController {
   }
 
   // api/group/:id/message/:messageId
+  @Patch(':messageId')
+  async updateMessageById(
+    @AuthUser() { id: authorId }: User,
+    @Param('id') id: string,
+    @Param('messageId') messageId: string,
+    @Body() { content }: GroupMessageEditDto,
+  ) {
+    const params = { authorId, id, messageId, content };
+    const message = await this._groupMessageService.editMessage(params);
+
+    return {
+      groupId: id,
+      message,
+    };
+  }
+
+  // api/group/:id/message/:messageId
   @Delete(':messageId')
   async deleteMessageById(
     @AuthUser() { id: authorId }: User,
-
     @Param('id') id: string,
     @Param('messageId') messageId: string,
   ) {
@@ -61,6 +79,8 @@ export class GroupMessageController {
 
     const message =
       await this._groupMessageService.deleteMessageGroupById(params);
+
+    console.log('delete: ', message);
 
     return {
       groupId: id,

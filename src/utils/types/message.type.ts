@@ -1,4 +1,4 @@
-import { GroupMessage, User } from '../typeorm';
+import { User } from '../typeorm';
 
 export type TCreateMessageParams = {
   id: string;
@@ -13,9 +13,14 @@ export type TGetMessagesParams = {
 };
 
 export type TGetMessagesResponse = {
-  messages: GroupMessage[];
   total: number;
   page: number;
   limit: number;
   totalPages: number;
+};
+
+export type TDeleteMessageParams = {
+  authorId: string;
+  id: string;
+  messageId: string;
 };

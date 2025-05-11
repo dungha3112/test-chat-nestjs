@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Delete,
   Get,
   Inject,
   Param,
@@ -36,9 +37,9 @@ export class GroupMessageController {
     return newMessage;
   }
 
+  // api/group/:id/message
   @Get()
   async getMessagesByGroupId(
-    @AuthUser() user: User,
     @Param('id') id: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
@@ -46,5 +47,24 @@ export class GroupMessageController {
     const params = { id, page, limit };
 
     return await this._groupMessageService.getMessagesByGroupId(params);
+  }
+
+  // api/group/:id/message/:messageId
+  @Delete(':messageId')
+  async deleteMessageById(
+    @AuthUser() { id: authorId }: User,
+
+    @Param('id') id: string,
+    @Param('messageId') messageId: string,
+  ) {
+    const params = { authorId, id, messageId };
+
+    const message =
+      await this._groupMessageService.deleteMessageGroupById(params);
+
+    return {
+      groupId: id,
+      messageId,
+    };
   }
 }

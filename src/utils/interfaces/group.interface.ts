@@ -1,5 +1,9 @@
 import { Group } from '../typeorm';
-import { TCheckUserInGroupParams, TCreateGroupParams } from '../types';
+import {
+  TCheckUserInGroupParams,
+  TCreateGroupParams,
+  TUpdateLastMessageParams,
+} from '../types';
 
 export interface IGroupService {
   createGroup(params: TCreateGroupParams): Promise<Group>;
@@ -8,6 +12,8 @@ export interface IGroupService {
   findGroupById(id: string): Promise<Group>;
 
   isUserInGroup(params: TCheckUserInGroupParams): Promise<Group>;
+
+  updateLastMessageGroup(params: TUpdateLastMessageParams);
 
   saveGroup(group: Group): Promise<Group>;
 }

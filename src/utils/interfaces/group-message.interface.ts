@@ -3,7 +3,8 @@ import {
   TCreateGroupMessageResponse,
   TCreateMessageParams,
   TGetMessagesParams,
-  TGetMessagesResponse,
+  TGetMessagesGroupResponse,
+  TDeleteMessageParams,
 } from '../types';
 
 export interface IGroupMessageService {
@@ -13,7 +14,9 @@ export interface IGroupMessageService {
 
   getMessagesByGroupId(
     params: TGetMessagesParams,
-  ): Promise<TGetMessagesResponse>;
+  ): Promise<TGetMessagesGroupResponse>;
+
+  deleteMessageGroupById(params: TDeleteMessageParams): Promise<GroupMessage>;
 
   saveMessageGroup(groupMessage: GroupMessage): Promise<GroupMessage>;
 }

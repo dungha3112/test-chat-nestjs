@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Services } from 'src/utils/constants';
 import { IGroupService, IUserService } from 'src/utils/interfaces';
 import { Group } from 'src/utils/typeorm';
-import { TCheckUserInGroupParams, TCreateGroupParams } from 'src/utils/types';
+import {
+  TCheckUserInGroupParams,
+  TCreateGroupParams,
+  TUpdateLastMessageParams,
+} from 'src/utils/types';
 import { Repository } from 'typeorm';
 import { validate as isUUID } from 'uuid';
 
@@ -105,6 +109,11 @@ export class GroupService implements IGroupService {
       );
 
     return group;
+  }
+
+  async updateLastMessageGroup(params: TUpdateLastMessageParams) {
+    const { id, lastMessageSent } = params;
+    return await this._groupRepository.update(id, { lastMessageSent });
   }
 
   async saveGroup(group: Group): Promise<Group> {

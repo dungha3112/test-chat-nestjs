@@ -4,4 +4,6 @@ export enum Services {
   CUSTOM_JWT = 'CUSTOM_JWT_SERVICE',
 
   GROUP = 'GROUP_SERVICE',
+
+  GROUP_MESSAGE = 'GROUP_MESSAGE_SERVICE',
 }

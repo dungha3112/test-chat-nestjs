@@ -3,4 +3,6 @@ export enum Routes {
   USER = 'user',
 
   GROUP = 'group',
+
+  GROUP_MESSAGE = 'group/:id/message',
 }

@@ -1,5 +1,5 @@
 import { User } from '../typeorm';
-import { TFindUserDetails } from '../types/user.type';
+import { TFindUserDetails } from '../types';
 
 export interface IUserService {
   findOne(findUserDetails: TFindUserDetails): Promise<User>;

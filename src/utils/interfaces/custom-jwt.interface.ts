@@ -1,4 +1,4 @@
-import { TJwtPayload } from '../types/custom-jwt.type';
+import { TJwtPayload } from '../types';
 
 export interface ICustomJwtService {
   generateAccessToken(userId: string): Promise<string>;

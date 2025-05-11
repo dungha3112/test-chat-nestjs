@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IUserService } from 'src/utils/interfaces';
 import { User } from 'src/utils/typeorm';
-import { TFindUserDetails } from 'src/utils/types/user.type';
+import { TFindUserDetails } from 'src/utils/types';
 import { Repository } from 'typeorm';
 
 @Injectable()

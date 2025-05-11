@@ -3,3 +3,7 @@ export type TCreateGroupParams = {
   title: string;
   ownerId: string;
 };
+export type TCheckUserInGroupParams = {
+  id: string;
+  userId: string;
+};

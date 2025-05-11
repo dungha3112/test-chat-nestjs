@@ -1,1 +1,6 @@
 export * from './auth.type';
+export * from './custom-jwt.type';
+export * from './group-message.type';
+export * from './group.type';
+export * from './message.type';
+export * from './user.type';

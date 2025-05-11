@@ -7,15 +7,15 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Routes, Services } from 'src/utils/constants';
-import { IAuthService } from 'src/utils/interfaces';
-import { UserRegisterDto } from './dtos/user-register.dto';
-import { UserLoginDto } from './dtos/user-login.dto';
 import { plainToInstance } from 'class-transformer';
-import { UserResponseDto } from 'src/user/dtos/user-response.dto';
 import { Request, Response } from 'express';
+import { UserResponseDto } from 'src/user/dtos/user-response.dto';
+import { Routes, Services } from 'src/utils/constants';
 import { AuthJwtGuard } from 'src/utils/guards/AuthJwtGuard';
+import { IAuthService } from 'src/utils/interfaces';
 import { AuthenticatedRequest } from 'src/utils/types/user.type';
+import { UserLoginDto } from './dtos/user-login.dto';
+import { UserRegisterDto } from './dtos/user-register.dto';
 
 @Controller(Routes.AUTH)
 export class AuthController {
@@ -40,10 +40,6 @@ export class AuthController {
     const { accessToken, refreshToken, user } =
       await this._authService.login(loginDto);
 
-    const userDto = plainToInstance(UserResponseDto, user, {
-      excludeExtraneousValues: true,
-    });
-
     response.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -53,7 +49,7 @@ export class AuthController {
 
     return {
       accessToken,
-      user: userDto,
+      user,
     };
   }
 

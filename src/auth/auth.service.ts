@@ -1,5 +1,7 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { plainToInstance } from 'class-transformer';
+import { UserResponseDto } from 'src/user/dtos/user-response.dto';
 import { Services } from 'src/utils/constants';
 import { compareHash, hashPassword } from 'src/utils/helpers';
 import {
@@ -88,10 +90,13 @@ export class AuthService implements IAuthService {
     user.refreshToken = refreshToken;
     await this._userService.saveUser(user);
 
+    const userDto = plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
     return {
       accessToken,
       refreshToken,
-      user,
+      user: userDto,
     };
   }
 

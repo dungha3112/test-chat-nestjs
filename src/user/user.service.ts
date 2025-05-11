@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IUserService } from 'src/utils/interfaces';
 import { User } from 'src/utils/typeorm';
@@ -28,6 +28,22 @@ export class UserService implements IUserService {
     });
 
     return user;
+  }
+
+  async searchUser(query: string): Promise<User[]> {
+    if (!query)
+      throw new HttpException('Provide a valid query', HttpStatus.BAD_REQUEST);
+
+    const statement = `(user.username LIKE :query)`;
+
+    const users = await this._userRepository
+      .createQueryBuilder('user')
+      .where(statement, { query: `%${query}%` })
+      .limit(10)
+      .addSelect(['user.username', 'user.id'])
+      .getMany();
+
+    return users;
   }
 
   async saveUser(params: User): Promise<User> {

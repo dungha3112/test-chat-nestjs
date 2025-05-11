@@ -6,6 +6,8 @@ import { GroupMessage } from 'src/utils/typeorm';
 import {
   TCreateGroupMessageResponse,
   TCreateMessageParams,
+  TGetMessagesParams,
+  TGetMessagesResponse,
 } from 'src/utils/types';
 import { Repository } from 'typeorm';
 
@@ -44,6 +46,29 @@ export class GroupMessageService implements IGroupMessageService {
     return {
       message: savedMessage,
       group: group,
+    };
+  }
+
+  async getMessagesByGroupId(
+    params: TGetMessagesParams,
+  ): Promise<TGetMessagesResponse> {
+    const { limit, id, page } = params;
+
+    const [data, total] = await this._messageGroupRepository
+      .createQueryBuilder('message')
+      .where('message.group.id = :id', { id })
+      .orderBy('message.createdAt', 'DESC')
+      .leftJoinAndSelect('message.author', 'author')
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      messages: data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
     };
   }
 

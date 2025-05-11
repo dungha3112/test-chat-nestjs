@@ -1,4 +1,14 @@
-import { Body, Controller, Inject, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  Get,
+  Inject,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { Routes, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IGroupMessageService } from 'src/utils/interfaces';
@@ -24,5 +34,17 @@ export class GroupMessageController {
       await this._groupMessageService.createMessageGroup(params);
 
     return newMessage;
+  }
+
+  @Get()
+  async getMessagesByGroupId(
+    @AuthUser() user: User,
+    @Param('id') id: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ) {
+    const params = { id, page, limit };
+
+    return await this._groupMessageService.getMessagesByGroupId(params);
   }
 }

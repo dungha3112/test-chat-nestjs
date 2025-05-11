@@ -17,9 +17,8 @@ import { IGroupMessageService } from 'src/utils/interfaces';
 import { User } from 'src/utils/typeorm';
 import { GroupMessageCreateDto } from '../dtos/group-message-create.dto';
 import { GroupMessageEditDto } from '../dtos/group-message-edit.dto';
-import { SkipThrottle } from '@nestjs/throttler';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
-@SkipThrottle()
 @Controller(Routes.GROUP_MESSAGE)
 export class GroupMessageController {
   constructor(
@@ -27,6 +26,7 @@ export class GroupMessageController {
     private readonly _groupMessageService: IGroupMessageService,
   ) {}
 
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post()
   async createNewGroupMessage(
     @AuthUser() author: User,
@@ -42,6 +42,7 @@ export class GroupMessageController {
   }
 
   // api/group/:id/message
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Get()
   async getMessagesByGroupId(
     @Param('id') id: string,
@@ -54,6 +55,7 @@ export class GroupMessageController {
   }
 
   // api/group/:id/message/:messageId
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Patch(':messageId')
   async updateMessageById(
     @AuthUser() { id: authorId }: User,
@@ -71,6 +73,7 @@ export class GroupMessageController {
   }
 
   // api/group/:id/message/:messageId
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Delete(':messageId')
   async deleteMessageById(
     @AuthUser() { id: authorId }: User,

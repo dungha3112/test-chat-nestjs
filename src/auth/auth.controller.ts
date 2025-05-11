@@ -7,6 +7,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { plainToInstance } from 'class-transformer';
 import { Request, Response } from 'express';
 import { UserResponseDto } from 'src/user/dtos/user-response.dto';
@@ -16,15 +17,14 @@ import { IAuthService } from 'src/utils/interfaces';
 import { AuthenticatedRequest } from 'src/utils/types/user.type';
 import { UserLoginDto } from './dtos/user-login.dto';
 import { UserRegisterDto } from './dtos/user-register.dto';
-import { SkipThrottle } from '@nestjs/throttler';
 
-@SkipThrottle()
 @Controller(Routes.AUTH)
 export class AuthController {
   constructor(
     @Inject(Services.AUTH) private readonly _authService: IAuthService,
   ) {}
 
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post('register')
   async registerUser(
     @Body() registerDto: UserRegisterDto,
@@ -34,6 +34,7 @@ export class AuthController {
     return { message };
   }
 
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post('login')
   async loginUser(
     @Body() loginDto: UserLoginDto,
@@ -55,6 +56,7 @@ export class AuthController {
     };
   }
 
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
   @Post('refresh-token')
   async refreshToken(@Req() request: Request) {
     const refresh_token = request.cookies['refresh_token'];
@@ -71,6 +73,7 @@ export class AuthController {
     };
   }
 
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('logout')
   @UseGuards(AuthJwtGuard)
   async loggout(

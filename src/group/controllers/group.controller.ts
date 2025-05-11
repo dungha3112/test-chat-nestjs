@@ -4,7 +4,9 @@ import { IGroupService } from 'src/utils/interfaces';
 import { GroupCreateDto } from '../dtos/group-create.dto';
 import { User } from 'src/utils/typeorm';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
+import { SkipThrottle } from '@nestjs/throttler';
 
+@SkipThrottle()
 @Controller(Routes.GROUP)
 export class GroupController {
   constructor(

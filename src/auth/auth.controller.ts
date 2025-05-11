@@ -16,7 +16,9 @@ import { IAuthService } from 'src/utils/interfaces';
 import { AuthenticatedRequest } from 'src/utils/types/user.type';
 import { UserLoginDto } from './dtos/user-login.dto';
 import { UserRegisterDto } from './dtos/user-register.dto';
+import { SkipThrottle } from '@nestjs/throttler';
 
+@SkipThrottle()
 @Controller(Routes.AUTH)
 export class AuthController {
   constructor(

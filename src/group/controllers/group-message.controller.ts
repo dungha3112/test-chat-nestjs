@@ -17,7 +17,9 @@ import { IGroupMessageService } from 'src/utils/interfaces';
 import { User } from 'src/utils/typeorm';
 import { GroupMessageCreateDto } from '../dtos/group-message-create.dto';
 import { GroupMessageEditDto } from '../dtos/group-message-edit.dto';
+import { SkipThrottle } from '@nestjs/throttler';
 
+@SkipThrottle()
 @Controller(Routes.GROUP_MESSAGE)
 export class GroupMessageController {
   constructor(

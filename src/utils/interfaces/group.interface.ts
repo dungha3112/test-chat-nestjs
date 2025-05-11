@@ -1,8 +1,11 @@
-import { Group } from '../typeorm';
+import { Group, User } from '../typeorm';
 import {
   TCheckUserInGroupParams,
   TCreateGroupParams,
+  TEditGroupParams,
   TUpdateLastMessageParams,
+  TUpdateOwnerGroupPrams,
+  TUserLeaveGroup,
 } from '../types';
 
 export interface IGroupService {
@@ -11,9 +14,15 @@ export interface IGroupService {
 
   findGroupById(id: string): Promise<Group>;
 
-  isUserInGroup(params: TCheckUserInGroupParams): Promise<Group>;
+  isUserInGroup(params: TCheckUserInGroupParams): Promise<User>;
 
   updateLastMessageGroup(params: TUpdateLastMessageParams);
+
+  editGrouById(params: TEditGroupParams): Promise<Group>;
+
+  updateOwnerGroup(params: TUpdateOwnerGroupPrams): Promise<Group>;
+
+  userLeaveGroup(params: TUserLeaveGroup): Promise<Group>;
 
   saveGroup(group: Group): Promise<Group>;
 }

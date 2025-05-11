@@ -2,11 +2,14 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Services } from 'src/utils/constants';
 import { IGroupService, IUserService } from 'src/utils/interfaces';
-import { Group } from 'src/utils/typeorm';
+import { Group, User } from 'src/utils/typeorm';
 import {
   TCheckUserInGroupParams,
   TCreateGroupParams,
+  TEditGroupParams,
   TUpdateLastMessageParams,
+  TUpdateOwnerGroupPrams,
+  TUserLeaveGroup,
 } from 'src/utils/types';
 import { Repository } from 'typeorm';
 import { validate as isUUID } from 'uuid';
@@ -92,7 +95,7 @@ export class GroupService implements IGroupService {
     return group;
   }
 
-  async isUserInGroup(params: TCheckUserInGroupParams): Promise<Group> {
+  async isUserInGroup(params: TCheckUserInGroupParams): Promise<User> {
     const { userId, id } = params;
 
     if (!isUUID(id)) {
@@ -102,18 +105,84 @@ export class GroupService implements IGroupService {
     const group = await this.findGroupById(id);
 
     const user = group.users.find((u) => u.id === userId);
-    if (!user)
+
+    return user;
+  }
+
+  async updateOwnerGroup(params: TUpdateOwnerGroupPrams): Promise<Group> {
+    const { id, newOwnerId, ownerId } = params;
+
+    if (!isUUID(newOwnerId)) {
+      throw new HttpException(`Invalid UUID format`, HttpStatus.BAD_REQUEST);
+    }
+
+    const group = await this.findGroupById(id);
+    const isMember = await this.isUserInGroup({ id, userId: newOwnerId });
+    if (!isMember) {
       throw new HttpException(
         'You are not a member of the group yet.',
-        HttpStatus.NOT_FOUND,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (group.owner.id !== ownerId)
+      throw new HttpException(
+        'Insufficient Permissions',
+        HttpStatus.BAD_REQUEST,
       );
 
-    return group;
+    if (group.owner.id === newOwnerId)
+      throw new HttpException(
+        'Cannot Transfer Owner to yourself',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    group.owner.id = newOwnerId;
+
+    const newGroup = await this.saveGroup(group);
+    return newGroup;
+  }
+
+  async userLeaveGroup(params: TUserLeaveGroup): Promise<Group> {
+    const { id, userId } = params;
+    const group = await this.findGroupById(id);
+
+    const isMember = await this.isUserInGroup({ id, userId });
+    if (!isMember)
+      throw new HttpException(
+        'You are not a member of the group yet.',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (userId === group.owner.id)
+      throw new HttpException(
+        'Cannot leave group as owner',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    group.users = group.users.filter((u) => u.id !== userId);
+
+    const updateGroup = await this.saveGroup(group);
+    return updateGroup;
   }
 
   async updateLastMessageGroup(params: TUpdateLastMessageParams) {
     const { id, lastMessageSent } = params;
     return await this._groupRepository.update(id, { lastMessageSent });
+  }
+
+  async editGrouById(params: TEditGroupParams): Promise<Group> {
+    const { id, ownerId, title } = params;
+
+    const group = await this.findGroupById(id);
+    if (group.owner.id !== ownerId)
+      throw new HttpException(
+        'You not owner group and can not edit',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    group.title = title;
+    const updateGroup = await this.saveGroup(group);
+    return updateGroup;
   }
 
   async saveGroup(group: Group): Promise<Group> {

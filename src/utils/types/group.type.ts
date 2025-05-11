@@ -14,3 +14,20 @@ export type TUpdateLastMessageParams = Partial<{
   id: string;
   lastMessageSent: GroupMessage;
 }>;
+
+export type TEditGroupParams = {
+  id: string;
+  ownerId: string;
+  title: string;
+};
+
+export type TUpdateOwnerGroupPrams = {
+  id: string;
+  newOwnerId: string;
+  ownerId: string;
+};
+
+export type TUserLeaveGroup = {
+  id: string;
+  userId: string;
+};

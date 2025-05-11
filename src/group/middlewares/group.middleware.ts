@@ -1,4 +1,9 @@
-import { Inject, NestMiddleware } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  NestMiddleware,
+} from '@nestjs/common';
 import { NextFunction, Response } from 'express';
 import { Services } from 'src/utils/constants';
 import { IGroupService } from 'src/utils/interfaces';
@@ -15,7 +20,13 @@ export class GroupMiddleware implements NestMiddleware {
 
     const params = { userId, id };
     const isMember = await this._groupService.isUserInGroup(params);
-
-    if (isMember) next();
+    if (!isMember) {
+      throw new HttpException(
+        'You are not a member of the group yet.',
+        HttpStatus.BAD_REQUEST,
+      );
+    } else {
+      next();
+    }
   }
 }

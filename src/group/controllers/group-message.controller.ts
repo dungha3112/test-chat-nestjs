@@ -11,13 +11,13 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { Routes, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IGroupMessageService } from 'src/utils/interfaces';
 import { User } from 'src/utils/typeorm';
 import { GroupMessageCreateDto } from '../dtos/group-message-create.dto';
 import { GroupMessageEditDto } from '../dtos/group-message-edit.dto';
-import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
 @Controller(Routes.GROUP_MESSAGE)
 export class GroupMessageController {

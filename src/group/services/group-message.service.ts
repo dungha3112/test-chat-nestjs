@@ -33,6 +33,12 @@ export class GroupMessageService implements IGroupMessageService {
       id,
       userId: author.id,
     });
+    if (!isMember) {
+      throw new HttpException(
+        'You are not a member of the group yet.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     const newMessageGroup = this._messageGroupRepository.create({
       author,

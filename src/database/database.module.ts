@@ -1,12 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-  Conversation,
-  ConversationMessage,
-  Group,
-  GroupMessage,
-  User,
-} from 'src/utils/typeorm';
+import entities from 'src/utils/typeorm/entities';
 
 @Module({
   imports: [
@@ -14,13 +8,7 @@ import {
       useFactory: async () => ({
         type: 'postgres',
         url: process.env.DATABASE_URL,
-        entities: [
-          User,
-          Group,
-          GroupMessage,
-          Conversation,
-          ConversationMessage,
-        ],
+        entities: entities,
         synchronize: true,
       }),
     }),

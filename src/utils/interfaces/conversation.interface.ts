@@ -1,5 +1,9 @@
 import { Conversation } from '../typeorm';
-import { TAccessConversationParams, TConversationCreateParams } from '../types';
+import {
+  TAccessConversationParams,
+  TConversationCreateParams,
+  TUpdateLastMessageConverParams,
+} from '../types';
 
 export interface IConversationService {
   createNewConversation(
@@ -10,6 +14,8 @@ export interface IConversationService {
   findConversationById(id: string): Promise<Conversation | null>;
 
   hasAccess(params: TAccessConversationParams): Promise<boolean>;
+
+  updateLastMessageConver(params: TUpdateLastMessageConverParams);
 
   isCreated(
     creatorId: string,

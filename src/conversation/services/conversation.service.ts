@@ -6,6 +6,7 @@ import { Conversation, ConversationMessage } from 'src/utils/typeorm';
 import {
   TAccessConversationParams,
   TConversationCreateParams,
+  TUpdateLastMessageConverParams,
 } from 'src/utils/types';
 import { Repository } from 'typeorm';
 import { validate as isUUID } from 'uuid';
@@ -127,6 +128,11 @@ export class ConversationService implements IConversationService {
         { creator: { id: recipientId }, recipient: { id: creatorId } },
       ],
     });
+  }
+
+  async updateLastMessageConver(params: TUpdateLastMessageConverParams) {
+    const { id, lastMessageSent } = params;
+    return await this._conversationRepository.update(id, { lastMessageSent });
   }
 
   async hasAccess(params: TAccessConversationParams): Promise<boolean> {

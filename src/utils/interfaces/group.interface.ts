@@ -3,7 +3,7 @@ import {
   TCheckUserInGroupParams,
   TCreateGroupParams,
   TEditGroupParams,
-  TUpdateLastMessageParams,
+  TUpdateLastMessageGroupParams,
   TUpdateOwnerGroupPrams,
   TUserLeaveGroup,
 } from '../types';
@@ -16,7 +16,7 @@ export interface IGroupService {
 
   isUserInGroup(params: TCheckUserInGroupParams): Promise<User>;
 
-  updateLastMessageGroup(params: TUpdateLastMessageParams);
+  updateLastMessageGroup(params: TUpdateLastMessageGroupParams);
 
   editGrouById(params: TEditGroupParams): Promise<Group>;
 

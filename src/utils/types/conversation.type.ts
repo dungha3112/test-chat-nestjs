@@ -1,4 +1,4 @@
-import { User } from '../typeorm';
+import { ConversationMessage, User } from '../typeorm';
 
 export type TConversationCreateParams = {
   creator: User;
@@ -9,4 +9,9 @@ export type TConversationCreateParams = {
 export type TAccessConversationParams = {
   userId: string;
   id: string;
+};
+
+export type TUpdateLastMessageConverParams = {
+  id: string;
+  lastMessageSent: ConversationMessage;
 };

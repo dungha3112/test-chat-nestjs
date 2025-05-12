@@ -12,7 +12,7 @@ export type TCheckUserInGroupParams = {
   userId: string;
 };
 
-export type TUpdateLastMessageParams = Partial<{
+export type TUpdateLastMessageGroupParams = Partial<{
   id: string;
   lastMessageSent: GroupMessage;
 }>;

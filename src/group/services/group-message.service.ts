@@ -152,7 +152,7 @@ export class GroupMessageService implements IGroupMessageService {
 
       return await this._messageGroupRepository.delete({ id: message.id });
     } else {
-      console.log('There are more than 1 conversation message');
+      console.log('There are more than 1 group message');
       const newLastMessage = groupMessages[SECOND_MESSAGE_INDEX];
       await this._groupService.updateLastMessageGroup({
         id: groupId,

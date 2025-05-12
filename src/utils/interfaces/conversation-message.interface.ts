@@ -13,17 +13,17 @@ export interface IConversationMessageService {
     params: TCreateMessageParams,
   ): Promise<TCreateConversationResponse>;
 
-  getMessagesByConversationId(
+  getMessagesByConverId(
     params: TGetMessagesParams,
   ): Promise<TGetMessagesConversationResponse>;
 
   editMessage(params: TEditMessageParams): Promise<ConversationMessage>;
 
-  deleteMessageGroupById(
+  deleteMessageConverById(
     params: TDeleteMessageParams,
   ): Promise<ConversationMessage>;
 
-  saveMessageGroup(
-    groupMessage: ConversationMessage,
+  saveMessageConver(
+    converMessage: ConversationMessage,
   ): Promise<ConversationMessage>;
 }

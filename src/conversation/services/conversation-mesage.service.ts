@@ -1,5 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { IConversationMessageService } from 'src/utils/interfaces';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Services } from 'src/utils/constants';
+import {
+  IConversationMessageService,
+  IConversationService,
+} from 'src/utils/interfaces';
 import { ConversationMessage } from 'src/utils/typeorm';
 import {
   TCreateMessageParams,
@@ -9,32 +14,169 @@ import {
   TEditMessageParams,
   TDeleteMessageParams,
 } from 'src/utils/types';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ConversationMessageService implements IConversationMessageService {
-  constructor() {}
+  constructor(
+    @InjectRepository(ConversationMessage)
+    private readonly _messageConverRepository: Repository<ConversationMessage>,
 
-  createMessageConver(
+    @Inject(Services.CONVERSATION)
+    private readonly _conversationService: IConversationService,
+  ) {}
+
+  async createMessageConver(
     params: TCreateMessageParams,
   ): Promise<TCreateConversationResponse> {
-    throw new Error('Method not implemented.');
+    const { author, id, content } = params;
+
+    const conversation =
+      await this._conversationService.findConversationById(id);
+    const { creator, recipient } = conversation;
+    if (creator.id !== author.id && recipient.id !== author.id)
+      throw new HttpException(
+        'You are neither creator nor recipient of the conversation',
+        HttpStatus.FORBIDDEN,
+      );
+
+    const newMessage = this._messageConverRepository.create({
+      author,
+      content,
+      conversation,
+    });
+    const savedMessage = await this.saveMessageConver(newMessage);
+
+    // update message conver
+    conversation.lastMessageSent = savedMessage;
+    const updateConversation =
+      await this._conversationService.saveConversation(conversation);
+    delete savedMessage.conversation;
+
+    return {
+      message: savedMessage,
+      conversation: updateConversation,
+    };
   }
-  getMessagesByConversationId(
+
+  async getMessagesByConverId(
     params: TGetMessagesParams,
   ): Promise<TGetMessagesConversationResponse> {
-    throw new Error('Method not implemented.');
+    const { limit, id, page } = params;
+
+    const [data, total] = await this._messageConverRepository
+      .createQueryBuilder('message')
+      .where('message.conversation.id = :id', { id })
+      .orderBy('message.createdAt', 'DESC')
+      .leftJoinAndSelect('message.author', 'author')
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      conversationId: id,
+      messages: data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
-  editMessage(params: TEditMessageParams): Promise<ConversationMessage> {
-    throw new Error('Method not implemented.');
+
+  async editMessage(params: TEditMessageParams): Promise<ConversationMessage> {
+    const { authorId, content, id, messageId } = params;
+
+    const conversation =
+      await this._conversationService.findConversationById(id);
+
+    const messageDB = await this._messageConverRepository.findOne({
+      where: { id: messageId, conversation: { id }, author: { id: authorId } },
+      relations: ['author'],
+    });
+    if (!messageDB)
+      throw new HttpException(
+        'Message not found or you can not edit message',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    messageDB.content = content;
+    const updateMessage = await this.saveMessageConver(messageDB);
+
+    if (conversation.lastMessageSent.id === messageId) {
+      await this._conversationService.updateLastMessageConver({
+        id,
+        lastMessageSent: updateMessage,
+      });
+    }
+
+    return updateMessage;
   }
-  deleteMessageGroupById(
+
+  async deleteMessageConverById(
     params: TDeleteMessageParams,
   ): Promise<ConversationMessage> {
-    throw new Error('Method not implemented.');
+    const { authorId, id, messageId } = params;
+    const conversation =
+      await this._conversationService.findConversationById(id);
+
+    const message = await this._messageConverRepository.findOne({
+      where: {
+        id: messageId,
+        author: { id: authorId },
+      },
+      relations: ['conversation', 'author'],
+    });
+
+    if (!message)
+      throw new HttpException(
+        'Message not found or you can not delete',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (conversation.lastMessageSent.id === message.id) {
+      await this._messageConverRepository.delete({ id: messageId });
+    } else {
+      this.deleteLastMessage(conversation.id, message);
+    }
+
+    return message;
   }
-  saveMessageGroup(
-    groupMessage: ConversationMessage,
+
+  async deleteLastMessage(
+    conversationId: string,
+    message: ConversationMessage,
+  ) {
+    const converMessages = await this._messageConverRepository.find({
+      where: { conversation: { id: conversationId } },
+    });
+
+    const size = converMessages.length;
+    const SECOND_MESSAGE_INDEX = 1;
+
+    if (size <= 1) {
+      console.log(`last message sent conversation is deleted`);
+      await this._conversationService.updateLastMessageConver({
+        id: conversationId,
+        lastMessageSent: null,
+      });
+
+      return await this._messageConverRepository.delete({ id: message.id });
+    } else {
+      console.log('There are more than 1 conver message');
+
+      const newLastMessage = converMessages[SECOND_MESSAGE_INDEX];
+      await this._conversationService.updateLastMessageConver({
+        id: conversationId,
+        lastMessageSent: newLastMessage,
+      });
+
+      return await this._messageConverRepository.delete({ id: message.id });
+    }
+  }
+
+  async saveMessageConver(
+    converMessage: ConversationMessage,
   ): Promise<ConversationMessage> {
-    throw new Error('Method not implemented.');
+    return await this._messageConverRepository.save(converMessage);
   }
 }

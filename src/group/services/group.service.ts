@@ -7,7 +7,7 @@ import {
   TCheckUserInGroupParams,
   TCreateGroupParams,
   TEditGroupParams,
-  TUpdateLastMessageParams,
+  TUpdateLastMessageGroupParams,
   TUpdateOwnerGroupPrams,
   TUserLeaveGroup,
 } from 'src/utils/types';
@@ -179,7 +179,7 @@ export class GroupService implements IGroupService {
     return updateGroup;
   }
 
-  async updateLastMessageGroup(params: TUpdateLastMessageParams) {
+  async updateLastMessageGroup(params: TUpdateLastMessageGroupParams) {
     const { id, lastMessageSent } = params;
     return await this._groupRepository.update(id, { lastMessageSent });
   }

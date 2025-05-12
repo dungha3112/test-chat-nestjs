@@ -5,3 +5,8 @@ export type TConversationCreateParams = {
   message: string;
   recipientId: string;
 };
+
+export type TAccessConversationParams = {
+  userId: string;
+  id: string;
+};

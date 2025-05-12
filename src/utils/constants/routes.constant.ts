@@ -7,4 +7,5 @@ export enum Routes {
   GROUPS_RECIPIENTS = 'group/:id/recipient',
 
   CONVERSATION = 'conversation',
+  CONVERSATION_MESSAGE = 'conversation/:id/message',
 }

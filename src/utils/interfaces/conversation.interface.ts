@@ -1,10 +1,15 @@
 import { Conversation } from '../typeorm';
-import { TConversationCreateParams } from '../types/conversation.type';
+import { TAccessConversationParams, TConversationCreateParams } from '../types';
 
 export interface IConversationService {
   createNewConversation(
     params: TConversationCreateParams,
   ): Promise<Conversation>;
+
+  userGetConversations(userId: string): Promise<Conversation[]>;
+  findConversationById(id: string): Promise<Conversation | null>;
+
+  hasAccess(params: TAccessConversationParams): Promise<boolean>;
 
   isCreated(
     creatorId: string,

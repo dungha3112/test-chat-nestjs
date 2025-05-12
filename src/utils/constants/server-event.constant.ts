@@ -15,3 +15,7 @@ export enum ServerGroupMessageEvent {
   GROUP_MESSAGE_EDIT = 'group.message.edit',
   GROUP_MESSAGE_DELETE = 'group.message.delete',
 }
+
+export enum ServerConversationEvent {
+  CONVERSATION_CREATE = 'conversation.create',
+}

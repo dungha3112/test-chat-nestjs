@@ -4,8 +4,12 @@ import { Services } from 'src/utils/constants';
 import { IUserService } from 'src/utils/interfaces';
 import { IConversationService } from 'src/utils/interfaces/conversation.interface';
 import { Conversation, ConversationMessage } from 'src/utils/typeorm';
-import { TConversationCreateParams } from 'src/utils/types/conversation.type';
+import {
+  TAccessConversationParams,
+  TConversationCreateParams,
+} from 'src/utils/types';
 import { Repository } from 'typeorm';
+import { validate as isUUID } from 'uuid';
 
 @Injectable()
 export class ConversationService implements IConversationService {
@@ -19,10 +23,53 @@ export class ConversationService implements IConversationService {
     @Inject(Services.USER) private readonly _userService: IUserService,
   ) {}
 
+  async userGetConversations(id: string): Promise<Conversation[]> {
+    const conversations = await this._conversationRepository
+      .createQueryBuilder('conversation')
+      .leftJoinAndSelect('conversation.lastMessageSent', 'lastMessageSent')
+      .leftJoinAndSelect('conversation.creator', 'creator')
+      .leftJoinAndSelect('conversation.recipient', 'recipient')
+
+      .leftJoinAndSelect('lastMessageSent.author', 'author')
+      .where('creator.id = :id', { id })
+      .orWhere('recipient.id = :id', { id })
+      .getMany();
+
+    return conversations;
+  }
+
+  async findConversationById(id: string): Promise<Conversation | null> {
+    if (!isUUID(id)) {
+      throw new HttpException(`Invalid UUID format`, HttpStatus.BAD_REQUEST);
+    }
+
+    const conversation = await this._conversationRepository.findOne({
+      where: { id },
+      relations: [
+        'creator',
+        'recipient',
+        'lastMessageSent',
+        'lastMessageSent.author',
+      ],
+    });
+
+    if (!conversation)
+      throw new HttpException('Group not found with id', HttpStatus.NOT_FOUND);
+
+    return conversation;
+  }
+
   async createNewConversation(
     params: TConversationCreateParams,
   ): Promise<Conversation> {
     const { creator, message, recipientId } = params;
+
+    if (!isUUID(recipientId)) {
+      throw new HttpException(
+        `Invalid UUID format recipientId`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     if (creator.id === recipientId) {
       throw new HttpException(
@@ -81,6 +128,17 @@ export class ConversationService implements IConversationService {
         { creator: { id: recipientId }, recipient: { id: creatorId } },
       ],
     });
+  }
+
+  async hasAccess(params: TAccessConversationParams): Promise<boolean> {
+    const { id, userId } = params;
+
+    const conversation = await this.findConversationById(id);
+
+    return (
+      (conversation.creator && conversation.creator.id === userId) ||
+      (conversation.recipient && conversation.recipient.id === userId)
+    );
   }
 
   async saveConversation(conversation: Conversation): Promise<Conversation> {

@@ -7,6 +7,7 @@ import { Conversation, ConversationMessage } from 'src/utils/typeorm';
 import { UserModule } from 'src/user/user.module';
 import { AuthMiddleware } from 'src/utils/middlewares';
 import { CustomJwtModule } from 'src/custom-jwt/custom-jwt.module';
+import { ConversationMiddleware } from './middlewares/conversation.middleware';
 
 @Module({
   imports: [
@@ -32,5 +33,6 @@ import { CustomJwtModule } from 'src/custom-jwt/custom-jwt.module';
 export class ConversationModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AuthMiddleware).forRoutes('conversation');
+    consumer.apply(ConversationMiddleware).forRoutes('conversation/:id');
   }
 }

@@ -18,6 +18,7 @@ export class ConversationMessageEvent {
     const { conversationId, message } = payload;
     const conversation =
       await this._conversationService.findConversationById(conversationId);
+
     const recipientSocket =
       message.author.id === conversation.creator.id
         ? this._appGateway._sessions.getUserSocket(conversation.recipient.id)
@@ -25,5 +26,35 @@ export class ConversationMessageEvent {
 
     if (recipientSocket)
       recipientSocket.emit('onConverMessageCreate', { conversation, message });
+  }
+
+  @OnEvent(ServerConverMessageEvent.CONVER_MESSAGE_EDIT)
+  async handleConverMessageEditEvent(payload: TMessageConverPayload) {
+    const { conversationId, message } = payload;
+    const conversation =
+      await this._conversationService.findConversationById(conversationId);
+
+    const recipientSocket =
+      message.author.id === conversation.creator.id
+        ? this._appGateway._sessions.getUserSocket(conversation.recipient.id)
+        : this._appGateway._sessions.getUserSocket(conversation.creator.id);
+
+    if (recipientSocket)
+      recipientSocket.emit(`onMessageEdit`, { conversation, message });
+  }
+
+  @OnEvent(ServerConverMessageEvent.CONVER_MESSAGE_DELETE)
+  async handleConverMessageDeleteEvent(payload: TMessageConverPayload) {
+    const { conversationId, message } = payload;
+    const conversation =
+      await this._conversationService.findConversationById(conversationId);
+
+    const recipientSocket =
+      message.author.id === conversation.creator.id
+        ? this._appGateway._sessions.getUserSocket(conversation.recipient.id)
+        : this._appGateway._sessions.getUserSocket(conversation.creator.id);
+
+    if (recipientSocket)
+      recipientSocket.emit(`onMessageDelete`, { conversation, message });
   }
 }

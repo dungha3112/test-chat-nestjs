@@ -22,4 +22,6 @@ export enum ServerConversationEvent {
 
 export enum ServerConverMessageEvent {
   CONVER_MESSAGE_CREATE = 'conver.message.create',
+  CONVER_MESSAGE_EDIT = 'conver.message.edit',
+  CONVER_MESSAGE_DELETE = 'conver.message.delete',
 }

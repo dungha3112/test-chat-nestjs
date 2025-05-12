@@ -81,6 +81,15 @@ export class ConversationMessageController {
     const params = { authorId, id, messageId, content };
     const message = await this._converMessageService.editMessage(params);
 
+    const payload: TMessageConverPayload = {
+      conversationId: id,
+      message,
+    };
+    this._eventEmitter.emit(
+      ServerConverMessageEvent.CONVER_MESSAGE_EDIT,
+      payload,
+    );
+
     return {
       conversationId: id,
       message,
@@ -99,6 +108,15 @@ export class ConversationMessageController {
 
     const message =
       await this._converMessageService.deleteMessageConverById(params);
+
+    const payload: TMessageConverPayload = {
+      conversationId: id,
+      message: message,
+    };
+    this._eventEmitter.emit(
+      ServerConverMessageEvent.CONVER_MESSAGE_DELETE,
+      payload,
+    );
 
     return {
       conversationId: id,

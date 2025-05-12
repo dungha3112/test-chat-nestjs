@@ -9,7 +9,8 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { Services } from 'src/utils/constants';
-import { AuthenticatedSocket, ISocketRedisService } from 'src/utils/interfaces';
+import { AuthenticatedSocket } from 'src/utils/interfaces';
+import { IGatewaySessionManager } from './gateway.session';
 
 @WebSocketGateway({
   cors: {
@@ -20,8 +21,8 @@ import { AuthenticatedSocket, ISocketRedisService } from 'src/utils/interfaces';
 })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
-    @Inject(Services.REDIS_SOCKET)
-    private readonly _redisSocketService: ISocketRedisService,
+    @Inject(Services.GATEWAY_SESSION_MANAGER)
+    public readonly _sessions: IGatewaySessionManager,
   ) {}
 
   // server: Server from package, to emit to client side
@@ -33,7 +34,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     try {
       console.log(socket.user.id, socket.id);
 
-      this._redisSocketService.setUserSocket(socket.user.id, socket);
+      this._sessions.setUserSocket(socket.user.id, socket);
 
       socket.emit('connected', {});
     } catch (error) {
@@ -44,7 +45,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // handleDisconnect
   handleDisconnect(socket: AuthenticatedSocket) {
     socket.disconnect();
-    // this._redisSocketService.removeUserSocket(socket.user.id);
+    // this._sessions.removeUserSocket(socket.user.id);
     console.log('socket dis-connect', socket.id);
   }
 

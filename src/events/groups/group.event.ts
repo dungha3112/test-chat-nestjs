@@ -1,23 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { ServerGroupEvent, Services } from 'src/utils/constants';
-import { AuthenticatedSocket, ISocketRedisService } from 'src/utils/interfaces';
-import { Group } from 'src/utils/typeorm';
-import { AppGateway } from './../../gateway/gateway';
 import {
   ConnectedSocket,
   MessageBody,
   SubscribeMessage,
 } from '@nestjs/websockets';
+import { ServerGroupEvent, Services } from 'src/utils/constants';
+import { AuthenticatedSocket } from 'src/utils/interfaces';
+import { Group } from 'src/utils/typeorm';
+import { AppGateway } from './../../gateway/gateway';
 
 @Injectable()
 export class GroupEvent {
-  constructor(
-    private readonly _appAppGateway: AppGateway,
-    @Inject(Services.REDIS_SOCKET)
-    private readonly _redisSocketService: ISocketRedisService,
-  ) {}
+  constructor(private readonly _appAppGateway: AppGateway) {}
 
+  //GROUP_CREATE
   @OnEvent(ServerGroupEvent.GROUP_CREATE)
   async handleNewGroupCreate(payload: Group) {
     console.log(`create new group`);
@@ -27,7 +24,9 @@ export class GroupEvent {
     await Promise.all(
       payload.users.map(async (user) => {
         if (user.id !== onwerId) {
-          const socket = await this._redisSocketService.getUserSocket(user.id);
+          const socket = await this._appAppGateway._sessions.getUserSocket(
+            user.id,
+          );
 
           if (socket) {
             socketIds.push(socket.id);
@@ -86,10 +85,12 @@ export class GroupEvent {
     group: Group;
     userId: string;
   }) {
+    console.log({ group, userId });
+
     const ROOM_NAME = `group-${group.id}`;
     const { rooms } = this._appAppGateway.server.sockets.adapter;
     const socketInRoom = rooms.get(ROOM_NAME);
-    const leftUserSocket = await this._redisSocketService.getUserSocket(userId);
+    const leftUserSocket = this._appAppGateway._sessions.getUserSocket(userId);
 
     if (leftUserSocket && socketInRoom) {
       if (socketInRoom.has(leftUserSocket.id)) {
@@ -107,6 +108,7 @@ export class GroupEvent {
     if (leftUserSocket && !socketInRoom) {
       return leftUserSocket.emit('onGroupParticipantLeft', group);
     }
-    // this._appAppGateway.server.to(room).emit('onGroupUpdateOwner');
+
+    this._appAppGateway.server.to(ROOM_NAME).emit('onGroupUpdateOwner', group);
   }
 }

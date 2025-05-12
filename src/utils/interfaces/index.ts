@@ -4,5 +4,4 @@ export * from './gateway.interface';
 export * from './group-message.interface';
 export * from './group-recipients.interface';
 export * from './group.interface';
-export * from './redis-socket.interface';
 export * from './user.interface';

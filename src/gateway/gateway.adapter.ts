@@ -2,7 +2,6 @@ import {
   HttpException,
   HttpStatus,
   INestApplicationContext,
-  Inject,
   Injectable,
 } from '@nestjs/common';
 import { IoAdapter } from '@nestjs/platform-socket.io';

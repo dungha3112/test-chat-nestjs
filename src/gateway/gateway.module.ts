@@ -1,10 +1,23 @@
 import { Module } from '@nestjs/common';
 import { AppGateway } from './gateway';
-import { RedisModule } from 'src/custom-redis/custom-redis.module';
+import { GatewaySessionManager } from './gateway.session';
+import { Services } from 'src/utils/constants';
 
 @Module({
-  imports: [RedisModule],
-  providers: [AppGateway],
-  exports: [AppGateway],
+  providers: [
+    AppGateway,
+
+    {
+      provide: Services.GATEWAY_SESSION_MANAGER,
+      useClass: GatewaySessionManager,
+    },
+  ],
+  exports: [
+    AppGateway,
+    {
+      provide: Services.GATEWAY_SESSION_MANAGER,
+      useClass: GatewaySessionManager,
+    },
+  ],
 })
 export class GateWayModule {}

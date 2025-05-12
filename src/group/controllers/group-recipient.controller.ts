@@ -6,12 +6,14 @@ import { IGroupRecipientsService } from 'src/utils/interfaces';
 import { User } from 'src/utils/typeorm';
 import { GroupRecipientAddUserDto } from '../dtos/group-recipient.add.dto';
 import { GroupRecipientRemoveUserDto } from '../dtos/group-recipient.remove.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller(Routes.GROUPS_RECIPIENTS)
 export class GroupRecipientController {
   constructor(
     @Inject(Services.GROUPS_RECIPIENTS)
     private readonly _groupRecipientService: IGroupRecipientsService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   // api/group/:id/recipient

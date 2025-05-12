@@ -1,9 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ServerGroupEvent, Services } from 'src/utils/constants';
-import { ISocketRedisService } from 'src/utils/interfaces';
+import { AuthenticatedSocket, ISocketRedisService } from 'src/utils/interfaces';
 import { Group } from 'src/utils/typeorm';
 import { AppGateway } from './../../gateway/gateway';
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+} from '@nestjs/websockets';
 
 @Injectable()
 export class GroupEvent {
@@ -33,5 +38,28 @@ export class GroupEvent {
 
     if (socketIds.length > 0)
       this._appAppGateway.server.to(socketIds).emit('onGroupCreate', payload);
+  }
+
+  // get emit onGroupJoin from client side
+  // {id}: {id: string} id : groupId
+  @SubscribeMessage('onGroupJoin')
+  onGroupJoin(
+    @MessageBody() { id }: { id: string },
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    console.log(`onGroupJoin join id: `, id);
+    client.join(`group-${id}`);
+    client.to(`group-${id}`).emit('userGroupJoin');
+  }
+
+  // get emit onGroupLeave from client side
+  // {id}: {id: string} id : groupId
+  @SubscribeMessage('onGroupLeave')
+  onGroupLeave(
+    @MessageBody() { id }: { id: string },
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    client.leave(`group-${id}`);
+    client.to(`group-${id}`).emit('userGroupLeave');
   }
 }

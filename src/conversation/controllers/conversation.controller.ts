@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
 import { Routes, ServerConversationEvent, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
-import { IConversationService } from 'src/utils/interfaces/conversation.interface';
 import { User } from 'src/utils/typeorm';
 import { ConversationCreateDto } from '../dtos/conversation-create.dto';
 import { Throttle } from '@nestjs/throttler';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { IConversationService } from 'src/utils/interfaces';
 
 @Controller(Routes.CONVERSATION)
 export class ConversationController {

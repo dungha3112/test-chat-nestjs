@@ -5,3 +5,5 @@ export * from './group-message.interface';
 export * from './group-recipients.interface';
 export * from './group.interface';
 export * from './user.interface';
+export * from './conversation.interface';
+export * from './conversation-message.interface';

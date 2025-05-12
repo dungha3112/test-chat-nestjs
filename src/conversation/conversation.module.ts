@@ -8,6 +8,7 @@ import { UserModule } from 'src/user/user.module';
 import { AuthMiddleware } from 'src/utils/middlewares';
 import { CustomJwtModule } from 'src/custom-jwt/custom-jwt.module';
 import { ConversationMiddleware } from './middlewares/conversation.middleware';
+import { ConversationMessageService } from './services/conversation-mesage.service';
 
 @Module({
   imports: [
@@ -21,12 +22,20 @@ import { ConversationMiddleware } from './middlewares/conversation.middleware';
       provide: Services.CONVERSATION,
       useClass: ConversationService,
     },
+    {
+      provide: Services.CONVERSATION_MESSAGE,
+      useClass: ConversationMessageService,
+    },
   ],
 
   exports: [
     {
       provide: Services.CONVERSATION,
       useClass: ConversationService,
+    },
+    {
+      provide: Services.CONVERSATION_MESSAGE,
+      useClass: ConversationMessageService,
     },
   ],
 })

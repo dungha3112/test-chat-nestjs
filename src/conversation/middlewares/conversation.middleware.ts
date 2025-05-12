@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { NextFunction, Response } from 'express';
 import { Services } from 'src/utils/constants';
-import { IConversationService } from 'src/utils/interfaces/conversation.interface';
+import { IConversationService } from 'src/utils/interfaces';
 import { AuthenticatedRequest } from 'src/utils/types';
 
 export class ConversationMiddleware implements NestMiddleware {

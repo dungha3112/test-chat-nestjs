@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
-import { CustomJwtModule } from './custom-jwt/custom-jwt.module';
-import { GroupModule } from './group/group.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { AuthModule } from './auth/auth.module';
+import { CustomJwtModule } from './custom-jwt/custom-jwt.module';
+import { DatabaseModule } from './database/database.module';
+import { GateWayModule } from './gateway/gateway.module';
+import { GroupModule } from './group/group.module';
+import { UserModule } from './user/user.module';
+import { RedisModule } from './custom-redis/custom-redis.module';
 
 @Module({
   imports: [
@@ -27,8 +29,10 @@ import { APP_GUARD } from '@nestjs/core';
     UserModule,
     CustomJwtModule,
     GroupModule,
+
+    GateWayModule,
+    RedisModule,
   ],
-  controllers: [],
   providers: [
     {
       provide: APP_GUARD,

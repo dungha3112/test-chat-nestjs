@@ -8,5 +8,10 @@ declare namespace NodeJS {
 
     REFRESH_TOKEN_SECRET: string;
     JWT_REFRESH_EXPIRES_IN: string;
+
+    REDIS_HOST: string;
+    REDIS_PORT: number;
+
+    REDIS_PASSWORD: string;
   }
 }

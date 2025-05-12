@@ -62,7 +62,13 @@ export class GroupController {
     @Param('id') id: string,
     @Body() { title }: GroupEditDto,
   ) {
-    return await this._groupService.editGrouById({ id, title, ownerId });
+    const newGroup = await this._groupService.editGrouById({
+      id,
+      title,
+      ownerId,
+    });
+    this._eventEmitter.emit(ServerGroupEvent.GROUP_UPDATE, newGroup);
+    return newGroup;
   }
 
   // api/group/:id/owner
@@ -76,6 +82,7 @@ export class GroupController {
     const params = { ownerId, id, newOwnerId };
 
     const newGroup = await this._groupService.updateOwnerGroup(params);
+    this._eventEmitter.emit(ServerGroupEvent.GROUP_OWNER_UPDATE, newGroup);
     return newGroup;
   }
 
@@ -88,7 +95,10 @@ export class GroupController {
   ) {
     const params = { id, userId };
     const group = await this._groupService.userLeaveGroup(params);
-
+    this._eventEmitter.emit(ServerGroupEvent.GROUP_USER_LEAVE, {
+      group,
+      userId,
+    });
     return group;
   }
 }

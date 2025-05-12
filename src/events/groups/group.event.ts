@@ -62,4 +62,51 @@ export class GroupEvent {
     client.leave(`group-${id}`);
     client.to(`group-${id}`).emit('userGroupLeave');
   }
+
+  //ServerGroupEvent.GROUP_OWNER_UPDATE
+  @OnEvent(ServerGroupEvent.GROUP_OWNER_UPDATE)
+  handleUpdateOwnerGroup(payload: Group) {
+    const room = `group-${payload.id}`;
+    this._appAppGateway.server.to(room).emit('onGroupUpdateOwner', payload);
+  }
+
+  // ServerGroupEvent.GROUP_UPDATE
+  @OnEvent(ServerGroupEvent.GROUP_UPDATE)
+  handleUpdateGroup(payload: Group) {
+    const room = `group-${payload.id}`;
+    this._appAppGateway.server.to(room).emit('onGroupUpdate', payload);
+  }
+
+  //ServerGroupEvent.GROUP_USER_LEAVE
+  @OnEvent(ServerGroupEvent.GROUP_USER_LEAVE)
+  async handleUserLeaveGroup({
+    group,
+    userId,
+  }: {
+    group: Group;
+    userId: string;
+  }) {
+    const ROOM_NAME = `group-${group.id}`;
+    const { rooms } = this._appAppGateway.server.sockets.adapter;
+    const socketInRoom = rooms.get(ROOM_NAME);
+    const leftUserSocket = await this._redisSocketService.getUserSocket(userId);
+
+    if (leftUserSocket && socketInRoom) {
+      if (socketInRoom.has(leftUserSocket.id)) {
+        return this._appAppGateway.server
+          .to(ROOM_NAME)
+          .emit('onGroupParticipantLeft', group);
+      } else {
+        leftUserSocket.emit('onGroupParticipantLeft', group);
+        this._appAppGateway.server
+          .to(ROOM_NAME)
+          .emit('onGroupParticipantLeft', group);
+        return;
+      }
+    }
+    if (leftUserSocket && !socketInRoom) {
+      return leftUserSocket.emit('onGroupParticipantLeft', group);
+    }
+    // this._appAppGateway.server.to(room).emit('onGroupUpdateOwner');
+  }
 }

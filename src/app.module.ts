@@ -10,6 +10,7 @@ import { GroupModule } from './group/group.module';
 import { UserModule } from './user/user.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EventModule } from './events/events.module';
+import { ConversationModule } from './conversation/conversation.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { EventModule } from './events/events.module';
     GateWayModule,
     EventEmitterModule.forRoot(),
     EventModule,
+    ConversationModule,
   ],
   providers: [
     {

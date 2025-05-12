@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Services } from 'src/utils/constants';
 import { IGroupService, IUserService } from 'src/utils/interfaces';
-import { Group, User } from 'src/utils/typeorm';
+import { Group, GroupMessage, User } from 'src/utils/typeorm';
 import {
   TCheckUserInGroupParams,
   TCreateGroupParams,
@@ -20,11 +20,14 @@ export class GroupService implements IGroupService {
     @InjectRepository(Group)
     private readonly _groupRepository: Repository<Group>,
 
+    @InjectRepository(GroupMessage)
+    private readonly _groupMessageRepository: Repository<GroupMessage>,
+
     @Inject(Services.USER) private readonly _userService: IUserService,
   ) {}
 
   async createGroup(params: TCreateGroupParams): Promise<Group> {
-    const { ownerId, title, users } = params;
+    const { owner, title, users, message } = params;
 
     const userPromise = users.map(async (id) => {
       if (!isUUID(id)) {
@@ -42,22 +45,33 @@ export class GroupService implements IGroupService {
           HttpStatus.BAD_REQUEST,
         );
 
-      return id;
+      return user;
     });
 
     const usersDb = await Promise.all(userPromise);
 
-    usersDb.push(ownerId);
+    usersDb.push(owner);
 
     const newGroup = this._groupRepository.create({
-      owner: { id: ownerId },
-      users: usersDb.map((id) => ({ id })),
+      owner,
+      users: usersDb,
       title,
     });
 
     const savedGroup = await this.saveGroup(newGroup);
 
-    return savedGroup;
+    const newMessage = this._groupMessageRepository.create({
+      group: savedGroup,
+      author: owner,
+      content: message,
+    });
+    const savedMessage = await this._groupMessageRepository.save(newMessage);
+
+    savedGroup.lastMessageSent = savedMessage;
+    const updateMessageGroup = await this.saveGroup(savedGroup);
+    delete updateMessageGroup.lastMessageSent.group;
+
+    return updateMessageGroup;
   }
 
   async getGroups(userId: string): Promise<Group[]> {

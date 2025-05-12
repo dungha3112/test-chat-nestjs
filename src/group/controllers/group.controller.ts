@@ -28,11 +28,8 @@ export class GroupController {
 
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post()
-  async createGroup(
-    @AuthUser() { id: ownerId }: User,
-    @Body() groupDto: GroupCreateDto,
-  ) {
-    const params = { ...groupDto, ownerId };
+  async createGroup(@AuthUser() owner: User, @Body() groupDto: GroupCreateDto) {
+    const params = { ...groupDto, owner };
 
     const newGroup = await this._groupService.createGroup(params);
 

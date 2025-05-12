@@ -1,10 +1,12 @@
-import { GroupMessage } from '../typeorm';
+import { GroupMessage, User } from '../typeorm';
 
 export type TCreateGroupParams = {
   users: string[];
   title: string;
-  ownerId: string;
+  owner: User;
+  message: string;
 };
+
 export type TCheckUserInGroupParams = {
   id: string;
   userId: string;

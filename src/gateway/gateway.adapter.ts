@@ -61,6 +61,7 @@ export class WebsocketAdapter extends IoAdapter {
         next();
       } catch (error) {
         console.log('Error in WebSocket middleware:', error);
+        throw new HttpException('UNAUTHORIZED', HttpStatus.UNAUTHORIZED);
       }
     });
 

@@ -32,10 +32,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // handleConnection
   handleConnection(socket: AuthenticatedSocket, ...args: any[]) {
     try {
-      console.log(socket.user.id, socket.id);
-
       this._sessions.setUserSocket(socket.user.id, socket);
-
       socket.emit('connected', {});
     } catch (error) {
       console.log('error handleConnection', error);
@@ -45,12 +42,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // handleDisconnect
   handleDisconnect(socket: AuthenticatedSocket) {
     socket.disconnect();
-    // this._sessions.removeUserSocket(socket.user.id);
+    this._sessions.removeUserSocket(socket.user.id);
     console.log('socket dis-connect', socket.id);
-  }
-
-  @SubscribeMessage('newMessage')
-  onNewMessage(@MessageBody() body: any) {
-    console.log(body);
   }
 }

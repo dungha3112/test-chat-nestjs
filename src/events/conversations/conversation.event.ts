@@ -6,11 +6,11 @@ import { Conversation } from 'src/utils/typeorm';
 
 @Injectable()
 export class ConversationEvent {
-  constructor(private readonly _appAppGateway: AppGateway) {}
+  constructor(private readonly _appGateway: AppGateway) {}
 
   @OnEvent(ServerConversationEvent.CONVERSATION_CREATE)
   handleConversationCreateEvent(payload: Conversation) {
-    const recipientSocket = this._appAppGateway._sessions.getUserSocket(
+    const recipientSocket = this._appGateway._sessions.getUserSocket(
       payload.recipient.id,
     );
 

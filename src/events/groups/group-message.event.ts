@@ -8,7 +8,7 @@ import { TMessageGroupPayload } from 'src/utils/types';
 @Injectable()
 export class GroupRecipientEvent {
   constructor(
-    private readonly _appAppGateway: AppGateway,
+    private readonly _appGateway: AppGateway,
 
     @Inject(Services.GROUP) private readonly _groupService: IGroupService,
   ) {}
@@ -19,9 +19,10 @@ export class GroupRecipientEvent {
     if (!group) return;
 
     const ROOM_NAME = `group-${group.id}`;
-    this._appAppGateway.server
-      .to(ROOM_NAME)
-      .emit('onGroupMessageCreate', payload);
+    this._appGateway.server.to(ROOM_NAME).emit('onGroupMessageCreate', {
+      group,
+      message: payload.message,
+    });
   }
 
   @OnEvent(ServerGroupMessageEvent.GROUP_MESSAGE_EDIT)
@@ -30,9 +31,9 @@ export class GroupRecipientEvent {
     if (!group) return;
 
     const ROOM_NAME = `group-${group.id}`;
-    this._appAppGateway.server
+    this._appGateway.server
       .to(ROOM_NAME)
-      .emit('onGroupMessageEdit', payload);
+      .emit('onGroupMessageEdit', { group, message: payload.message });
   }
 
   @OnEvent(ServerGroupMessageEvent.GROUP_MESSAGE_DELETE)
@@ -41,8 +42,8 @@ export class GroupRecipientEvent {
     if (!group) return;
 
     const ROOM_NAME = `group-${group.id}`;
-    this._appAppGateway.server
+    this._appGateway.server
       .to(ROOM_NAME)
-      .emit('onGroupMessageDelete', payload);
+      .emit('onGroupMessageDelete', { group, message: payload.message });
   }
 }

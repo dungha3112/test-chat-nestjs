@@ -12,7 +12,7 @@ import { AppGateway } from './../../gateway/gateway';
 
 @Injectable()
 export class GroupEvent {
-  constructor(private readonly _appAppGateway: AppGateway) {}
+  constructor(private readonly _appGateway: AppGateway) {}
 
   //GROUP_CREATE
   @OnEvent(ServerGroupEvent.GROUP_CREATE)
@@ -24,7 +24,7 @@ export class GroupEvent {
     await Promise.all(
       payload.users.map(async (user) => {
         if (user.id !== onwerId) {
-          const socket = await this._appAppGateway._sessions.getUserSocket(
+          const socket = await this._appGateway._sessions.getUserSocket(
             user.id,
           );
 
@@ -36,7 +36,7 @@ export class GroupEvent {
     );
 
     if (socketIds.length > 0)
-      this._appAppGateway.server.to(socketIds).emit('onGroupCreate', payload);
+      this._appGateway.server.to(socketIds).emit('onGroupCreate', payload);
   }
 
   // get emit onGroupJoin from client side
@@ -66,14 +66,14 @@ export class GroupEvent {
   @OnEvent(ServerGroupEvent.GROUP_OWNER_UPDATE)
   handleUpdateOwnerGroup(payload: Group) {
     const room = `group-${payload.id}`;
-    this._appAppGateway.server.to(room).emit('onGroupUpdateOwner', payload);
+    this._appGateway.server.to(room).emit('onGroupUpdateOwner', payload);
   }
 
   // ServerGroupEvent.GROUP_UPDATE
   @OnEvent(ServerGroupEvent.GROUP_UPDATE)
   handleUpdateGroup(payload: Group) {
     const room = `group-${payload.id}`;
-    this._appAppGateway.server.to(room).emit('onGroupUpdate', payload);
+    this._appGateway.server.to(room).emit('onGroupUpdate', payload);
   }
 
   //ServerGroupEvent.GROUP_USER_LEAVE
@@ -88,18 +88,18 @@ export class GroupEvent {
     console.log({ group, userId });
 
     const ROOM_NAME = `group-${group.id}`;
-    const { rooms } = this._appAppGateway.server.sockets.adapter;
+    const { rooms } = this._appGateway.server.sockets.adapter;
     const socketInRoom = rooms.get(ROOM_NAME);
-    const leftUserSocket = this._appAppGateway._sessions.getUserSocket(userId);
+    const leftUserSocket = this._appGateway._sessions.getUserSocket(userId);
 
     if (leftUserSocket && socketInRoom) {
       if (socketInRoom.has(leftUserSocket.id)) {
-        return this._appAppGateway.server
+        return this._appGateway.server
           .to(ROOM_NAME)
           .emit('onGroupParticipantLeft', group);
       } else {
         leftUserSocket.emit('onGroupParticipantLeft', group);
-        this._appAppGateway.server
+        this._appGateway.server
           .to(ROOM_NAME)
           .emit('onGroupParticipantLeft', group);
         return;
@@ -109,6 +109,6 @@ export class GroupEvent {
       return leftUserSocket.emit('onGroupParticipantLeft', group);
     }
 
-    this._appAppGateway.server.to(ROOM_NAME).emit('onGroupUpdateOwner', group);
+    this._appGateway.server.to(ROOM_NAME).emit('onGroupUpdateOwner', group);
   }
 }

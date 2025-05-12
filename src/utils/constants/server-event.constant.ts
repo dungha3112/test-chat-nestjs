@@ -19,3 +19,7 @@ export enum ServerGroupMessageEvent {
 export enum ServerConversationEvent {
   CONVERSATION_CREATE = 'conversation.create',
 }
+
+export enum ServerConverMessageEvent {
+  CONVER_MESSAGE_CREATE = 'conver.message.create',
+}

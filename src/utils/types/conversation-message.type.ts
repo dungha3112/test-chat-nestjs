@@ -10,3 +10,9 @@ export type TGetMessagesConversationResponse = TGetMessagesResponse & {
   conversationId: string;
   messages: ConversationMessage[];
 };
+
+// PAYLOAD EMITER
+export type TMessageConverPayload = {
+  conversationId: string;
+  message: ConversationMessage;
+};

@@ -12,18 +12,26 @@ import {
   Query,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { Routes, Services } from 'src/utils/constants';
+import {
+  Routes,
+  ServerConverMessageEvent,
+  Services,
+} from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IConversationMessageService } from 'src/utils/interfaces';
 import { User } from 'src/utils/typeorm';
 import { ConverMessageCreateDto } from '../dtos/conversation-message.create';
 import { ConverMessageEditDto } from '../dtos/conversation-message-edit.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { TMessageConverPayload } from 'src/utils/types';
 
 @Controller(Routes.CONVERSATION_MESSAGE)
 export class ConversationMessageController {
   constructor(
     @Inject(Services.CONVERSATION_MESSAGE)
     private readonly _converMessageService: IConversationMessageService,
+
+    private readonly _eventEmitter: EventEmitter2,
   ) {}
 
   @Throttle({ default: { limit: 10, ttl: 60000 } })
@@ -36,6 +44,15 @@ export class ConversationMessageController {
     const params = { author, id, content };
 
     const res = await this._converMessageService.createMessageConver(params);
+
+    const payload: TMessageConverPayload = {
+      conversationId: id,
+      message: res.message,
+    };
+    this._eventEmitter.emit(
+      ServerConverMessageEvent.CONVER_MESSAGE_CREATE,
+      payload,
+    );
 
     return res;
   }

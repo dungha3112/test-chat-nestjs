@@ -76,19 +76,13 @@ export class GroupMessageController {
     const params = { authorId, id, messageId, content };
     const message = await this._groupMessageService.editMessage(params);
 
-    const payload: TMessageGroupPayload = {
-      groupId: id,
-      message: message,
-    };
+    const payload: TMessageGroupPayload = { groupId: id, message: message };
     this._eventEmitter.emit(
       ServerGroupMessageEvent.GROUP_MESSAGE_EDIT,
       payload,
     );
 
-    return {
-      groupId: id,
-      message,
-    };
+    return { groupId: id, message };
   }
 
   // api/group/:id/message/:messageId
@@ -109,9 +103,6 @@ export class GroupMessageController {
       ServerGroupMessageEvent.GROUP_MESSAGE_DELETE,
       payload,
     );
-    return {
-      groupId: id,
-      message,
-    };
+    return { groupId: id, message };
   }
 }

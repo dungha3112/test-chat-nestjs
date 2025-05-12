@@ -10,3 +10,10 @@ export type TGetMessagesGroupResponse = TGetMessagesResponse & {
   groupId: string;
   messages: GroupMessage[];
 };
+
+// PAYLOAD EMITER
+
+export type TMessageGroupPayload = {
+  groupId: string;
+  message: GroupMessage;
+};

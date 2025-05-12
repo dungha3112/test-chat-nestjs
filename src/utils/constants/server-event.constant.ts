@@ -9,3 +9,9 @@ export enum ServerGroupRecipientEvent {
   GROUP_USER_ADD = 'group.user.add',
   GROUP_USER_REMOVE = 'group.user.remove',
 }
+
+export enum ServerGroupMessageEvent {
+  GROUP_MESSAGE_CREATE = 'group.message.create',
+  GROUP_MESSAGE_EDIT = 'group.message.edit',
+  GROUP_MESSAGE_DELETE = 'group.message.delete',
+}

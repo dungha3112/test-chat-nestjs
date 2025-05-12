@@ -1,7 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { AppGateway } from 'src/gateway/gateway';
-import { ServerGroupRecipientEvent, Services } from 'src/utils/constants';
+import { ServerGroupRecipientEvent } from 'src/utils/constants';
 import {
   TAddRecipientToGroupResponse,
   TRemoveRecipientToGroupResponse,

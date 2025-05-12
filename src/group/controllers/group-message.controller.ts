@@ -12,18 +12,21 @@ import {
   Query,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { Routes, Services } from 'src/utils/constants';
+import { Routes, ServerGroupMessageEvent, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IGroupMessageService } from 'src/utils/interfaces';
 import { User } from 'src/utils/typeorm';
 import { GroupMessageCreateDto } from '../dtos/group-message-create.dto';
 import { GroupMessageEditDto } from '../dtos/group-message-edit.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { TMessageGroupPayload } from 'src/utils/types';
 
 @Controller(Routes.GROUP_MESSAGE)
 export class GroupMessageController {
   constructor(
     @Inject(Services.GROUP_MESSAGE)
     private readonly _groupMessageService: IGroupMessageService,
+    private readonly _eventEmitter: EventEmitter2,
   ) {}
 
   @Throttle({ default: { limit: 10, ttl: 60000 } })
@@ -35,10 +38,17 @@ export class GroupMessageController {
   ) {
     const params = { author, id, content };
 
-    const newMessage =
-      await this._groupMessageService.createMessageGroup(params);
+    const res = await this._groupMessageService.createMessageGroup(params);
 
-    return newMessage;
+    const payload: TMessageGroupPayload = {
+      groupId: res.group.id,
+      message: res.message,
+    };
+    this._eventEmitter.emit(
+      ServerGroupMessageEvent.GROUP_MESSAGE_CREATE,
+      payload,
+    );
+    return res;
   }
 
   // api/group/:id/message
@@ -66,6 +76,15 @@ export class GroupMessageController {
     const params = { authorId, id, messageId, content };
     const message = await this._groupMessageService.editMessage(params);
 
+    const payload: TMessageGroupPayload = {
+      groupId: id,
+      message: message,
+    };
+    this._eventEmitter.emit(
+      ServerGroupMessageEvent.GROUP_MESSAGE_EDIT,
+      payload,
+    );
+
     return {
       groupId: id,
       message,
@@ -85,11 +104,14 @@ export class GroupMessageController {
     const message =
       await this._groupMessageService.deleteMessageGroupById(params);
 
-    console.log('delete: ', message);
-
+    const payload: TMessageGroupPayload = { groupId: id, message };
+    this._eventEmitter.emit(
+      ServerGroupMessageEvent.GROUP_MESSAGE_DELETE,
+      payload,
+    );
     return {
       groupId: id,
-      messageId,
+      message,
     };
   }
 }

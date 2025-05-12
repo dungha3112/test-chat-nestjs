@@ -1,11 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import {
   ConnectedSocket,
   MessageBody,
   SubscribeMessage,
 } from '@nestjs/websockets';
-import { ServerGroupEvent, Services } from 'src/utils/constants';
+import { ServerGroupEvent } from 'src/utils/constants';
 import { AuthenticatedSocket } from 'src/utils/interfaces';
 import { Group } from 'src/utils/typeorm';
 import { AppGateway } from './../../gateway/gateway';

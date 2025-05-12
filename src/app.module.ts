@@ -9,6 +9,8 @@ import { GateWayModule } from './gateway/gateway.module';
 import { GroupModule } from './group/group.module';
 import { UserModule } from './user/user.module';
 import { RedisModule } from './custom-redis/custom-redis.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { EventModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { RedisModule } from './custom-redis/custom-redis.module';
 
     GateWayModule,
     RedisModule,
+    EventEmitterModule.forRoot(),
+    EventModule,
   ],
   providers: [
     {

@@ -9,18 +9,21 @@ import {
   Post,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { Routes, Services } from 'src/utils/constants';
+import { Routes, ServerGroupEvent, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IGroupService } from 'src/utils/interfaces';
 import { User } from 'src/utils/typeorm';
 import { GroupCreateDto } from '../dtos/group-create.dto';
 import { GroupAddUserDto } from '../dtos/group-add-user.dto';
 import { GroupEditDto } from '../dtos/group-edit.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller(Routes.GROUP)
 export class GroupController {
   constructor(
     @Inject(Services.GROUP) private readonly _groupService: IGroupService,
+
+    private readonly _eventEmitter: EventEmitter2,
   ) {}
 
   @Throttle({ default: { limit: 10, ttl: 60000 } })
@@ -32,6 +35,8 @@ export class GroupController {
     const params = { ...groupDto, ownerId };
 
     const newGroup = await this._groupService.createGroup(params);
+
+    this._eventEmitter.emit(ServerGroupEvent.GROUP_CREATE, newGroup);
 
     return newGroup;
   }

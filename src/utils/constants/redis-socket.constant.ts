@@ -1,3 +1,3 @@
 export enum RedistSocket {
-  SOCKET_PREFIX = 'socket',
+  SOCKET_USER_ID = 'socket_user_id',
 }

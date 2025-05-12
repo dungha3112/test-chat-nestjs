@@ -9,22 +9,28 @@ export class SocketRedisService implements ISocketRedisService {
 
   async getUserSocket(id: string): Promise<AuthenticatedSocket | null> {
     const socketId = await this._redis.get(
-      `${RedistSocket.SOCKET_PREFIX}:${id}`,
+      `${RedistSocket.SOCKET_USER_ID}:${id}`,
     );
     if (!socketId) return null;
     else return { id: socketId } as AuthenticatedSocket;
   }
 
   async setUserSocket(id: string, socket: AuthenticatedSocket): Promise<void> {
-    await this._redis.set(`${RedistSocket.SOCKET_PREFIX}:${id}`, socket.id);
+    const existingSocketId = await this._redis.get(
+      `${RedistSocket.SOCKET_USER_ID}:${id}`,
+    );
+    if (existingSocketId) {
+      await this._redis.del(`${RedistSocket.SOCKET_USER_ID}:${id}`);
+    }
+    await this._redis.set(`${RedistSocket.SOCKET_USER_ID}:${id}`, socket.id);
   }
 
   async removeUserSocket(id: string): Promise<void> {
-    await this._redis.del(`${RedistSocket.SOCKET_PREFIX}:${id}`);
+    await this._redis.del(`${RedistSocket.SOCKET_USER_ID}:${id}`);
   }
 
   async getSockets(): Promise<Map<string, AuthenticatedSocket>> {
-    const keys = await this._redis.keys(`${RedistSocket.SOCKET_PREFIX}:*`);
+    const keys = await this._redis.keys(`${RedistSocket.SOCKET_USER_ID}:*`);
     const sockets = new Map<string, AuthenticatedSocket>();
 
     for (const key of keys) {
@@ -38,7 +44,7 @@ export class SocketRedisService implements ISocketRedisService {
     return sockets;
   }
   async getAllOnlineUserIds(): Promise<Set<string>> {
-    const keys = await this._redis.keys(`${RedistSocket.SOCKET_PREFIX}:*`);
+    const keys = await this._redis.keys(`${RedistSocket.SOCKET_USER_ID}:*`);
     const userIds = new Set<string>();
 
     for (const key of keys) {

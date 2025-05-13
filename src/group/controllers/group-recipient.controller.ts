@@ -11,7 +11,17 @@ import { User } from 'src/utils/typeorm';
 import { GroupRecipientAddUserDto } from '../dtos/group-recipient.add.dto';
 import { GroupRecipientRemoveUserDto } from '../dtos/group-recipient.remove.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBody,
+  ApiResponse,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
+import { AddUserToGroupResDto, RemoveUserToGroupResDto } from '../dtos';
 
+@ApiTags(Routes.GROUPS_RECIPIENTS)
 @Controller(Routes.GROUPS_RECIPIENTS)
 export class GroupRecipientController {
   constructor(
@@ -21,8 +31,16 @@ export class GroupRecipientController {
   ) {}
 
   // api/group/:id/recipient
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post()
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @ApiOperation({ summary: 'Add new user to group' })
+  @ApiBody({ type: GroupRecipientAddUserDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Add user to group successfully created.',
+    type: AddUserToGroupResDto,
+  })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
   async addRecipientToGroup(
     @AuthUser() { id: ownerId }: User,
     @Param('id') id: string,
@@ -36,8 +54,16 @@ export class GroupRecipientController {
   }
 
   // api/group/:id/recipient
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Delete()
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @ApiOperation({ summary: 'Remove new user to group' })
+  @ApiBody({ type: GroupRecipientRemoveUserDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Remove user to group successfully created.',
+    type: RemoveUserToGroupResDto,
+  })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
   async removeRecipientToGroup(
     @AuthUser() { id: ownerId }: User,
     @Param('id') id: string,

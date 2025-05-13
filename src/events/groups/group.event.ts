@@ -21,11 +21,9 @@ export class GroupEvent {
     const socketIds: string[] = [];
 
     await Promise.all(
-      payload.users.map(async (user) => {
+      payload.users.map((user) => {
         if (user.id !== onwerId) {
-          const socket = await this._appGateway._sessions.getUserSocket(
-            user.id,
-          );
+          const socket = this._appGateway._sessions.getUserSocket(user.id);
 
           if (socket) {
             socketIds.push(socket.id);
@@ -62,16 +60,52 @@ export class GroupEvent {
 
   //ServerGroupEvent.GROUP_OWNER_UPDATE
   @OnEvent(ServerGroupEvent.GROUP_OWNER_UPDATE)
-  handleUpdateOwnerGroup(payload: Group) {
-    const room = `group-${payload.id}`;
-    this._appGateway.server.to(room).emit('onGroupUpdateOwner', payload);
+  async handleUpdateOwnerGroup(payload: Group) {
+    const onwerId = payload.owner.id;
+    const socketIds: string[] = [];
+
+    await Promise.all(
+      payload.users.map((user) => {
+        if (user.id !== onwerId) {
+          const socket = this._appGateway._sessions.getUserSocket(user.id);
+
+          if (socket) {
+            socketIds.push(socket.id);
+          }
+        }
+      }),
+    );
+
+    if (socketIds.length > 0)
+      this._appGateway.server.to(socketIds).emit('onGroupUpdateOwner', payload);
+
+    // const room = `group-${payload.id}`;
+    // this._appGateway.server.to(room).emit('onGroupUpdateOwner', payload);
   }
 
   // ServerGroupEvent.GROUP_UPDATE
   @OnEvent(ServerGroupEvent.GROUP_UPDATE)
-  handleUpdateGroup(payload: Group) {
-    const room = `group-${payload.id}`;
-    this._appGateway.server.to(room).emit('onGroupUpdate', payload);
+  async handleUpdateGroup(payload: Group) {
+    const onwerId = payload.owner.id;
+    const socketIds: string[] = [];
+
+    await Promise.all(
+      payload.users.map((user) => {
+        if (user.id !== onwerId) {
+          const socket = this._appGateway._sessions.getUserSocket(user.id);
+
+          if (socket) {
+            socketIds.push(socket.id);
+          }
+        }
+      }),
+    );
+
+    if (socketIds.length > 0)
+      this._appGateway.server.to(socketIds).emit('onGroupUpdate', payload);
+
+    // const room = `group-${payload.id}`;
+    // this._appGateway.server.to(room).emit('onGroupUpdate', payload);
   }
 
   //ServerGroupEvent.GROUP_USER_LEAVE
@@ -83,28 +117,51 @@ export class GroupEvent {
     group: Group;
     userId: string;
   }) {
-    const ROOM_NAME = `group-${group.id}`;
-    const { rooms } = this._appGateway.server.sockets.adapter;
-    const socketInRoom = rooms.get(ROOM_NAME);
-    const leftUserSocket = this._appGateway._sessions.getUserSocket(userId);
+    const onwerId = group.owner.id;
+    const socketIds: string[] = [];
 
-    if (leftUserSocket && socketInRoom) {
-      if (socketInRoom.has(leftUserSocket.id)) {
-        return this._appGateway.server
-          .to(ROOM_NAME)
-          .emit('onGroupParticipantLeft', group);
-      } else {
-        leftUserSocket.emit('onGroupParticipantLeft', group);
-        this._appGateway.server
-          .to(ROOM_NAME)
-          .emit('onGroupParticipantLeft', group);
-        return;
-      }
-    }
-    if (leftUserSocket && !socketInRoom) {
+    await Promise.all(
+      group.users.map((user) => {
+        if (user.id !== onwerId) {
+          const socket = this._appGateway._sessions.getUserSocket(user.id);
+
+          if (socket) {
+            socketIds.push(socket.id);
+          }
+        }
+      }),
+    );
+
+    if (socketIds.length > 0)
+      this._appGateway.server.to(socketIds).emit('onGroupUpdateOwner', group);
+
+    const leftUserSocket = this._appGateway._sessions.getUserSocket(userId);
+    if (leftUserSocket) {
       return leftUserSocket.emit('onGroupParticipantLeft', group);
     }
 
-    this._appGateway.server.to(ROOM_NAME).emit('onGroupUpdateOwner', group);
+    // const ROOM_NAME = `group-${group.id}`;
+    // const { rooms } = this._appGateway.server.sockets.adapter;
+    // const socketInRoom = rooms.get(ROOM_NAME);
+    // const leftUserSocket = this._appGateway._sessions.getUserSocket(userId);
+
+    // if (leftUserSocket && socketInRoom) {
+    //   if (socketInRoom.has(leftUserSocket.id)) {
+    //     return this._appGateway.server
+    //       .to(ROOM_NAME)
+    //       .emit('onGroupParticipantLeft', group);
+    //   } else {
+    //     leftUserSocket.emit('onGroupParticipantLeft', group);
+    //     this._appGateway.server
+    //       .to(ROOM_NAME)
+    //       .emit('onGroupParticipantLeft', group);
+    //     return;
+    //   }
+    // }
+    // if (leftUserSocket && !socketInRoom) {
+    //   return leftUserSocket.emit('onGroupParticipantLeft', group);
+    // }
+
+    // this._appGateway.server.to(ROOM_NAME).emit('onGroupUpdateOwner', group);
   }
 }

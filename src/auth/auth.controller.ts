@@ -17,15 +17,29 @@ import { IAuthService } from 'src/utils/interfaces';
 import { AuthenticatedRequest } from 'src/utils/types/user.type';
 import { UserLoginDto } from './dtos/user-login.dto';
 import { UserRegisterDto } from './dtos/user-register.dto';
+import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
+import {
+  UserLoginResponseDto,
+  UserRefreshTokenResponseDto,
+} from './dtos/index.dto';
 
 @Controller(Routes.AUTH)
+@ApiTags(Routes.AUTH)
 export class AuthController {
   constructor(
     @Inject(Services.AUTH) private readonly _authService: IAuthService,
   ) {}
 
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post('register')
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @ApiOperation({ summary: 'Register user' })
+  @ApiBody({ type: UserRegisterDto })
+  @ApiResponse({
+    status: 201,
+    description: 'User registered successfully',
+    type: String,
+  })
+  @ApiResponse({ status: 400, description: 'Validation failed' })
   async registerUser(
     @Body() registerDto: UserRegisterDto,
   ): Promise<{ message: string }> {
@@ -34,8 +48,16 @@ export class AuthController {
     return { message };
   }
 
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post('login')
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @ApiOperation({ summary: 'Login user' })
+  @ApiBody({ type: UserLoginDto })
+  @ApiResponse({
+    status: 200,
+    description: 'User logged in successfully, accessToken returned',
+    type: UserLoginResponseDto,
+  })
+  @ApiResponse({ status: 401, description: 'Invalid credentials' })
   async loginUser(
     @Body() loginDto: UserLoginDto,
     @Res({ passthrough: true }) response: Response,
@@ -56,8 +78,15 @@ export class AuthController {
     };
   }
 
-  @Throttle({ default: { limit: 3, ttl: 60000 } })
   @Post('refresh-token')
+  @ApiOperation({ summary: 'Get new access token using refresh token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Token refreshed successfully',
+    type: UserRefreshTokenResponseDto,
+  })
+  @ApiResponse({ status: 401, description: 'Missing or invalid refresh token' })
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
   async refreshToken(@Req() request: Request) {
     const refresh_token = request.cookies['refresh_token'];
 
@@ -73,8 +102,15 @@ export class AuthController {
     };
   }
 
-  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('logout')
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @ApiOperation({ summary: 'Logout user and clear refresh token cookie' })
+  @ApiResponse({
+    status: 200,
+    description: 'User logged out successfully',
+    type: String,
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(AuthJwtGuard)
   async loggout(
     @Req() request: AuthenticatedRequest,

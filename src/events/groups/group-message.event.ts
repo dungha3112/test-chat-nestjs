@@ -18,12 +18,29 @@ export class GroupMessageEvent {
     const group = await this._groupService.findGroupById(payload.groupId);
     if (!group) return;
 
-    const ROOM_NAME = `group-${group.id}`;
+    const socketIds: string[] = [];
 
-    this._appGateway.server.to(ROOM_NAME).emit('onGroupMessageCreate', {
-      group,
-      message: payload.message,
-    });
+    await Promise.all(
+      group.users.map((user) => {
+        const socket = this._appGateway._sessions.getUserSocket(user.id);
+
+        if (socket) {
+          socketIds.push(socket.id);
+        }
+      }),
+    );
+
+    if (socketIds.length > 0)
+      this._appGateway.server
+        .to(socketIds)
+        .emit('onGroupMessageCreate', { group, message: payload.message });
+
+    // const ROOM_NAME = `group-${group.id}`;
+
+    // this._appGateway.server.to(ROOM_NAME).emit('onGroupMessageCreate', {
+    //   group,
+    //   message: payload.message,
+    // });
   }
 
   @OnEvent(ServerGroupMessageEvent.GROUP_MESSAGE_EDIT)
@@ -31,11 +48,28 @@ export class GroupMessageEvent {
     const group = await this._groupService.findGroupById(payload.groupId);
     if (!group) return;
 
-    const ROOM_NAME = `group-${group.id}`;
+    const socketIds: string[] = [];
 
-    this._appGateway.server
-      .to(ROOM_NAME)
-      .emit('onGroupMessageEdit', { group, message: payload.message });
+    await Promise.all(
+      group.users.map((user) => {
+        const socket = this._appGateway._sessions.getUserSocket(user.id);
+
+        if (socket) {
+          socketIds.push(socket.id);
+        }
+      }),
+    );
+
+    if (socketIds.length > 0)
+      this._appGateway.server
+        .to(socketIds)
+        .emit('onGroupMessageEdit', { group, message: payload.message });
+
+    // const ROOM_NAME = `group-${group.id}`;
+
+    // this._appGateway.server
+    //   .to(ROOM_NAME)
+    //   .emit('onGroupMessageEdit', { group, message: payload.message });
   }
 
   @OnEvent(ServerGroupMessageEvent.GROUP_MESSAGE_DELETE)
@@ -43,10 +77,27 @@ export class GroupMessageEvent {
     const group = await this._groupService.findGroupById(payload.groupId);
     if (!group) return;
 
-    const ROOM_NAME = `group-${group.id}`;
+    const socketIds: string[] = [];
 
-    this._appGateway.server
-      .to(ROOM_NAME)
-      .emit('onGroupMessageDelete', { group, message: payload.message });
+    await Promise.all(
+      group.users.map((user) => {
+        const socket = this._appGateway._sessions.getUserSocket(user.id);
+
+        if (socket) {
+          socketIds.push(socket.id);
+        }
+      }),
+    );
+
+    if (socketIds.length > 0)
+      this._appGateway.server
+        .to(socketIds)
+        .emit('onGroupMessageDelete', { group, message: payload.message });
+
+    // const ROOM_NAME = `group-${group.id}`;
+
+    // this._appGateway.server
+    //   .to(ROOM_NAME)
+    //   .emit('onGroupMessageDelete', { group, message: payload.message });
   }
 }

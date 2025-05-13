@@ -12,33 +12,83 @@ export class GroupRecipientEvent {
   constructor(private readonly _appGateway: AppGateway) {}
 
   @OnEvent(ServerGroupRecipientEvent.GROUP_USER_ADD)
-  handleGroupUserAdd(payload: TAddRecipientToGroupResponse) {
+  async handleGroupUserAdd(payload: TAddRecipientToGroupResponse) {
     const { group, recipient } = payload;
 
-    const ROOM_NAME = `group-${group.id}`;
+    const onwerId = group.owner.id;
+    const socketIds: string[] = [];
+
+    await Promise.all(
+      group.users.map((user) => {
+        if (user.id !== onwerId) {
+          const socket = this._appGateway._sessions.getUserSocket(user.id);
+
+          if (socket) {
+            socketIds.push(socket.id);
+          }
+        }
+      }),
+    );
     const recipientSocket = this._appGateway._sessions.getUserSocket(
       recipient.id,
     );
+    if (recipientSocket) {
+      recipientSocket.emit('onGroupUserAdd', group);
+    }
 
-    this._appGateway.server.to(ROOM_NAME).emit('onGroupReceivedNewUser', group);
+    if (socketIds.length > 0)
+      this._appGateway.server
+        .to(socketIds)
+        .emit('onGroupReceivedNewUser', group);
 
-    if (recipientSocket) recipientSocket.emit('onGroupUserAdd', group);
+    // const ROOM_NAME = `group-${group.id}`;
+    // const recipientSocket = this._appGateway._sessions.getUserSocket(
+    //   recipient.id,
+    // );
+
+    // this._appGateway.server.to(ROOM_NAME).emit('onGroupReceivedNewUser', group);
+
+    // if (recipientSocket) recipientSocket.emit('onGroupUserAdd', group);
   }
 
   @OnEvent(ServerGroupRecipientEvent.GROUP_USER_REMOVE)
-  handleGroupUserRemove(payload: TRemoveRecipientToGroupResponse) {
+  async handleGroupUserRemove(payload: TRemoveRecipientToGroupResponse) {
     const { group, recipient } = payload;
     const recipientSocket = this._appGateway._sessions.getUserSocket(
       recipient.id,
     );
 
-    const ROOM_NAME = `group-${group.id}`;
+    const onwerId = group.owner.id;
+    const socketIds: string[] = [];
 
-    this._appGateway.server.to(ROOM_NAME).emit('onGroupReceivedRemoved', group);
+    await Promise.all(
+      group.users.map((user) => {
+        if (user.id !== onwerId) {
+          const socket = this._appGateway._sessions.getUserSocket(user.id);
+
+          if (socket) {
+            socketIds.push(socket.id);
+          }
+        }
+      }),
+    );
 
     if (recipientSocket) {
       recipientSocket.emit('onGroupUserRemoved', group);
-      recipientSocket.leave(ROOM_NAME);
     }
+
+    if (socketIds.length > 0)
+      this._appGateway.server
+        .to(socketIds)
+        .emit('onGroupReceivedRemoved', payload);
+
+    // const ROOM_NAME = `group-${group.id}`;
+
+    // this._appGateway.server.to(ROOM_NAME).emit('onGroupReceivedRemoved', group);
+
+    // if (recipientSocket) {
+    //   recipientSocket.emit('onGroupUserRemoved', group);
+    // recipientSocket.leave(ROOM_NAME);
+    // }
   }
 }

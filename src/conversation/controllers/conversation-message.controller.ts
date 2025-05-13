@@ -24,7 +24,22 @@ import { ConverMessageCreateDto } from '../dtos/conversation-message.create';
 import { ConverMessageEditDto } from '../dtos/conversation-message-edit.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TMessageConverPayload } from 'src/utils/types';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBody,
+  ApiResponse,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
+import {
+  CreateConversationResponseDto,
+  DeleteMessageConverResponseDto,
+  GetMessagesConversationResponseDto,
+  UpdateMessageConverResponseDto,
+} from '../dtos';
 
+@ApiTags(Routes.CONVERSATION_MESSAGE)
 @Controller(Routes.CONVERSATION_MESSAGE)
 export class ConversationMessageController {
   constructor(
@@ -34,8 +49,17 @@ export class ConversationMessageController {
     private readonly _eventEmitter: EventEmitter2,
   ) {}
 
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Post()
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @ApiOperation({ summary: 'Create a new conversation message' })
+  @ApiBody({ type: ConverMessageCreateDto })
+  @ApiParam({ name: 'id', description: 'Group ID', type: String })
+  @ApiResponse({
+    status: 201,
+    description: 'Message created successfully',
+    type: CreateConversationResponseDto,
+  })
+  @ApiResponse({ status: 400, description: 'Validation failed' })
   async createNewConverMessage(
     @AuthUser() author: User,
     @Param('id') id: string,
@@ -57,8 +81,28 @@ export class ConversationMessageController {
     return res;
   }
   // api/conversation/:id/message
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Get()
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @ApiOperation({ summary: 'Get messages by conversation ID' })
+  @ApiParam({ name: 'id', description: 'Group ID', type: String })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Messages per page',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of messages',
+    type: GetMessagesConversationResponseDto,
+  })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   async getMessagesByGroupId(
     @Param('id') id: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -70,8 +114,18 @@ export class ConversationMessageController {
   }
 
   // api/conversation/:id/message/messageId
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Patch(':messageId')
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @ApiOperation({ summary: 'Edit a conversation message by ID' })
+  @ApiParam({ name: 'id', description: 'Group ID', type: String })
+  @ApiParam({ name: 'messageId', description: 'message ID', type: String })
+  @ApiBody({ type: ConverMessageEditDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Message updated successfully',
+    type: UpdateMessageConverResponseDto,
+  })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   async updateMessageById(
     @AuthUser() { id: authorId }: User,
     @Param('id') id: string,
@@ -97,8 +151,17 @@ export class ConversationMessageController {
   }
 
   // api/conversation/:id/message/messageId
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @Delete(':messageId')
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @ApiOperation({ summary: 'Delete a conversation message by ID' })
+  @ApiParam({ name: 'id', description: 'Group ID', type: String })
+  @ApiParam({ name: 'messageId', description: 'message ID', type: String })
+  @ApiResponse({
+    status: 200,
+    description: 'Message deleted successfully',
+    type: DeleteMessageConverResponseDto,
+  })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   async deleteMessageById(
     @AuthUser() { id: authorId }: User,
     @Param('id') id: string,

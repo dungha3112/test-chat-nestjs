@@ -272,38 +272,38 @@ It broadcasts relevant events to connected clients who have joined specific "roo
 
 Emitted events:
 
-onConversationCreate – when a conversation is created
+**onConversationCreate** : when a conversation is created
 
-onConversationUpdate – when a conversation is updated
+**onConversationUpdate** : when a conversation is updated
 
-onConversationDelete – when a conversation is deleted
+**onConversationDelete** : when a conversation is deleted
 
-onConversationMessageCreate – when a new message is sent
+**onConversationMessageCreate** : when a new message is sent
 
-onConversationMessageEdit – when a message is edited
+**onConversationMessageEdit** : when a message is edited
 
-onConversationMessageDelete – when a message is deleted
+**onConversationMessageDelete** : when a message is deleted
 
 👥 Group Messaging
 Room name: group-${groupId}
 
 Emitted events:
 
-onGroupCreate – when a new group is created
+**onGroupCreate** : when a new group is created
 
-onGroupUpdate – when group information is updated
+**onGroupUpdate** : when group information is updated
 
-onGroupOwnerUpdate – when the group owner changes
+**onGroupOwnerUpdate** : when the group owner changes
 
-onGroupMemberAdd – when a member is added
+**onGroupMemberAdd** : when a member is added
 
-onGroupMemberRemove – when a member is removed
+**onGroupMemberRemove** : when a member is removed
 
-onGroupMessageCreate – when a new group message is sent
+**onGroupMessageCreate** : when a new group message is sent
 
-onGroupMessageEdit – when a group message is edited
+**onGroupMessageEdit** : when a group message is edited
 
-onGroupMessageDelete – when a group message is deleted
+**onGroupMessageDelete** : when a group message is deleted
 
 📲 Joining Rooms
 To receive real-time updates, the client must join the appropriate room after authenticating via socket:
@@ -340,27 +340,157 @@ JWT authentication is expected during WebSocket connection handshake.
 ```bash
 
 src/
-├── auth/                  # Auth DTOs, controllers, services, modules
-├── conversation/
-│   ├── controllers/       # Conversation & conversation-message controllers
-│   ├── dtos/
-│   ├── middlewares/
-│   ├── services/
-├── custom-jwt/            # JWT service and module
-├── database/              # Database module config
-├── events/                # WebSocket events
-│   ├── conversations/
-│   ├── groups/
-├── gateway/               # WebSocket gateway setup
-├── group/
-│   ├── controllers/       # Group, message, and recipient controllers
-│   ├── dtos/
-│   ├── middlewares/
-│   ├── services/
-├── user/                  # User DTOs, controllers, services, module
-├── util/                  # Constants, decorators, guards, helpers, types, interfacesm middlewares, typeorm
-├── app.module.ts
-└── main.ts
+│   app.module.ts
+│   main.ts
+│
+├───auth
+│   │   auth.controller.ts
+│   │   auth.module.ts
+│   │   auth.service.ts
+│   │
+│   └───dtos
+│           index.dto.ts
+│           user-login.dto.ts
+│           user-register.dto.ts
+│
+├───conversation
+│   │   conversation.module.ts
+│   │
+│   ├───controllers
+│   │       conversation-message.controller.ts
+│   │       conversation.controller.ts
+│   │
+│   ├───dtos
+│   │       conversation-create.dto.ts
+│   │       conversation-message-edit.dto.ts
+│   │       conversation-message.create.ts
+│   │       index.ts
+│   │
+│   ├───middlewares
+│   │       conversation.middleware.ts
+│   │
+│   └───services
+│           conversation-mesage.service.ts
+│           conversation.service.ts
+│
+├───custom-jwt
+│       custom-jwt.module.ts
+│       custom-jwt.service.ts
+│
+├───database
+│       database.module.ts
+│
+├───events
+│   │   events.module.ts
+│   │
+│   ├───conversations
+│   │       conversation-message.event.ts
+│   │       conversation.event.ts
+│   │
+│   └───groups
+│           group-message.event.ts
+│           group-recipient.event.ts
+│           group.event.ts
+│
+├───gateway
+│       gateway.adapter.ts
+│       gateway.module.ts
+│       gateway.session.ts
+│       gateway.ts
+│
+├───group
+│   │   group.module.ts
+│   │
+│   ├───controllers
+│   │       group-message.controller.ts
+│   │       group-recipient.controller.ts
+│   │       group.controller.ts
+│   │
+│   ├───dtos
+│   │       group-add-user.dto.ts
+│   │       group-create.dto.ts
+│   │       group-edit.dto.ts
+│   │       group-message-create.dto.ts
+│   │       group-message-edit.dto.ts
+│   │       group-recipient.add.dto.ts
+│   │       group-recipient.remove.dto.ts
+│   │       index.ts
+│   │
+│   ├───middlewares
+│   │       group.middleware.ts
+│   │
+│   └───services
+│           group-message.service.ts
+│           group-recipients.service.ts
+│           group.service.ts
+│
+├───user
+│   │   user.controller.ts
+│   │   user.module.ts
+│   │   user.service.ts
+│   │
+│   └───dtos
+│           index.ts
+│           user-response.dto.ts
+│
+└───utils
+    ├───constants
+    │       index.ts
+    │       routes.constant.ts
+    │       server-event.constant.ts
+    │       services.constant.ts
+    │
+    ├───decorators
+    │       auth-user.decorator.ts
+    │       index.ts
+    │
+    ├───guards
+    │       AuthJwtGuard.ts
+    │       index.ts
+    │
+    ├───helpers
+    │       index.ts
+    │       password.helper.ts
+    │
+    ├───interfaces
+    │       auth.interface.ts
+    │       conversation-message.interface.ts
+    │       conversation.interface.ts
+    │       custom-jwt.interface.ts
+    │       gateway.interface.ts
+    │       group-message.interface.ts
+    │       group-recipients.interface.ts
+    │       group.interface.ts
+    │       index.ts
+    │       user.interface.ts
+    │
+    ├───middlewares
+    │       auth.middeware.ts
+    │       index.ts
+    │
+    ├───typeorm
+    │   │   index.ts
+    │   │
+    │   └───entities
+    │           base-message.entity.ts
+    │           conversation-message.entity.ts
+    │           conversation.entity.ts
+    │           group-message.entity.ts
+    │           group.entity.ts
+    │           index.ts
+    │           user.entity.ts
+    │
+    └───types
+            auth.type.ts
+            conversation-message.type.ts
+            conversation.type.ts
+            custom-jwt.type.ts
+            group-message.type.ts
+            group-recipients.type.ts
+            group.type.ts
+            index.ts
+            message.type.ts
+            user.type.ts
 
 ```
 

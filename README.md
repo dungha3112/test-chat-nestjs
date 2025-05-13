@@ -94,35 +94,45 @@ Swagger UI: http://localhost:3000/api/
 
 ## Architecture Diagram
 
-            +-----------------------+
-            |     Client (Web/Mobile)  |
-            +-----------+-----------+
-                        |
-                WebSocket + REST API
-                        |
-       +----------------+-------------------+
-       |             NestJS Backend         |
-       |                                    |
-       | +---------+     +----------------+ |
-       | | Gateway | <--> | ChatService   | |
-       | +---------+     +----------------+ |
-       |                   |       ▲        |
-       |                   ▼       |        |
-       |           +---------------------+  |
-       |           | ConversationService |  |
-       |           +---------------------+  |
-       |                   |                |
-       |           +----------------+       |
-       |           | GroupService   |       |
-       |           +----------------+       |
-       |                                    |
-       +------------------+-----------------+
-                          |
-                    TypeORM (Repository)
-                          |
-                   +---------------+
-                   | PostgreSQL DB |
-                   +---------------+
+                               +------------------------+
+                               |   Client (Web/Mobile)  |
+                               +-----------+------------+
+                                           |
+                                    WebSocket + REST API
+                                           |
+                              +------------+------------+
+                              |     NestJS Backend      |
+                              |                         |
+                              |      +-----------+      |
+                              |      |  Gateway  |      |
+                              |      +-----------+      |
+                              |           |             |
+                              |           ▼             |
+                              |     +------------+      |
+                              |     | EventModule|      |
+                              |     +------------+      |
+                              |        /      \         |
+                              |       /        \        |
+                              ▼      ▼          ▼       ▼
+                          +----------------+  +----------------+
+                          | Conversation   |  |     Group      |
+                          |    Module      |  |     Module     |
+                          |----------------|  |----------------|
+                                /                   \
+                               /                     \
+                              ▼                       ▼
+       +----------------+------------------+   +----------------+------------------+
+       | - ConversationController          |   | - GroupController                 |
+       | - ConversationMessageController   |   | - GroupMessageController          |
+       |                                   |   | - GroupRecipientController        |
+       +----------------+------------------+   +----------------+------------------+
+                        |---------------------------------------|
+                                             |
+                                    TypeORM (Repository)
+                                             |
+                                      +----------------+
+                                      | PostgreSQL DB  |
+                                      +----------------+
 
 ---
 
@@ -246,7 +256,80 @@ You can test the API directly at:
 
 ---
 
-## 🌐 WebSocket (if supported)
+## 📡 WebSocket Gateway – Real-Time Messaging (Conversation & Group)
+
+This WebSocket gateway handles real-time communication for two main features:
+
+1-on-1 conversations
+
+Group chats
+
+It broadcasts relevant events to connected clients who have joined specific "rooms" based on conversation or group IDs.
+
+✅ Features
+
+👤 Conversation (1-on-1 Messaging)
+
+Emitted events:
+
+onConversationCreate – when a conversation is created
+
+onConversationUpdate – when a conversation is updated
+
+onConversationDelete – when a conversation is deleted
+
+onConversationMessageCreate – when a new message is sent
+
+onConversationMessageEdit – when a message is edited
+
+onConversationMessageDelete – when a message is deleted
+
+👥 Group Messaging
+Room name: group-${groupId}
+
+Emitted events:
+
+onGroupCreate – when a new group is created
+
+onGroupUpdate – when group information is updated
+
+onGroupOwnerUpdate – when the group owner changes
+
+onGroupMemberAdd – when a member is added
+
+onGroupMemberRemove – when a member is removed
+
+onGroupMessageCreate – when a new group message is sent
+
+onGroupMessageEdit – when a group message is edited
+
+onGroupMessageDelete – when a group message is deleted
+
+📲 Joining Rooms
+To receive real-time updates, the client must join the appropriate room after authenticating via socket:
+
+```bash
+
+  socket.emit("onGroupJoin", {id: "groupId"})
+
+```
+
+To leave:
+
+```bash
+
+  socket.emit("onGroupLeave", {id: "groupId"})
+
+```
+
+🧠 Notes
+All rooms are dynamically named by prefixing either conversation- or group- with their corresponding IDs.
+
+Only clients who join a room will receive that room’s updates.
+
+JWT authentication is expected during WebSocket connection handshake.
+
+---
 
 ## 🧱 Database Schema Overview
 
@@ -303,6 +386,8 @@ ws://localhost:3000
 ## 📤 Future Enhancements
 
 Verify otp
+
+Request, Request Friend
 
 Add file/image messaging support
 

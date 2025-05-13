@@ -88,6 +88,38 @@ Swagger UI: http://localhost:3000/api/
 **Specification**: OpenAPI 3.0  
 **Base URL**: `http://localhost:3000`
 
+## Architecture Diagram
+
+            +-----------------------+
+            |     Client (Web/Mobile)  |
+            +-----------+-----------+
+                        |
+                WebSocket + REST API
+                        |
+       +----------------+-------------------+
+       |             NestJS Backend         |
+       |                                    |
+       | +---------+     +----------------+ |
+       | | Gateway | <--> | ChatService   | |
+       | +---------+     +----------------+ |
+       |                   |       ▲        |
+       |                   ▼       |        |
+       |           +---------------------+  |
+       |           | ConversationService |  |
+       |           +---------------------+  |
+       |                   |                |
+       |           +----------------+       |
+       |           | GroupService   |       |
+       |           +----------------+       |
+       |                                    |
+       +------------------+-----------------+
+                          |
+                    TypeORM (Repository)
+                          |
+                   +---------------+
+                   | PostgreSQL DB |
+                   +---------------+
+
 ---
 
 ## 🔐 Auth Module (`/api/auth`)
@@ -212,23 +244,9 @@ You can test the API directly at:
 
 ## 🌐 WebSocket (if supported)
 
-> Connect using the following format:
-
 ## 🧱 Database Schema Overview
 
-![Architecture Diagram](./neondb.png)
-
-users: User info (id, email, username, password)
-
-conversations: One-to-one chats between users
-
-conversation_messages: Messages for one-to-one chats
-
-groups: Chat groups
-
-group_messages: Messages in groups
-
-All messages include id, content, author, and createdAt.
+![](./neondb.png)
 
 ## 🧱 Project Structure
 
@@ -270,7 +288,7 @@ This app uses JWT (via @nestjs/jwt) for secure authentication. On successful log
 Example WebSocket auth flow:
 
 Connect to WebSocket with JWT as a query parameter:
-ws://localhost:3000?token=<your_jwt_token>
+ws://localhost:3000
 
 ---
 

@@ -49,7 +49,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // handleDisconnect
   handleDisconnect(socket: AuthenticatedSocket) {
     socket.disconnect();
-    // this._sessions.removeUserSocket(socket.user.id);
+    this._sessions.removeUserSocket(socket.user.id);
     console.log('socket dis-connect', socket.id);
   }
 }

@@ -50,7 +50,10 @@ export class GroupService implements IGroupService {
 
     const usersDb = await Promise.all(userPromise);
 
-    usersDb.push(owner);
+    const alreadyInGroup = usersDb.some((user) => user.id === owner.id);
+    if (!alreadyInGroup) {
+      usersDb.push(owner);
+    }
 
     const newGroup = this._groupRepository.create({
       owner,
@@ -134,7 +137,7 @@ export class GroupService implements IGroupService {
     const isMember = await this.isUserInGroup({ id, userId: newOwnerId });
     if (!isMember) {
       throw new HttpException(
-        'You are not a member of the group yet.',
+        `${isMember.username} is not member of group.`,
         HttpStatus.BAD_REQUEST,
       );
     }

@@ -6,7 +6,7 @@ import { IGroupService } from 'src/utils/interfaces';
 import { TMessageGroupPayload } from 'src/utils/types';
 
 @Injectable()
-export class GroupRecipientEvent {
+export class GroupMessageEvent {
   constructor(
     private readonly _appGateway: AppGateway,
 
@@ -19,6 +19,7 @@ export class GroupRecipientEvent {
     if (!group) return;
 
     const ROOM_NAME = `group-${group.id}`;
+
     this._appGateway.server.to(ROOM_NAME).emit('onGroupMessageCreate', {
       group,
       message: payload.message,
@@ -31,6 +32,7 @@ export class GroupRecipientEvent {
     if (!group) return;
 
     const ROOM_NAME = `group-${group.id}`;
+
     this._appGateway.server
       .to(ROOM_NAME)
       .emit('onGroupMessageEdit', { group, message: payload.message });
@@ -42,6 +44,7 @@ export class GroupRecipientEvent {
     if (!group) return;
 
     const ROOM_NAME = `group-${group.id}`;
+
     this._appGateway.server
       .to(ROOM_NAME)
       .emit('onGroupMessageDelete', { group, message: payload.message });

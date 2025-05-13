@@ -5,6 +5,7 @@ import {
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
@@ -18,17 +19,17 @@ export class Conversation {
 
   @OneToOne(() => User, { createForeignKeyConstraints: false })
   @JoinColumn()
-  creator: User;
+  creator: Relation<User>;
 
   @OneToOne(() => User, { createForeignKeyConstraints: false })
   @JoinColumn()
-  recipient: User;
+  recipient: Relation<User>;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: number;
 
-  @OneToOne(() => ConversationMessage)
-  @JoinColumn({ name: 'last_message_sent' })
+  @OneToOne(() => ConversationMessage, { createForeignKeyConstraints: false })
+  @JoinColumn()
   lastMessageSent: ConversationMessage;
 
   @UpdateDateColumn({ name: 'updated_at' })

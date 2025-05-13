@@ -16,22 +16,26 @@ export class GroupRecipientEvent {
     const { group, recipient } = payload;
 
     const ROOM_NAME = `group-${group.id}`;
-    this._appGateway.server.to(ROOM_NAME).emit('onGroupReceivedNewUser', group);
     const recipientSocket = this._appGateway._sessions.getUserSocket(
       recipient.id,
     );
+
+    this._appGateway.server.to(ROOM_NAME).emit('onGroupReceivedNewUser', group);
+
     if (recipientSocket) recipientSocket.emit('onGroupUserAdd', group);
   }
 
-  @OnEvent(ServerGroupRecipientEvent.GROUP_USER_ADD)
+  @OnEvent(ServerGroupRecipientEvent.GROUP_USER_REMOVE)
   handleGroupUserRemove(payload: TRemoveRecipientToGroupResponse) {
     const { group, recipient } = payload;
-
-    const ROOM_NAME = `group-${group.id}`;
-    this._appGateway.server.to(ROOM_NAME).emit('onGroupReceivedRemoved', group);
     const recipientSocket = this._appGateway._sessions.getUserSocket(
       recipient.id,
     );
+
+    const ROOM_NAME = `group-${group.id}`;
+
+    this._appGateway.server.to(ROOM_NAME).emit('onGroupReceivedRemoved', group);
+
     if (recipientSocket) {
       recipientSocket.emit('onGroupUserRemoved', group);
       recipientSocket.leave(ROOM_NAME);

@@ -17,7 +17,6 @@ export class GroupEvent {
   //GROUP_CREATE
   @OnEvent(ServerGroupEvent.GROUP_CREATE)
   async handleNewGroupCreate(payload: Group) {
-    console.log(`create new group`);
     const onwerId = payload.owner.id;
     const socketIds: string[] = [];
 
@@ -46,7 +45,6 @@ export class GroupEvent {
     @MessageBody() { id }: { id: string },
     @ConnectedSocket() client: AuthenticatedSocket,
   ) {
-    console.log(`onGroupJoin join id: `, id);
     client.join(`group-${id}`);
     client.to(`group-${id}`).emit('userGroupJoin');
   }
@@ -85,8 +83,6 @@ export class GroupEvent {
     group: Group;
     userId: string;
   }) {
-    console.log({ group, userId });
-
     const ROOM_NAME = `group-${group.id}`;
     const { rooms } = this._appGateway.server.sockets.adapter;
     const socketInRoom = rooms.get(ROOM_NAME);

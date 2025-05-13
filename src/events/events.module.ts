@@ -4,11 +4,15 @@ import { GroupRecipientEvent } from './groups/group-recipient.event';
 import { GroupEvent } from './groups/group.event';
 import { ConversationEvent } from './conversations/conversation.event';
 import { ConversationMessageEvent } from './conversations/conversation-message.event';
+import { ConversationModule } from 'src/conversation/conversation.module';
+import { GroupMessageEvent } from './groups/group-message.event';
+import { GroupModule } from 'src/group/group.module';
 
 @Module({
-  imports: [GateWayModule],
+  imports: [GateWayModule, ConversationModule, GroupModule],
   providers: [
     GroupEvent,
+    GroupMessageEvent,
     GroupRecipientEvent,
     ConversationEvent,
     ConversationMessageEvent,

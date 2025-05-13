@@ -54,7 +54,10 @@ export class ConversationService implements IConversationService {
     });
 
     if (!conversation)
-      throw new HttpException('Group not found with id', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Conversation not found with id',
+        HttpStatus.NOT_FOUND,
+      );
 
     return conversation;
   }

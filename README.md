@@ -1,99 +1,274 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+## 🧩 WebSocket Group Chat API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 📌 Objective
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+    Build a WebSocket-based group chat API that stores messages in a PostgreSQL database and provides an interface accessible by both mobile and web clients. The project is documented with Swagger and containerized using Docker.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🚀 Technologies Used
 
-## Project setup
+- **NestJS**: Backend framework
+- **TypeORM**: ORM for database operations
+- **PostgreSQL**: Database
+- **Socket.IO**: WebSocket library
+- **Swagger (OpenAPI)**: API documentation
+- **Docker & Docker Compose**: Containerization
+- **Dotenv**: Environment variable configuration.
+- **@nestjs/jwt**: For handling JSON Web Token-based authentication.
 
-```bash
-$ npm install
-```
+---
 
-## Compile and run the project
+## 📦 Features
 
-```bash
-# development
-$ npm run start
+    ✅ Real-time group chat via WebSocket
 
-# watch mode
-$ npm run start:dev
+    ✅ Real-time one-to-one (1:1) chat
 
-# production mode
-$ npm run start:prod
-```
+    ✅ Message history stored in PostgreSQL
 
-## Run tests
+    ✅ REST API to fetch chat history
 
-```bash
-# unit tests
-$ npm run test
+    ✅ JWT-based user authentication
 
-# e2e tests
-$ npm run test:e2e
+    ✅ Swagger for API documentation
 
-# test coverage
-$ npm run test:cov
-```
+    ✅ Dockerized setup for easy local development
 
-## Deployment
+    ✅ Ready for integration with web and mobile apps
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+---
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## ⚙️ Local Setup Instructions
+
+### Prerequisites
+
+- Node.js (>= 18)
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+
+---
+
+## 🧪 Run Locally
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+  git clone https://github.com/dungha3112/test-chat-nestjs
+  cd test-chat-nest
+  cp .env.example .env
+  docker-compose up --build
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## 🔌 Access Points
 
-Check out a few resources that may come in handy when working with NestJS:
+    WebSocket Endpoint: ws://localhost:3000
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+    Swagger UI: http://localhost:3000/api/
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# 📚 Chat API Documentation (v1.0)
 
-## Stay in touch
+**Specification**: OpenAPI 3.0  
+**Base URL**: `http://localhost:3000`
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
-## License
+## 🔐 Auth Module (`/api/auth`)
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+| Method | Endpoint         | Description                                  |
+| ------ | ---------------- | -------------------------------------------- |
+| POST   | `/register`      | Register a new user                          |
+| POST   | `/login`         | Login and receive access + refresh tokens    |
+| POST   | `/refresh-token` | Get a new access token using a refresh token |
+| POST   | `/logout`        | Logout and clear refresh token cookie        |
+
+---
+
+## 👤 User Module (`/api/user`)
+
+| Method | Endpoint  | Description                   |
+| ------ | --------- | ----------------------------- |
+| GET    | `/search` | Search for a user by username |
+
+---
+
+## 👥 Group Module (`/api/group`)
+
+### Group Management
+
+| Method | Endpoint      | Description                    |
+| ------ | ------------- | ------------------------------ |
+| POST   | `/`           | Create a new group             |
+| GET    | `/`           | Get all groups                 |
+| GET    | `/{id}`       | Get group details by ID        |
+| PATCH  | `/{id}`       | Update group info (owner only) |
+| PATCH  | `/{id}/owner` | Transfer group ownership       |
+| DELETE | `/{id}/leave` | Leave the group                |
+
+### Group Members
+
+| Method | Endpoint          | Description            |
+| ------ | ----------------- | ---------------------- |
+| POST   | `/{id}/recipient` | Add user to group      |
+| DELETE | `/{id}/recipient` | Remove user from group |
+
+### Group Messages
+
+| Method | Endpoint                    | Description                  |
+| ------ | --------------------------- | ---------------------------- |
+| POST   | `/{id}/message`             | Send a message to the group  |
+| GET    | `/{id}/message`             | Get all group messages       |
+| PATCH  | `/{id}/message/{messageId}` | Edit a group message by ID   |
+| DELETE | `/{id}/message/{messageId}` | Delete a group message by ID |
+
+---
+
+## 💬 Direct Conversations (`/api/conversation`)
+
+### Conversations
+
+| Method | Endpoint | Description                       |
+| ------ | -------- | --------------------------------- |
+| POST   | `/`      | Create a new conversation         |
+| GET    | `/`      | Get all conversations             |
+| GET    | `/{id}`  | Get a specific conversation by ID |
+
+### Conversation Messages
+
+| Method | Endpoint                    | Description                         |
+| ------ | --------------------------- | ----------------------------------- |
+| POST   | `/{id}/message`             | Send a message in conversation      |
+| GET    | `/{id}/message`             | Get all messages in conversation    |
+| PATCH  | `/{id}/message/{messageId}` | Edit a conversation message by ID   |
+| DELETE | `/{id}/message/{messageId}` | Delete a conversation message by ID |
+
+---
+
+## 🧬 Schemas (DTOs)
+
+### ✅ Auth DTOs
+
+- `UserRegisterDto`
+- `UserLoginDto`
+- `UserResponseDto`
+- `UserLoginResponseDto`
+- `UserRefreshTokenResponseDto`
+
+### ✅ Group DTOs
+
+- `GroupCreateDto`
+- `GroupEditDto`
+- `GroupResDto`
+- `GroupMessageCreateDto`
+- `GroupMessageEditDto`
+- `MessageGroupResDto`
+- `CreateNewMessageGroupDto`
+- `GroupRecipientAddUserDto`
+- `GroupRecipientRemoveUserDto`
+- `AddUserToGroupResDto`
+- `RemoveUserToGroupResDto`
+- `GetMessagesGroupResponseDto`
+- `UpdateMessageGroupResDto`
+- `DeleteMessageGroupResDto`
+
+### ✅ Conversation DTOs
+
+- `ConversationCreateDto`
+- `ConverstionResDto`
+- `ConverMessageCreateDto`
+- `ConverMessageEditDto`
+- `MessageConverResDto`
+- `CreateConversationResponseDto`
+- `GetMessagesConversationResponseDto`
+- `UpdateMessageConverResponseDto`
+- `DeleteMessageConverResponseDto`
+
+---
+
+## 🧪 Swagger UI
+
+You can test the API directly at:
+
+👉 [http://localhost:3000/api](http://localhost:3000/api)
+
+---
+
+## 🌐 WebSocket (if supported)
+
+> Connect using the following format:
+
+## 🧱 Database Schema Overview
+
+![Architecture Diagram](./neondb.png)
+
+users: User info (id, email, username, password)
+
+conversations: One-to-one chats between users
+
+conversation_messages: Messages for one-to-one chats
+
+groups: Chat groups
+
+group_messages: Messages in groups
+
+All messages include id, content, author, and createdAt.
+
+## 🧱 Project Structure
+
+```bash
+
+src/
+├── auth/                  # Auth DTOs, controllers, services, modules
+├── conversation/
+│   ├── controllers/       # Conversation & conversation-message controllers
+│   ├── dtos/
+│   ├── middlewares/
+│   ├── services/
+├── custom-jwt/            # JWT service and module
+├── database/              # Database module config
+├── events/                # WebSocket events
+│   ├── conversations/
+│   ├── groups/
+├── gateway/               # WebSocket gateway setup
+├── group/
+│   ├── controllers/       # Group, message, and recipient controllers
+│   ├── dtos/
+│   ├── middlewares/
+│   ├── services/
+├── user/                  # User DTOs, controllers, services, module
+├── util/                  # Constants, decorators, guards, helpers, types, interfacesm middlewares, typeorm
+├── app.module.ts
+└── main.ts
+
+```
+
+---
+
+## ✅ Optional Additions You Could Include
+
+🔒 Authentication Overview
+
+This app uses JWT (via @nestjs/jwt) for secure authentication. On successful login, a JWT token is returned. Protected routes and WebSocket connections require this token.
+
+Example WebSocket auth flow:
+
+Connect to WebSocket with JWT as a query parameter:
+ws://localhost:3000?token=<your_jwt_token>
+
+---
+
+## 📤 Future Enhancements
+
+Verify otp
+
+Add file/image messaging support
+
+Support for typing indicators, online status
+
+Push notification integration
+
+Admin/moderation tools
+
+Redis support for scaling WebSocket servers

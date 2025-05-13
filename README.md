@@ -294,15 +294,11 @@ Example WebSocket auth flow:
 Connect to WebSocket with JWT as a query parameter:
 ws://localhost:3000
 
----
-
 ## Bonus: Deployment
 
     The application is deployed on Render and can be accessed via:
 
-    Backend API URL: [https://test-chat-nestjs.onrender.com/api](https://test-chat-nestjs.onrender.com/api)
-
----
+👉 [https://test-chat-nestjs.onrender.com/api](https://test-chat-nestjs.onrender.com/api)
 
 ## 📤 Future Enhancements
 

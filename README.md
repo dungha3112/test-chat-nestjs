@@ -54,13 +54,14 @@
 ```bash
   git clone https://github.com/dungha3112/test-chat-nestjs
   cd test-chat-nest
-  cp .env.example .env
-  docker-compose up --build
+  npm i
+  npm run start:dev or npm run start
 ```
 
 ## 🌍 Environment Configuration
 
 ```bash
+
   PORT=3000
   DATABASE_URL=your_database_connection_string
 
@@ -69,15 +70,16 @@
 
   REFRESH_TOKEN_SECRET=your_refresh_token_secret
   JWT_REFRESH_EXPIRES_IN=604800  # Refresh token expiration time in seconds (e.g., 7 days)
+
 ```
 
 ---
 
 ## 🔌 Access Points
 
-    WebSocket Endpoint: ws://localhost:3000
+WebSocket Endpoint: ws://localhost:3000
 
-    Swagger UI: http://localhost:3000/api/
+Swagger UI: http://localhost:3000/api/
 
 ---
 

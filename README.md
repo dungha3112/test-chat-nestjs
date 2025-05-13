@@ -58,6 +58,19 @@
   docker-compose up --build
 ```
 
+## 🌍 Environment Configuration
+
+```bash
+  PORT=3000
+  DATABASE_URL=your_database_connection_string
+
+  JWT_ACCESS_SECRET=your_jwt_access_secret
+  JWT_ACCESS_EXPIRES_IN=3600  # Token expiration time in seconds (e.g., 1 hour)
+
+  REFRESH_TOKEN_SECRET=your_refresh_token_secret
+  JWT_REFRESH_EXPIRES_IN=604800  # Refresh token expiration time in seconds (e.g., 7 days)
+```
+
 ---
 
 ## 🔌 Access Points

@@ -8,24 +8,26 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Routes, ServerGroupEvent, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IGroupService } from 'src/utils/interfaces';
-import { Group, User } from 'src/utils/typeorm';
-import { GroupCreateDto } from '../dtos/group-create.dto';
-import { GroupAddUserDto } from '../dtos/group-add-user.dto';
-import { GroupEditDto } from '../dtos/group-edit.dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBody,
-  ApiResponse,
-  ApiParam,
-} from '@nestjs/swagger';
+import { User } from 'src/utils/typeorm';
 import { GroupResDto } from '../dtos';
+import { GroupAddUserDto } from '../dtos/group-add-user.dto';
+import { GroupCreateDto } from '../dtos/group-create.dto';
+import { GroupEditDto } from '../dtos/group-edit.dto';
 
+@ApiBearerAuth()
 @ApiTags(Routes.GROUP)
 @Controller(Routes.GROUP)
 export class GroupController {

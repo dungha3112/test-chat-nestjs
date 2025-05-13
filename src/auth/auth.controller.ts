@@ -17,7 +17,13 @@ import { IAuthService } from 'src/utils/interfaces';
 import { AuthenticatedRequest } from 'src/utils/types/user.type';
 import { UserLoginDto } from './dtos/user-login.dto';
 import { UserRegisterDto } from './dtos/user-register.dto';
-import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBody,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import {
   UserLoginResponseDto,
   UserRefreshTokenResponseDto,
@@ -112,6 +118,7 @@ export class AuthController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(AuthJwtGuard)
+  @ApiBearerAuth()
   async loggout(
     @Req() request: AuthenticatedRequest,
     @Res() response: Response,

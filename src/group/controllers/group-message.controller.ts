@@ -11,30 +11,32 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Routes, ServerGroupMessageEvent, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IGroupMessageService } from 'src/utils/interfaces';
 import { User } from 'src/utils/typeorm';
-import { GroupMessageCreateDto } from '../dtos/group-message-create.dto';
-import { GroupMessageEditDto } from '../dtos/group-message-edit.dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TMessageGroupPayload } from 'src/utils/types';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBody,
-  ApiResponse,
-  ApiParam,
-  ApiQuery,
-} from '@nestjs/swagger';
 import {
   CreateNewMessageGroupDto,
   DeleteMessageGroupResDto,
   GetMessagesGroupResponseDto,
   UpdateMessageGroupResDto,
 } from '../dtos';
+import { GroupMessageCreateDto } from '../dtos/group-message-create.dto';
+import { GroupMessageEditDto } from '../dtos/group-message-edit.dto';
 
+@ApiBearerAuth()
 @ApiTags(Routes.GROUP_MESSAGE)
 @Controller(Routes.GROUP_MESSAGE)
 export class GroupMessageController {

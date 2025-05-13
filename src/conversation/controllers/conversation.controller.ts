@@ -12,9 +12,11 @@ import {
   ApiBody,
   ApiResponse,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ConverstionResDto } from '../dtos';
 
+@ApiBearerAuth()
 @ApiTags(Routes.CONVERSATION)
 @Controller(Routes.CONVERSATION)
 export class ConversationController {

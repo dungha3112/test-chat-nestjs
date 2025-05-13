@@ -1,4 +1,12 @@
 import { Body, Controller, Delete, Inject, Param, Post } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import {
   Routes,
@@ -8,19 +16,11 @@ import {
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IGroupRecipientsService } from 'src/utils/interfaces';
 import { User } from 'src/utils/typeorm';
+import { AddUserToGroupResDto, RemoveUserToGroupResDto } from '../dtos';
 import { GroupRecipientAddUserDto } from '../dtos/group-recipient.add.dto';
 import { GroupRecipientRemoveUserDto } from '../dtos/group-recipient.remove.dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBody,
-  ApiResponse,
-  ApiParam,
-  ApiQuery,
-} from '@nestjs/swagger';
-import { AddUserToGroupResDto, RemoveUserToGroupResDto } from '../dtos';
 
+@ApiBearerAuth()
 @ApiTags(Routes.GROUPS_RECIPIENTS)
 @Controller(Routes.GROUPS_RECIPIENTS)
 export class GroupRecipientController {

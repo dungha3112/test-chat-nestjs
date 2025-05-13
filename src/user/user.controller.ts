@@ -1,7 +1,7 @@
 import { Controller, Get, Inject, Query } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiOperation,
-  ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
@@ -9,10 +9,10 @@ import {
 import { Throttle } from '@nestjs/throttler';
 import { Routes, Services } from 'src/utils/constants';
 import { IUserService } from 'src/utils/interfaces';
-import { User } from 'src/utils/typeorm';
 import { UserResponseDto } from './dtos';
 
 @ApiTags(Routes.USER)
+@ApiBearerAuth()
 @Controller(Routes.USER)
 export class UserController {
   constructor(

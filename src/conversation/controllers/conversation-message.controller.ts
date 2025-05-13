@@ -31,6 +31,7 @@ import {
   ApiResponse,
   ApiParam,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import {
   CreateConversationResponseDto,
@@ -39,6 +40,7 @@ import {
   UpdateMessageConverResponseDto,
 } from '../dtos';
 
+@ApiBearerAuth()
 @ApiTags(Routes.CONVERSATION_MESSAGE)
 @Controller(Routes.CONVERSATION_MESSAGE)
 export class ConversationMessageController {

@@ -23,8 +23,8 @@ import {
   ApiBody,
   ApiResponse,
   ApiParam,
-  ApiQuery,
 } from '@nestjs/swagger';
+import { GroupResDto } from '../dtos';
 
 @ApiTags(Routes.GROUP)
 @Controller(Routes.GROUP)
@@ -42,7 +42,7 @@ export class GroupController {
   @ApiResponse({
     status: 201,
     description: 'The group successfully created.',
-    type: Group,
+    type: GroupResDto,
   })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   async createGroup(@AuthUser() owner: User, @Body() groupDto: GroupCreateDto) {
@@ -62,7 +62,8 @@ export class GroupController {
   @ApiResponse({
     status: 201,
     description: 'Get list group successfully.',
-    type: [Group],
+    type: GroupResDto,
+    isArray: true,
   })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   async getGroup(@AuthUser() user: User) {
@@ -77,7 +78,7 @@ export class GroupController {
   @ApiResponse({
     status: 201,
     description: 'Get group successfully',
-    type: Group,
+    type: GroupResDto,
   })
   @ApiResponse({ status: 400, description: 'Validation failed' })
   async findGrouById(@Param('id') id: string) {
@@ -92,7 +93,7 @@ export class GroupController {
   @ApiResponse({
     status: 201,
     description: 'Update group successfully',
-    type: Group,
+    type: GroupResDto,
   })
   @ApiResponse({ status: 400, description: 'Validation failed' })
   async editGrouById(
@@ -117,7 +118,7 @@ export class GroupController {
   @ApiResponse({
     status: 201,
     description: 'Tranfer owner successfully',
-    type: Group,
+    type: GroupResDto,
   })
   @ApiResponse({ status: 400, description: 'Validation failed' })
   async updateOwnerGroup(
@@ -140,7 +141,7 @@ export class GroupController {
   @ApiResponse({
     status: 201,
     description: 'User leave successfully',
-    type: Group,
+    type: GroupResDto,
   })
   @ApiResponse({ status: 400, description: 'Validation failed' })
   async leaveGroupById(

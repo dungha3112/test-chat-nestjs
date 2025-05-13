@@ -39,6 +39,10 @@
 
 ---
 
+## 🌍 Deploy URL
+
+If you've deployed your application to a platform like
+
 ## ⚙️ Local Setup Instructions
 
 ### Prerequisites
@@ -292,6 +296,14 @@ ws://localhost:3000
 
 ---
 
+## Bonus: Deployment
+
+    The application is deployed on Render and can be accessed via:
+
+    Backend API URL: https://test-chat-nestjs.onrender.com/api
+
+---
+
 ## 📤 Future Enhancements
 
 Verify otp
@@ -301,6 +313,8 @@ Add file/image messaging support
 Support for typing indicators, online status
 
 Push notification integration
+
+Call video, cal audio 1-1, 1-n
 
 Admin/moderation tools
 

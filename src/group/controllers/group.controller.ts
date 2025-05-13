@@ -95,6 +95,7 @@ export class GroupController {
     description: 'Update group successfully',
     type: GroupResDto,
   })
+  @ApiBody({ type: GroupEditDto })
   @ApiResponse({ status: 400, description: 'Validation failed' })
   async editGrouById(
     @AuthUser() { id: ownerId }: User,
@@ -120,6 +121,7 @@ export class GroupController {
     description: 'Tranfer owner successfully',
     type: GroupResDto,
   })
+  @ApiBody({ type: GroupAddUserDto })
   @ApiResponse({ status: 400, description: 'Validation failed' })
   async updateOwnerGroup(
     @AuthUser() { id: ownerId }: User,

@@ -14,6 +14,15 @@ async function bootstrap() {
 
   app.useWebSocketAdapter(adapter);
 
+  app.enableCors({
+    origin: [
+      'http://localhost:7819',
+      'https://test-chat-nestjs.onrender.com',
+      'https://test-chat-nestjs.onrender.com/api',
+    ],
+    methods: 'GET, POST, PUT, DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+  });
   // app.useWebSocketAdapter(new IoAdapter(app));
 
   app.useGlobalPipes(new ValidationPipe());

@@ -21,7 +21,7 @@ export class UserController {
 
   @Get('search')
   @Throttle({ default: { limit: 3, ttl: 60000 } })
-  @ApiOperation({ summary: 'Get messages by conversation ID' })
+  @ApiOperation({ summary: 'Search user by username ' })
   @ApiQuery({
     name: 'query',
     required: true,

@@ -300,7 +300,7 @@ ws://localhost:3000
 
     The application is deployed on Render and can be accessed via:
 
-    Backend API URL: https://test-chat-nestjs.onrender.com/api
+    Backend API URL: [https://test-chat-nestjs.onrender.com/api](https://test-chat-nestjs.onrender.com/api)
 
 ---
 

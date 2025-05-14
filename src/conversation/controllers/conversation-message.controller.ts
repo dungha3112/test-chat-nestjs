@@ -11,7 +11,8 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   Routes,
   ServerConverMessageEvent,
@@ -19,25 +20,18 @@ import {
 } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IConversationMessageService } from 'src/utils/interfaces';
+import {
+  ApiConverMessageCreateDoc,
+  ApiDeleteConverMessageByConverIdAndMessageIdDoc,
+  ApiGetConverMessagesByCorverIdDoc,
+  ApiPatchConverMessageByConverIdAndMessageIdDoc,
+} from 'src/utils/swaggers';
 import { User } from 'src/utils/typeorm';
-import { ConverMessageCreateDto } from '../dtos/conversation-message.create';
-import { ConverMessageEditDto } from '../dtos/conversation-message-edit.dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TMessageConverPayload } from 'src/utils/types';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiBody,
-  ApiResponse,
-  ApiParam,
-  ApiQuery,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
-import {
-  CreateConversationResponseDto,
+  ConverMessageCreateDto,
+  ConverMessageEditDto,
   DeleteMessageConverResponseDto,
-  GetMessagesConversationResponseDto,
-  UpdateMessageConverResponseDto,
 } from '../dtos';
 
 @ApiBearerAuth()
@@ -52,16 +46,7 @@ export class ConversationMessageController {
   ) {}
 
   @Post()
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Create a new conversation message' })
-  @ApiBody({ type: ConverMessageCreateDto })
-  @ApiParam({ name: 'id', description: 'Group ID', type: String })
-  @ApiResponse({
-    status: 201,
-    description: 'Message created successfully',
-    type: CreateConversationResponseDto,
-  })
-  @ApiResponse({ status: 400, description: 'Validation failed' })
+  @ApiConverMessageCreateDoc()
   async createNewConverMessage(
     @AuthUser() author: User,
     @Param('id') id: string,
@@ -84,27 +69,7 @@ export class ConversationMessageController {
   }
   // api/conversation/:id/message
   @Get()
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Get messages by conversation ID' })
-  @ApiParam({ name: 'id', description: 'Group ID', type: String })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-    type: Number,
-    description: 'Page number',
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    type: Number,
-    description: 'Messages per page',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'List of messages',
-    type: GetMessagesConversationResponseDto,
-  })
-  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiGetConverMessagesByCorverIdDoc()
   async getMessagesByGroupId(
     @Param('id') id: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -117,17 +82,7 @@ export class ConversationMessageController {
 
   // api/conversation/:id/message/messageId
   @Patch(':messageId')
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Edit a conversation message by ID' })
-  @ApiParam({ name: 'id', description: 'Group ID', type: String })
-  @ApiParam({ name: 'messageId', description: 'message ID', type: String })
-  @ApiBody({ type: ConverMessageEditDto })
-  @ApiResponse({
-    status: 200,
-    description: 'Message updated successfully',
-    type: UpdateMessageConverResponseDto,
-  })
-  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiPatchConverMessageByConverIdAndMessageIdDoc()
   async updateMessageById(
     @AuthUser() { id: authorId }: User,
     @Param('id') id: string,
@@ -146,29 +101,17 @@ export class ConversationMessageController {
       payload,
     );
 
-    return {
-      conversationId: id,
-      message,
-    };
+    return { conversationId: id, message };
   }
 
   // api/conversation/:id/message/messageId
   @Delete(':messageId')
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Delete a conversation message by ID' })
-  @ApiParam({ name: 'id', description: 'Group ID', type: String })
-  @ApiParam({ name: 'messageId', description: 'message ID', type: String })
-  @ApiResponse({
-    status: 200,
-    description: 'Message deleted successfully',
-    type: DeleteMessageConverResponseDto,
-  })
-  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiDeleteConverMessageByConverIdAndMessageIdDoc()
   async deleteMessageById(
     @AuthUser() { id: authorId }: User,
     @Param('id') id: string,
     @Param('messageId') messageId: string,
-  ) {
+  ): Promise<DeleteMessageConverResponseDto> {
     const params = { authorId, id, messageId };
 
     const message =

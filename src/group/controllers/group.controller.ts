@@ -9,20 +9,19 @@ import {
   Post,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Routes, ServerGroupEvent, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IGroupService } from 'src/utils/interfaces';
+import {
+  ApiGetGroupByIdDoc,
+  ApiGroupCreateDoc,
+  ApiGroupsGetDoc,
+  ApiPatchGroupByIdDoc,
+  ApiPatchOnwerGroupByIdDoc,
+  ApiUserLeaveGroupByIdDoc,
+} from 'src/utils/swaggers';
 import { User } from 'src/utils/typeorm';
-import { GroupResDto } from '../dtos';
 import { GroupAddUserDto } from '../dtos/group-add-user.dto';
 import { GroupCreateDto } from '../dtos/group-create.dto';
 import { GroupEditDto } from '../dtos/group-edit.dto';
@@ -38,15 +37,7 @@ export class GroupController {
   ) {}
 
   @Post()
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Create new group' })
-  @ApiBody({ type: GroupCreateDto })
-  @ApiResponse({
-    status: 201,
-    description: 'The group successfully created.',
-    type: GroupResDto,
-  })
-  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiGroupCreateDoc()
   async createGroup(@AuthUser() owner: User, @Body() groupDto: GroupCreateDto) {
     const params = { ...groupDto, owner };
 
@@ -58,47 +49,21 @@ export class GroupController {
   }
 
   @Get()
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Get list group' })
-  @ApiResponse({
-    status: 201,
-    description: 'Get list group successfully.',
-    type: GroupResDto,
-    isArray: true,
-  })
-  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiGroupsGetDoc()
   async getGroup(@AuthUser() user: User) {
     return await this._groupService.getGroups(user.id);
   }
 
   // api/group/:id
   @Get(':id')
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Get a group by id' })
-  @ApiParam({ name: 'id', description: 'Group ID', type: String })
-  @ApiResponse({
-    status: 201,
-    description: 'Get group successfully',
-    type: GroupResDto,
-  })
-  @ApiResponse({ status: 400, description: 'Validation failed' })
+  @ApiGetGroupByIdDoc()
   async findGrouById(@Param('id') id: string) {
     return await this._groupService.findGroupById(id);
   }
 
   // api/group/:id
   @Patch(':id')
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Owner update group by id' })
-  @ApiParam({ name: 'id', description: 'Group ID', type: String })
-  @ApiResponse({
-    status: 201,
-    description: 'Update group successfully',
-    type: GroupResDto,
-  })
-  @ApiBody({ type: GroupEditDto })
-  @ApiResponse({ status: 400, description: 'Validation failed' })
+  @ApiPatchGroupByIdDoc()
   async editGrouById(
     @AuthUser() { id: ownerId }: User,
     @Param('id') id: string,
@@ -115,16 +80,7 @@ export class GroupController {
 
   // api/group/:id/owner
   @Patch(':id/owner')
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Tranfer owner' })
-  @ApiParam({ name: 'id', description: 'Group ID', type: String })
-  @ApiResponse({
-    status: 201,
-    description: 'Tranfer owner successfully',
-    type: GroupResDto,
-  })
-  @ApiBody({ type: GroupAddUserDto })
-  @ApiResponse({ status: 400, description: 'Validation failed' })
+  @ApiPatchOnwerGroupByIdDoc()
   async updateOwnerGroup(
     @AuthUser() { id: ownerId }: User,
     @Param('id') id: string,
@@ -139,15 +95,7 @@ export class GroupController {
 
   // api/groups/:id/leave
   @Delete('/:id/leave')
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'User leave group' })
-  @ApiParam({ name: 'id', description: 'Group ID', type: String })
-  @ApiResponse({
-    status: 201,
-    description: 'User leave successfully',
-    type: GroupResDto,
-  })
-  @ApiResponse({ status: 400, description: 'Validation failed' })
+  @ApiUserLeaveGroupByIdDoc()
   async leaveGroupById(
     @AuthUser() { id: userId }: User,
     @Param('id') id: string,

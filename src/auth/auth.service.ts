@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToInstance } from 'class-transformer';
-import { UserResponseDto } from 'src/user/dtos/user-response.dto';
+import { UserResponseDto } from 'src/user/dtos';
 import { Services } from 'src/utils/constants';
 import { compareHash, hashPassword } from 'src/utils/helpers';
 import {

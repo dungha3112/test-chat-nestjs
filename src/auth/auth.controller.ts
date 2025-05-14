@@ -7,45 +7,34 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
-import { plainToInstance } from 'class-transformer';
+import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
-import { UserResponseDto } from 'src/user/dtos/user-response.dto';
 import { Routes, Services } from 'src/utils/constants';
 import { AuthJwtGuard } from 'src/utils/guards/AuthJwtGuard';
 import { IAuthService } from 'src/utils/interfaces';
+import {
+  ApiLoginDoc,
+  ApiLogoutDoc,
+  ApiRefreshTokenDoc,
+  ApiRegisterDoc,
+} from 'src/utils/swaggers';
 import { AuthenticatedRequest } from 'src/utils/types/user.type';
-import { UserLoginDto } from './dtos/user-login.dto';
-import { UserRegisterDto } from './dtos/user-register.dto';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiBody,
-  ApiResponse,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
-import {
+  UserLoginDto,
   UserLoginResponseDto,
   UserRefreshTokenResponseDto,
-} from './dtos/index.dto';
+  UserRegisterDto,
+} from './dtos';
 
-@Controller(Routes.AUTH)
 @ApiTags(Routes.AUTH)
+@Controller(Routes.AUTH)
 export class AuthController {
   constructor(
     @Inject(Services.AUTH) private readonly _authService: IAuthService,
   ) {}
 
   @Post('register')
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Register user' })
-  @ApiBody({ type: UserRegisterDto })
-  @ApiResponse({
-    status: 201,
-    description: 'User registered successfully',
-    type: String,
-  })
-  @ApiResponse({ status: 400, description: 'Validation failed' })
+  @ApiRegisterDoc()
   async registerUser(
     @Body() registerDto: UserRegisterDto,
   ): Promise<{ message: string }> {
@@ -55,19 +44,11 @@ export class AuthController {
   }
 
   @Post('login')
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Login user' })
-  @ApiBody({ type: UserLoginDto })
-  @ApiResponse({
-    status: 200,
-    description: 'User logged in successfully, accessToken returned',
-    type: UserLoginResponseDto,
-  })
-  @ApiResponse({ status: 401, description: 'Invalid credentials' })
+  @ApiLoginDoc()
   async loginUser(
     @Body() loginDto: UserLoginDto,
     @Res({ passthrough: true }) response: Response,
-  ) {
+  ): Promise<UserLoginResponseDto> {
     const { accessToken, refreshToken, user } =
       await this._authService.login(loginDto);
 
@@ -78,47 +59,25 @@ export class AuthController {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     });
 
-    return {
-      accessToken,
-      user,
-    };
+    return { accessToken, user };
   }
 
   @Post('refresh-token')
-  @ApiOperation({ summary: 'Get new access token using refresh token' })
-  @ApiResponse({
-    status: 200,
-    description: 'Token refreshed successfully',
-    type: UserRefreshTokenResponseDto,
-  })
-  @ApiResponse({ status: 401, description: 'Missing or invalid refresh token' })
-  @Throttle({ default: { limit: 3, ttl: 60000 } })
-  async refreshToken(@Req() request: Request) {
+  @ApiRefreshTokenDoc()
+  async refreshToken(
+    @Req() request: Request,
+  ): Promise<UserRefreshTokenResponseDto> {
     const refresh_token = request.cookies['refresh_token'];
 
     const { user, accessToken } =
       await this._authService.refreshToken(refresh_token);
-    const userDto = plainToInstance(UserResponseDto, user, {
-      excludeExtraneousValues: true,
-    });
 
-    return {
-      accessToken,
-      user: userDto,
-    };
+    return { accessToken, user };
   }
 
   @Post('logout')
-  @Throttle({ default: { limit: 5, ttl: 60000 } })
-  @ApiOperation({ summary: 'Logout user and clear refresh token cookie' })
-  @ApiResponse({
-    status: 200,
-    description: 'User logged out successfully',
-    type: String,
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiLogoutDoc()
   @UseGuards(AuthJwtGuard)
-  @ApiBearerAuth()
   async loggout(
     @Req() request: AuthenticatedRequest,
     @Res() response: Response,

@@ -22,7 +22,7 @@ import { ConversationModule } from './conversation/conversation.module';
       throttlers: [
         {
           ttl: 60000,
-          limit: 3,
+          limit: 10,
         },
       ],
     }),

@@ -5,9 +5,7 @@ import {
   Injectable,
   NestMiddleware,
 } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
 import { NextFunction, Request, Response } from 'express';
-import { UserResponseDto } from 'src/user/dtos/user-response.dto';
 import { Services } from '../constants';
 import { ICustomJwtService, IUserService } from '../interfaces';
 
@@ -41,11 +39,11 @@ export class AuthMiddleware implements NestMiddleware {
       if (!user || !user.refreshToken)
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
 
-      const userDto = plainToInstance(UserResponseDto, user, {
-        excludeExtraneousValues: true,
-      });
+      // const userDto = plainToInstance(UserResponseDto, user, {
+      //   excludeExtraneousValues: true,
+      // });
 
-      request['user'] = userDto;
+      request['user'] = user;
       next();
     } catch (error) {
       console.log('AuthMiddleware error ...');

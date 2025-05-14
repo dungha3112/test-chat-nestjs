@@ -3,6 +3,6 @@ import { IsNotEmpty } from 'class-validator';
 
 export class ConverMessageEditDto {
   @IsNotEmpty()
-  @ApiProperty({ example: 'what ?' })
+  @ApiProperty({ example: 'string' })
   content: string;
 }

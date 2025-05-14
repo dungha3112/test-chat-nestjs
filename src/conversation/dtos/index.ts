@@ -1,8 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UserResponseDto } from 'src/user/dtos';
 
+export * from './conversation-create.dto';
+export * from './conversation-message.create.dto';
+export * from './conversation-message-edit.dto';
+
 export class MessageConverResDto {
-  @ApiProperty({ example: 'hehe' })
+  @ApiProperty({ example: 'string' })
   content: string;
 
   @ApiProperty({ type: UserResponseDto })
@@ -12,7 +16,7 @@ export class MessageConverResDto {
   id: string;
 
   @ApiProperty({ example: '2025-05-13T00:22:04.108Z' })
-  createdAt: string;
+  createdAt: Date;
 }
 
 export class ConverstionResDto {
@@ -23,7 +27,7 @@ export class ConverstionResDto {
   createdAt: string;
 
   @ApiProperty({ example: '2025-05-13T00:22:06.012Z' })
-  lastMessageSentAt: string;
+  lastMessageSentAt: Date;
 
   @ApiProperty({ type: UserResponseDto })
   creator: UserResponseDto;

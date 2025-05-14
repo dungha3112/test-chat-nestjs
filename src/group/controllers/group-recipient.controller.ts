@@ -1,13 +1,6 @@
 import { Body, Controller, Delete, Inject, Param, Post } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   Routes,
   ServerGroupRecipientEvent,
@@ -15,8 +8,11 @@ import {
 } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IGroupRecipientsService } from 'src/utils/interfaces';
+import {
+  ApiOwnerAddUserToGroupDoc,
+  ApiOwnerRemoveUserToGroupDoc,
+} from 'src/utils/swaggers';
 import { User } from 'src/utils/typeorm';
-import { AddUserToGroupResDto, RemoveUserToGroupResDto } from '../dtos';
 import { GroupRecipientAddUserDto } from '../dtos/group-recipient.add.dto';
 import { GroupRecipientRemoveUserDto } from '../dtos/group-recipient.remove.dto';
 
@@ -32,15 +28,7 @@ export class GroupRecipientController {
 
   // api/group/:id/recipient
   @Post()
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Add new user to group' })
-  @ApiBody({ type: GroupRecipientAddUserDto })
-  @ApiResponse({
-    status: 201,
-    description: 'Add user to group successfully created.',
-    type: AddUserToGroupResDto,
-  })
-  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiOwnerAddUserToGroupDoc()
   async addRecipientToGroup(
     @AuthUser() { id: ownerId }: User,
     @Param('id') id: string,
@@ -55,15 +43,7 @@ export class GroupRecipientController {
 
   // api/group/:id/recipient
   @Delete()
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Remove new user to group' })
-  @ApiBody({ type: GroupRecipientRemoveUserDto })
-  @ApiResponse({
-    status: 201,
-    description: 'Remove user to group successfully created.',
-    type: RemoveUserToGroupResDto,
-  })
-  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiOwnerRemoveUserToGroupDoc()
   async removeRecipientToGroup(
     @AuthUser() { id: ownerId }: User,
     @Param('id') id: string,

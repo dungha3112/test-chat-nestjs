@@ -17,6 +17,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:7819',
+      'http://localhost:7819/api',
       'https://test-chat-nestjs.onrender.com',
       'https://test-chat-nestjs.onrender.com/api',
     ],

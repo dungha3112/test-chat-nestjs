@@ -1,20 +1,16 @@
 import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Routes, ServerConversationEvent, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
-import { Conversation, User } from 'src/utils/typeorm';
-import { ConversationCreateDto } from '../dtos/conversation-create.dto';
-import { Throttle } from '@nestjs/throttler';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IConversationService } from 'src/utils/interfaces';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiBody,
-  ApiResponse,
-  ApiParam,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
-import { ConverstionResDto } from '../dtos';
+  ApiConversationCreateDoc,
+  ApiFindConversationById,
+  ApiUserGetConversaionDoc,
+} from 'src/utils/swaggers';
+import { User } from 'src/utils/typeorm';
+import { ConversationCreateDto } from '../dtos/conversation-create.dto';
 
 @ApiBearerAuth()
 @ApiTags(Routes.CONVERSATION)
@@ -28,15 +24,7 @@ export class ConversationController {
   ) {}
 
   @Post()
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Create new a conversation' })
-  @ApiBody({ type: ConversationCreateDto })
-  @ApiResponse({
-    status: 201,
-    description: 'Create new conversation successfully',
-    type: ConverstionResDto,
-  })
-  @ApiResponse({ status: 400, description: 'Validation failed' })
+  @ApiConversationCreateDoc()
   async createNewConversation(
     @AuthUser() creator: User,
     @Body() conversationCreateDto: ConversationCreateDto,
@@ -53,15 +41,7 @@ export class ConversationController {
   }
 
   @Get()
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Get conversations' })
-  @ApiResponse({
-    status: 201,
-    description: 'Get conversations',
-    type: ConverstionResDto,
-    isArray: true,
-  })
-  @ApiResponse({ status: 400, description: 'Error server' })
+  @ApiUserGetConversaionDoc()
   async userGetConversations(@AuthUser() user: User) {
     const conversations = await this._conversationService.userGetConversations(
       user.id,
@@ -71,15 +51,7 @@ export class ConversationController {
   }
 
   @Get(':id')
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Get a conversation by id' })
-  @ApiParam({ name: 'id', description: 'Group ID', type: String })
-  @ApiResponse({
-    status: 201,
-    description: 'Get conversation successfully',
-    type: ConverstionResDto,
-  })
-  @ApiResponse({ status: 400, description: 'Validation failed' })
+  @ApiFindConversationById()
   async findGrouById(@Param('id') id: string) {
     return await this._conversationService.findConversationById(id);
   }

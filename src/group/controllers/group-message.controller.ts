@@ -12,27 +12,18 @@ import {
   Query,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Routes, ServerGroupMessageEvent, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IGroupMessageService } from 'src/utils/interfaces';
+import {
+  ApiDeleteGroupMessageByGroupIdAndMessageIdDoc,
+  ApiGroupMessageCreateDoc,
+  ApiGroupMessagesGetDoc,
+  ApiUpdateGroupMessageByGroupIdAndMessageIdDoc,
+} from 'src/utils/swaggers';
 import { User } from 'src/utils/typeorm';
 import { TMessageGroupPayload } from 'src/utils/types';
-import {
-  CreateNewMessageGroupDto,
-  DeleteMessageGroupResDto,
-  GetMessagesGroupResponseDto,
-  UpdateMessageGroupResDto,
-} from '../dtos';
 import { GroupMessageCreateDto } from '../dtos/group-message-create.dto';
 import { GroupMessageEditDto } from '../dtos/group-message-edit.dto';
 
@@ -47,15 +38,7 @@ export class GroupMessageController {
   ) {}
 
   @Post()
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Create a new group message' })
-  @ApiBody({ type: GroupMessageCreateDto })
-  @ApiResponse({
-    status: 201,
-    description: 'The message has been successfully created.',
-    type: CreateNewMessageGroupDto,
-  })
-  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiGroupMessageCreateDoc()
   async createNewGroupMessage(
     @AuthUser() author: User,
     @Param('id') id: string,
@@ -78,27 +61,7 @@ export class GroupMessageController {
 
   // api/group/:id/message
   @Get()
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Get messages by group ID' })
-  @ApiParam({ name: 'id', description: 'Group ID', type: String })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-    type: Number,
-    description: 'Page number',
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    type: Number,
-    description: 'Messages per page',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'List of messages',
-    type: GetMessagesGroupResponseDto,
-  })
-  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @ApiGroupMessagesGetDoc()
   async getMessagesByGroupId(
     @Param('id') id: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -111,17 +74,7 @@ export class GroupMessageController {
 
   // api/group/:id/message/:messageId
   @Patch(':messageId')
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Update a message by ID' })
-  @ApiParam({ name: 'id', description: 'Group ID' })
-  @ApiParam({ name: 'messageId', description: 'Message ID' })
-  @ApiBody({ type: GroupMessageEditDto })
-  @ApiResponse({
-    status: 200,
-    description: 'Updated message',
-    type: UpdateMessageGroupResDto,
-  })
-  @ApiResponse({ status: 404, description: 'Message not found' })
+  @ApiUpdateGroupMessageByGroupIdAndMessageIdDoc()
   async updateMessageById(
     @AuthUser() { id: authorId }: User,
     @Param('id') id: string,
@@ -142,16 +95,7 @@ export class GroupMessageController {
 
   // api/group/:id/message/:messageId
   @Delete(':messageId')
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: 'Delete a message by ID' })
-  @ApiParam({ name: 'id', description: 'Group ID' })
-  @ApiParam({ name: 'messageId', description: 'Message ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Deleted message',
-    type: DeleteMessageGroupResDto,
-  })
-  @ApiResponse({ status: 404, description: 'Message not found' })
+  @ApiDeleteGroupMessageByGroupIdAndMessageIdDoc()
   async deleteMessageById(
     @AuthUser() { id: authorId }: User,
     @Param('id') id: string,

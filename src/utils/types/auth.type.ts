@@ -1,4 +1,4 @@
-import { UserResponseDto } from 'src/user/dtos/user-response.dto';
+import { UserResponseDto } from 'src/user/dtos';
 
 export type TRegisterParams = TLoginParams & {
   username: string;

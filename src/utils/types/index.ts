@@ -7,3 +7,4 @@ export * from './message.type';
 export * from './user.type';
 export * from './conversation.type';
 export * from './conversation-message.type';
+export * from './friend-request.type';

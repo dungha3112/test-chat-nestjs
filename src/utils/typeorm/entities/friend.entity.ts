@@ -1,5 +1,4 @@
 import {
-  Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
@@ -7,10 +6,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './user.entity';
-import { TFriendRequestStatusType } from 'src/utils/types';
 
-@Entity({ name: 'friend_requests' })
-export class FriendRequest {
+@Entity({ name: 'friends' })
+export class Friend {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -24,11 +22,4 @@ export class FriendRequest {
 
   @CreateDateColumn()
   createdAt: Date;
-
-  @Column({
-    type: 'varchar',
-    enum: ['pending', 'accepted', 'rejected'],
-    default: 'pending',
-  })
-  status: TFriendRequestStatusType;
 }

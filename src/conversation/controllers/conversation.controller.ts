@@ -10,7 +10,7 @@ import {
   ApiUserGetConversaionDoc,
 } from 'src/utils/swaggers';
 import { User } from 'src/utils/typeorm';
-import { ConversationCreateDto } from '../dtos/conversation-create.dto';
+import { ConversationCreateDto } from '../dtos/conversations/conversation-create.dto';
 import { ConverstionResDto } from '../dtos';
 import { plainToInstance } from 'class-transformer';
 

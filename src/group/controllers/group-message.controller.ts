@@ -24,8 +24,8 @@ import {
 } from 'src/utils/swaggers';
 import { User } from 'src/utils/typeorm';
 import { TMessageGroupPayload } from 'src/utils/types';
-import { GroupMessageCreateDto } from '../dtos/group-message-create.dto';
-import { GroupMessageEditDto } from '../dtos/group-message-edit.dto';
+import { GroupMessageCreateDto } from '../dtos/messages/group-message-create.dto';
+import { GroupMessageEditDto } from '../dtos/messages/group-message-edit.dto';
 import {
   CreateNewMessageGroupDto,
   DeleteMessageGroupResDto,

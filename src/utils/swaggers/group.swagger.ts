@@ -1,9 +1,9 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { GroupResDto } from 'src/group/dtos';
-import { GroupAddUserDto } from 'src/group/dtos/group-add-user.dto';
-import { GroupCreateDto } from 'src/group/dtos/group-create.dto';
-import { GroupEditDto } from 'src/group/dtos/group-edit.dto';
+import { GroupAddUserDto } from 'src/group/dtos/groups/group-add-user.dto';
+import { GroupCreateDto } from 'src/group/dtos/groups/group-create.dto';
+import { GroupEditDto } from 'src/group/dtos/groups/group-edit.dto';
 
 export function ApiGroupCreateDoc() {
   return applyDecorators(

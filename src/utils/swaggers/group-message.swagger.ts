@@ -12,8 +12,8 @@ import {
   GetMessagesGroupResponseDto,
   UpdateMessageGroupResDto,
 } from 'src/group/dtos';
-import { GroupMessageCreateDto } from 'src/group/dtos/group-message-create.dto';
-import { GroupMessageEditDto } from 'src/group/dtos/group-message-edit.dto';
+import { GroupMessageCreateDto } from 'src/group/dtos/messages/group-message-create.dto';
+import { GroupMessageEditDto } from 'src/group/dtos/messages/group-message-edit.dto';
 
 export function ApiGroupMessageCreateDoc() {
   return applyDecorators(

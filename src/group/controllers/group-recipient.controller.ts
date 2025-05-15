@@ -13,8 +13,8 @@ import {
   ApiOwnerRemoveUserToGroupDoc,
 } from 'src/utils/swaggers';
 import { User } from 'src/utils/typeorm';
-import { GroupRecipientAddUserDto } from '../dtos/group-recipient.add.dto';
-import { GroupRecipientRemoveUserDto } from '../dtos/group-recipient.remove.dto';
+import { GroupRecipientAddUserDto } from '../dtos/recipients/group-recipient.add.dto';
+import { GroupRecipientRemoveUserDto } from '../dtos/recipients/group-recipient.remove.dto';
 import { AddUserToGroupResDto, RemoveUserToGroupResDto } from '../dtos';
 import { plainToInstance } from 'class-transformer';
 

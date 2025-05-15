@@ -2,9 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { UserResponseDto } from 'src/user/dtos';
 
-export * from './conversation-create.dto';
-export * from './conversation-message.create.dto';
-export * from './conversation-message-edit.dto';
+export * from './conversations/conversation-create.dto';
+export * from './messages/conversation-message.create.dto';
+export * from './messages/conversation-message-edit.dto';
 
 export class MessageConverResDto {
   @Expose()

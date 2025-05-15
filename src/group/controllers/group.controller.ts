@@ -22,9 +22,9 @@ import {
   ApiUserLeaveGroupByIdDoc,
 } from 'src/utils/swaggers';
 import { User } from 'src/utils/typeorm';
-import { GroupAddUserDto } from '../dtos/group-add-user.dto';
-import { GroupCreateDto } from '../dtos/group-create.dto';
-import { GroupEditDto } from '../dtos/group-edit.dto';
+import { GroupAddUserDto } from '../dtos/groups/group-add-user.dto';
+import { GroupCreateDto } from '../dtos/groups/group-create.dto';
+import { GroupEditDto } from '../dtos/groups/group-edit.dto';
 import { GroupResDto } from '../dtos';
 import { plainToInstance } from 'class-transformer';
 

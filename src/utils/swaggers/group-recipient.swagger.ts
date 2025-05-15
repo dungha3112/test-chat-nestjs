@@ -1,8 +1,8 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AddUserToGroupResDto, RemoveUserToGroupResDto } from 'src/group/dtos';
-import { GroupRecipientAddUserDto } from 'src/group/dtos/group-recipient.add.dto';
-import { GroupRecipientRemoveUserDto } from 'src/group/dtos/group-recipient.remove.dto';
+import { GroupRecipientAddUserDto } from 'src/group/dtos/recipients/group-recipient.add.dto';
+import { GroupRecipientRemoveUserDto } from 'src/group/dtos/recipients/group-recipient.remove.dto';
 
 export function ApiOwnerAddUserToGroupDoc() {
   return applyDecorators(

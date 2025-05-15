@@ -11,6 +11,7 @@ import { UserModule } from './user/user.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EventModule } from './events/events.module';
 import { ConversationModule } from './conversation/conversation.module';
+import { FriendModule } from './friend/friend.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ConversationModule } from './conversation/conversation.module';
     EventEmitterModule.forRoot(),
     EventModule,
     ConversationModule,
+    FriendModule,
   ],
   providers: [
     {

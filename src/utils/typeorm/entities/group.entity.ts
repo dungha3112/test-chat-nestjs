@@ -30,7 +30,7 @@ export class Group {
   title: string;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: number;
+  createdAt: string;
 
   @OneToOne(() => GroupMessage, { createForeignKeyConstraints: false })
   @JoinColumn()

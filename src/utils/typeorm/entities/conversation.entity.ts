@@ -26,7 +26,7 @@ export class Conversation {
   recipient: Relation<User>;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: number;
+  createdAt: Date;
 
   @OneToOne(() => ConversationMessage, { createForeignKeyConstraints: false })
   @JoinColumn()

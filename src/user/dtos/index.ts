@@ -17,5 +17,5 @@ export class UserResponseDto {
 
   @Expose()
   @ApiProperty({ example: '2025-05-12T18:22:00.186Z' })
-  createdAt: Date;
+  createdAt: string;
 }

@@ -1,4 +1,4 @@
-import { UserResponseDto } from 'src/user/dtos';
+import { User } from '../typeorm';
 
 export type TRegisterParams = TLoginParams & {
   username: string;
@@ -14,6 +14,6 @@ export type TLoginResponse = TRefreshTokenResponse & {
 };
 
 export type TRefreshTokenResponse = {
-  user: UserResponseDto;
+  user: User;
   accessToken: string;
 };

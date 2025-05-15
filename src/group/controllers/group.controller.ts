@@ -25,6 +25,8 @@ import { User } from 'src/utils/typeorm';
 import { GroupAddUserDto } from '../dtos/group-add-user.dto';
 import { GroupCreateDto } from '../dtos/group-create.dto';
 import { GroupEditDto } from '../dtos/group-edit.dto';
+import { GroupResDto } from '../dtos';
+import { plainToInstance } from 'class-transformer';
 
 @ApiBearerAuth()
 @ApiTags(Routes.GROUP)
@@ -38,27 +40,33 @@ export class GroupController {
 
   @Post()
   @ApiGroupCreateDoc()
-  async createGroup(@AuthUser() owner: User, @Body() groupDto: GroupCreateDto) {
+  async createGroup(
+    @AuthUser() owner: User,
+    @Body() groupDto: GroupCreateDto,
+  ): Promise<GroupResDto> {
     const params = { ...groupDto, owner };
 
     const newGroup = await this._groupService.createGroup(params);
 
     this._eventEmitter.emit(ServerGroupEvent.GROUP_CREATE, newGroup);
 
-    return newGroup;
+    return plainToInstance(GroupResDto, newGroup);
   }
 
   @Get()
   @ApiGroupsGetDoc()
-  async getGroup(@AuthUser() user: User) {
-    return await this._groupService.getGroups(user.id);
+  async getGroup(@AuthUser() user: User): Promise<GroupResDto[]> {
+    const res = await this._groupService.getGroups(user.id);
+    return plainToInstance(GroupResDto, res);
   }
 
   // api/group/:id
   @Get(':id')
   @ApiGetGroupByIdDoc()
-  async findGrouById(@Param('id') id: string) {
-    return await this._groupService.findGroupById(id);
+  async findGrouById(@Param('id') id: string): Promise<GroupResDto> {
+    const res = await this._groupService.findGroupById(id);
+
+    return plainToInstance(GroupResDto, res);
   }
 
   // api/group/:id
@@ -68,14 +76,15 @@ export class GroupController {
     @AuthUser() { id: ownerId }: User,
     @Param('id') id: string,
     @Body() { title }: GroupEditDto,
-  ) {
+  ): Promise<GroupResDto> {
     const newGroup = await this._groupService.editGrouById({
       id,
       title,
       ownerId,
     });
     this._eventEmitter.emit(ServerGroupEvent.GROUP_UPDATE, newGroup);
-    return newGroup;
+
+    return plainToInstance(GroupResDto, newGroup);
   }
 
   // api/group/:id/owner
@@ -85,12 +94,13 @@ export class GroupController {
     @AuthUser() { id: ownerId }: User,
     @Param('id') id: string,
     @Body() { newOwnerId }: GroupAddUserDto,
-  ) {
+  ): Promise<GroupResDto> {
     const params = { ownerId, id, newOwnerId };
 
     const newGroup = await this._groupService.updateOwnerGroup(params);
     this._eventEmitter.emit(ServerGroupEvent.GROUP_OWNER_UPDATE, newGroup);
-    return newGroup;
+
+    return plainToInstance(GroupResDto, newGroup);
   }
 
   // api/groups/:id/leave
@@ -99,13 +109,14 @@ export class GroupController {
   async leaveGroupById(
     @AuthUser() { id: userId }: User,
     @Param('id') id: string,
-  ) {
+  ): Promise<GroupResDto> {
     const params = { id, userId };
     const group = await this._groupService.userLeaveGroup(params);
     this._eventEmitter.emit(ServerGroupEvent.GROUP_USER_LEAVE, {
       group,
       userId,
     });
-    return group;
+
+    return plainToInstance(GroupResDto, group);
   }
 }

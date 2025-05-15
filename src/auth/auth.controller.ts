@@ -25,6 +25,8 @@ import {
   UserRefreshTokenResponseDto,
   UserRegisterDto,
 } from './dtos';
+import { plainToInstance } from 'class-transformer';
+import { UserResponseDto } from 'src/user/dtos';
 
 @ApiTags(Routes.AUTH)
 @Controller(Routes.AUTH)
@@ -58,8 +60,11 @@ export class AuthController {
       sameSite: 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     });
+    const userDto = plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
 
-    return { accessToken, user };
+    return { accessToken, user: userDto };
   }
 
   @Post('refresh-token')
@@ -72,7 +77,11 @@ export class AuthController {
     const { user, accessToken } =
       await this._authService.refreshToken(refresh_token);
 
-    return { accessToken, user };
+    const userDto = plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
+
+    return { accessToken, user: userDto };
   }
 
   @Post('logout')

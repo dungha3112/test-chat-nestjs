@@ -8,6 +8,8 @@ import {
 import { NextFunction, Request, Response } from 'express';
 import { Services } from '../constants';
 import { ICustomJwtService, IUserService } from '../interfaces';
+import { plainToInstance } from 'class-transformer';
+import { UserResponseDto } from 'src/user/dtos';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
@@ -39,11 +41,11 @@ export class AuthMiddleware implements NestMiddleware {
       if (!user || !user.refreshToken)
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
 
-      // const userDto = plainToInstance(UserResponseDto, user, {
-      //   excludeExtraneousValues: true,
-      // });
+      const userDto = plainToInstance(UserResponseDto, user, {
+        excludeExtraneousValues: true,
+      });
 
-      request['user'] = user;
+      request['user'] = userDto;
       next();
     } catch (error) {
       console.log('AuthMiddleware error ...');

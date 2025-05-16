@@ -1,13 +1,23 @@
-import { Friend } from '../typeorm';
-import { TCreateFriendParams } from '../types';
+import { FriendRequest } from '../typeorm';
+import {
+  TCreateFriendRequestParams,
+  TFriendRequestAcceptedRes,
+  TFriendRequestParams,
+} from '../types';
 
 export interface IFriendRequestService {
-  create(params: TCreateFriendParams): Promise<Friend>;
+  create(params: TCreateFriendRequestParams): Promise<FriendRequest>;
+  acceptById(params: TFriendRequestParams): Promise<TFriendRequestAcceptedRes>;
+  rejectById(params: TFriendRequestParams): Promise<FriendRequest>;
+
+  deleteById(params: TFriendRequestParams): Promise<FriendRequest>;
+
+  findfRequestById(id: string): Promise<FriendRequest | undefined>;
 
   findOneRequest(
     senderId: string,
     receiverId: string,
-  ): Promise<Friend | undefined>;
+  ): Promise<FriendRequest | undefined>;
 
-  saveFriendRequest(friend: Friend): Promise<Friend>;
+  saveFriendRequest(friend: FriendRequest): Promise<FriendRequest>;
 }

@@ -7,3 +7,5 @@ export * from './group.interface';
 export * from './user.interface';
 export * from './conversation.interface';
 export * from './conversation-message.interface';
+export * from './friend.interface';
+export * from './friend-request.interface';

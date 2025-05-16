@@ -1,5 +1,6 @@
 import { ConversationMessage } from './conversation-message.entity';
 import { Conversation } from './conversation.entity';
+import { FriendRequest } from './friend-request.entity';
 import { Friend } from './friend.entity';
 import { GroupMessage } from './group-message.entity';
 import { Group } from './group.entity';
@@ -12,6 +13,7 @@ const entities = [
   Conversation,
   ConversationMessage,
   Friend,
+  FriendRequest,
 ];
 
 export default entities;

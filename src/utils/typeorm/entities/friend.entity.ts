@@ -1,6 +1,7 @@
 import {
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -9,6 +10,7 @@ import {
 import { User } from './user.entity';
 
 @Entity({ name: 'friends' })
+@Index(['sender.id', 'receiver.id'], { unique: true })
 export class Friend {
   @PrimaryGeneratedColumn('uuid')
   id: string;

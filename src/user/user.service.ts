@@ -51,16 +51,17 @@ export class UserService implements IUserService {
     return newUser;
   }
 
-  async findOneSesstion(userId: string, jit: string): Promise<Sessions> {
+  async findOneSesstion(
+    userId: string,
+    refresh_token: string,
+  ): Promise<Sessions> {
     const session = await this._sessionRepository.findOne({
-      where: { userId, jit },
+      where: { userId, refresh_token },
     });
-
-    console.log(session);
 
     if (!session)
       throw new HttpException(
-        'User loggout with this device',
+        'User logged out from this device',
         HttpStatus.UNAUTHORIZED,
       );
 

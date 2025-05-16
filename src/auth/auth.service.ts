@@ -71,22 +71,18 @@ export class AuthService implements IAuthService {
   async loginUser(user: User, req: Request): Promise<TLoginTokenResponse> {
     const userId = user.id;
 
-    const jitAccess = uuidv4();
-    const accessToken = await this._customJwtService.generateAccessToken(
-      userId,
-      jitAccess,
-    );
+    const accessToken =
+      await this._customJwtService.generateAccessToken(userId);
 
-    const jitRefresh = uuidv4();
-    const refreshToken = await this._customJwtService.generateRefreshToken(
-      userId,
-      jitRefresh,
-    );
+    const refreshToken = `${uuidv4()}-${uuidv4()}`;
+
+    const expiresIn = new Date();
+    expiresIn.setDate(expiresIn.getDate() + 7);
 
     const newSession = this._sessionRepository.create({
       userId,
       refresh_token: refreshToken,
-      jit: jitRefresh,
+      expiresAt: expiresIn,
       // deviceName: req.headers['user-agent'],
       // deviceId: req.ip,
     });
@@ -97,29 +93,51 @@ export class AuthService implements IAuthService {
   }
 
   async refreshToken(refreshToken: string): Promise<TRefreshTokenResponse> {
-    const { userId, jit } =
-      await this._customJwtService.verifyRefreshToken(refreshToken);
+    if (!refreshToken)
+      throw new HttpException(
+        'No refresh token in body',
+        HttpStatus.BAD_REQUEST,
+      );
 
-    const sessionExists = await this._userService.findOneSesstion(userId, jit);
+    const sessionExists = await this._sessionRepository.findOne({
+      where: { refresh_token: refreshToken },
+    });
+    if (!sessionExists)
+      throw new HttpException(
+        'User logged out from this device',
+        HttpStatus.UNAUTHORIZED,
+      );
+
+    if (!sessionExists || sessionExists.expiresAt < new Date()) {
+      throw new HttpException(
+        'Invalid or expired refresh token',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
 
     const user = await this._userService.findOne({
       options: { selectAll: false },
-      params: { id: userId },
+      params: { id: sessionExists.userId },
     });
 
     const accessToken = await this._customJwtService.generateAccessToken(
-      userId,
-      jit,
+      sessionExists.userId,
     );
 
     return { accessToken, user };
   }
 
   async logoutUser(userId: string, refreshToken: string): Promise<string> {
+    const sessionExists = await this._userService.findOneSesstion(
+      userId,
+      refreshToken,
+    );
+
     await this._sessionRepository.delete({
       userId,
       refresh_token: refreshToken,
     });
+
     return 'Logout successful';
   }
 

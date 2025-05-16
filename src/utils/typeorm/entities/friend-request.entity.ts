@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -11,6 +12,7 @@ import { User } from './user.entity';
 import { TFriendRequestStatusType } from 'src/utils/types';
 
 @Entity({ name: 'friend_requests' })
+@Index(['sender.id', 'receiver.id'], { unique: true })
 export class FriendRequest {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -6,3 +6,4 @@ export * from './entities/conversation-message.entity';
 export * from './entities/friend.entity';
 export * from './entities/friend-request.entity';
 export * from './entities/session.entity';
+export * from './entities/otp.entity';

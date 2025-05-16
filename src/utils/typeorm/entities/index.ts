@@ -4,6 +4,7 @@ import { FriendRequest } from './friend-request.entity';
 import { Friend } from './friend.entity';
 import { GroupMessage } from './group-message.entity';
 import { Group } from './group.entity';
+import { Otps } from './otp.entity';
 import { Sessions } from './session.entity';
 import { User } from './user.entity';
 
@@ -16,6 +17,7 @@ const entities = [
   ConversationMessage,
   Friend,
   FriendRequest,
+  Otps,
 ];
 
 export default entities;

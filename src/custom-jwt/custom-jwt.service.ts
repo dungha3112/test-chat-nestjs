@@ -7,20 +7,9 @@ import { TJwtPayload } from 'src/utils/types';
 export class CustomJwtService implements ICustomJwtService {
   constructor(private readonly _jwtService: JwtService) {}
 
-  async generateAccessToken(userId: string, jit: string): Promise<string> {
-    const accessToken = await this._jwtService.signAsync({ userId, jit });
+  async generateAccessToken(userId: string): Promise<string> {
+    const accessToken = await this._jwtService.signAsync({ userId });
     return accessToken;
-  }
-
-  async generateRefreshToken(userId: string, jit: string): Promise<string> {
-    const refreshToken = await this._jwtService.signAsync(
-      { userId, jit },
-      {
-        secret: process.env.REFRESH_TOKEN_SECRET,
-        expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
-      },
-    );
-    return refreshToken;
   }
 
   async verifyAccessToken(token: string): Promise<TJwtPayload> {
@@ -31,11 +20,22 @@ export class CustomJwtService implements ICustomJwtService {
     return payload;
   }
 
-  async verifyRefreshToken(token: string): Promise<TJwtPayload> {
-    const payload = await this._jwtService.verifyAsync(token, {
-      secret: process.env.REFRESH_TOKEN_SECRET,
-    });
+  //   async generateRefreshToken(userId: string, jit: string): Promise<string> {
+  //   const refreshToken = await this._jwtService.signAsync(
+  //     { userId, jit },
+  //     {
+  //       secret: process.env.REFRESH_TOKEN_SECRET,
+  //       expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
+  //     },
+  //   );
+  //   return refreshToken;
+  // }
 
-    return payload;
-  }
+  // async verifyRefreshToken(token: string): Promise<TJwtPayload> {
+  //   const payload = await this._jwtService.verifyAsync(token, {
+  //     secret: process.env.REFRESH_TOKEN_SECRET,
+  //   });
+
+  //   return payload;
+  // }
 }

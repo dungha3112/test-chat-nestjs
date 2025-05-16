@@ -8,5 +8,5 @@ export interface IUserService {
 
   saveUser(params: User): Promise<User>;
 
-  findOneSesstion(userId: string, jit: string): Promise<Sessions>;
+  findOneSesstion(userId: string, refresh_token: string): Promise<Sessions>;
 }

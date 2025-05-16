@@ -23,8 +23,6 @@ export class AuthMiddleware implements NestMiddleware {
   async use(request: Request, res: Response, next: NextFunction) {
     const accessToken = this._extractTokenFromHeader(request);
 
-    console.log(accessToken);
-
     if (!accessToken) {
       throw new HttpException(
         'Missing or invalid Authorization header',
@@ -35,12 +33,6 @@ export class AuthMiddleware implements NestMiddleware {
     try {
       const { userId, jit } =
         await this._customJwtService.verifyAccessToken(accessToken);
-      const sessionExists = await this._userService.findOneSesstion(
-        userId,
-        jit,
-      );
-
-      console.log(sessionExists);
 
       const user = await this._userService.findOne({
         options: { selectAll: true },

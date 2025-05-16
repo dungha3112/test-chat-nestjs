@@ -45,10 +45,7 @@ export class AuthController {
   @Post('login')
   @UseGuards(LocalAuthGuard)
   @ApiLoginDoc()
-  async loginUser(
-    @Req() request: AuthenticatedRequest,
-    @Res({ passthrough: true }) response: Response,
-  ) {
+  async loginUser(@Req() request: AuthenticatedRequest) {
     const user = request.user;
 
     const { accessToken, refreshToken } = await this._authService.loginUser(
@@ -56,26 +53,7 @@ export class AuthController {
       request,
     );
 
-    // const isMobile = request.headers['user-agent']?.includes('MyMobileApp');
-    const isMobile = request.headers['x-client-type'] === 'mobile';
-
-    //    headers: {
-    //   'Content-Type': 'application/json',
-    //   'X-Client-Type': 'mobile',
-    // },
-
-    if (isMobile) {
-      return { accessToken, refreshToken, user: request.user };
-    } else {
-      response.cookie('refresh_token', refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-      });
-
-      return { accessToken, user: request.user };
-    }
+    return { accessToken, user: request.user, refreshToken };
   }
 
   @Post('refresh-token')
@@ -84,16 +62,8 @@ export class AuthController {
     @Req() request: Request,
     @Body() { refreshToken }: RefreshTokenDto,
   ): Promise<UserRefreshTokenResponseDto> {
-    let refresh_token: string;
-
-    if (request.headers['x-client-type'] === 'mobile') {
-      refresh_token = refreshToken;
-    } else {
-      refresh_token = request.cookies['refresh_token'];
-    }
-
     const { user, accessToken } =
-      await this._authService.refreshToken(refresh_token);
+      await this._authService.refreshToken(refreshToken);
 
     const userDto = plainToInstance(UserResponseDto, user, {
       excludeExtraneousValues: true,
@@ -110,18 +80,10 @@ export class AuthController {
     @Body() { refreshToken }: RefreshTokenDto,
     @Res() response: Response,
   ) {
-    let refresh_token: string;
-
-    if (request.headers['x-client-type'] === 'mobile') {
-      refresh_token = refreshToken;
-    } else {
-      refresh_token = request.cookies['refresh_token'];
-    }
-
     try {
       const message = await this._authService.logoutUser(
         request.user.id,
-        refresh_token,
+        refreshToken,
       );
 
       response.clearCookie('refresh_token');

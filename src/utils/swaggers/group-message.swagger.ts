@@ -42,7 +42,7 @@ export function ApiGroupMessagesGetDoc() {
       name: 'limit',
       required: false,
       type: Number,
-      description: 'Messages per page',
+      description: 'limit number',
     }),
     ApiResponse({
       status: 200,

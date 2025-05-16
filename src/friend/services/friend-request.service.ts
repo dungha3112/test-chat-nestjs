@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Services } from 'src/utils/constants';
 import { IFriendService, IUserService } from 'src/utils/interfaces';
@@ -22,7 +28,8 @@ export class FriendReuestService implements IFriendRequestService {
     @InjectRepository(FriendRequest)
     private readonly _friendRequestRepository: Repository<FriendRequest>,
 
-    @Inject(Services.FRIEND) private readonly _friendService: IFriendService,
+    @Inject(forwardRef(() => Services.FRIEND))
+    private readonly _friendService: IFriendService,
   ) {}
 
   async getRequests(

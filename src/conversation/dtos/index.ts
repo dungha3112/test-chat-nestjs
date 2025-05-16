@@ -67,6 +67,7 @@ export class GetMessagesConversationResponseDto {
     description: 'Total message',
   })
   total: number;
+
   @Expose()
   @ApiProperty({
     type: Number,

@@ -1,13 +1,8 @@
-import { TFriendRequestStatusType } from 'src/utils/types';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { UserResponseDto } from 'src/user/dtos';
-import { FriendResDto } from '../friends';
 
-export * from './friend-request.dto';
-
-//FriendRequestResDto
-export class FriendRequestResDto {
+export class FriendResDto {
   @Expose()
   @ApiProperty({ example: '197b7874-c1f4-455c-bb20-80886ccf26c2' })
   id: string;
@@ -23,14 +18,9 @@ export class FriendRequestResDto {
   @Expose()
   @ApiProperty({ type: UserResponseDto })
   receiver: UserResponseDto;
-
-  @Expose()
-  @ApiProperty({ type: String })
-  status: TFriendRequestStatusType;
 }
 
-//GetFriendsRequestResDto
-export class GetFriendsRequestResDto {
+export class GetFriendsResDto {
   @Expose()
   @ApiProperty({
     type: Number,
@@ -69,14 +59,8 @@ export class GetFriendsRequestResDto {
 
   @Expose()
   @ApiProperty({
-    type: [FriendRequestResDto],
+    type: [FriendResDto],
     description: 'list friends',
   })
-  friendsRequest: FriendRequestResDto[];
-}
-
-// AcceptRequestDto
-export class AcceptRequestDto {
-  friend: FriendResDto;
-  friendRequest: FriendRequestResDto;
+  friends: FriendResDto[];
 }

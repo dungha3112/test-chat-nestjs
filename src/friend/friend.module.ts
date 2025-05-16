@@ -2,7 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from 'src/user/user.module';
 import { Services } from 'src/utils/constants';
-import { Friend } from 'src/utils/typeorm';
+import { Friend, FriendRequest } from 'src/utils/typeorm';
 import { FriendRequestController } from './controllers/friend-request.controller';
 import { FriendController } from './controllers/friend.controller';
 import { FriendReuestService } from './services/friend-request.service';
@@ -11,7 +11,11 @@ import { CustomJwtModule } from 'src/custom-jwt/custom-jwt.module';
 import { FriendService } from './services/friend.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Friend]), UserModule, CustomJwtModule],
+  imports: [
+    TypeOrmModule.forFeature([Friend, FriendRequest]),
+    UserModule,
+    CustomJwtModule,
+  ],
   controllers: [FriendController, FriendRequestController],
   providers: [
     { provide: Services.FRIEND_REQUEST, useClass: FriendReuestService },

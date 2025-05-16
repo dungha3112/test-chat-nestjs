@@ -8,11 +8,19 @@ import {
   ParseIntPipe,
   Query,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Routes, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IFriendService } from 'src/utils/interfaces';
+import {
+  ApiDeleteFriendDoc,
+  ApiGetFriendsDoc,
+  ApiSearchFriendsDoc,
+} from 'src/utils/swaggers';
 import { User } from 'src/utils/typeorm';
 
+@ApiBearerAuth()
+@ApiTags(Routes.FRIEND)
 @Controller(Routes.FRIEND)
 export class FriendController {
   constructor(
@@ -20,6 +28,7 @@ export class FriendController {
   ) {}
 
   @Get()
+  @ApiGetFriendsDoc()
   async getFriends(
     @AuthUser() { id: userId }: User,
 
@@ -31,11 +40,13 @@ export class FriendController {
   }
 
   @Get('search')
+  @ApiSearchFriendsDoc()
   async searchFriend(@Query('query') query: string) {
     return await this._friendService.searchFriend(query);
   }
 
   @Delete(':id/delete')
+  @ApiDeleteFriendDoc()
   async deleteFriend(
     @AuthUser() { id: userId }: User,
     @Param('id') id: string,

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { AppGateway } from 'src/gateway/gateway';
-import { ServerGroupRecipientEvent } from 'src/utils/constants';
+import { GroupRecipientEvents } from 'src/utils/constants';
 import {
   TAddRecipientToGroupResponse,
   TRemoveRecipientToGroupResponse,
@@ -11,7 +11,7 @@ import {
 export class GroupRecipientEvent {
   constructor(private readonly _appGateway: AppGateway) {}
 
-  @OnEvent(ServerGroupRecipientEvent.GROUP_USER_ADD)
+  @OnEvent(GroupRecipientEvents.GROUP_USER_ADD)
   async handleGroupUserAdd(payload: TAddRecipientToGroupResponse) {
     const { group, recipient } = payload;
 
@@ -51,7 +51,7 @@ export class GroupRecipientEvent {
     if (recipientSocket) recipientSocket.emit('onGroupUserAdd', group);
   }
 
-  @OnEvent(ServerGroupRecipientEvent.GROUP_USER_REMOVE)
+  @OnEvent(GroupRecipientEvents.GROUP_USER_REMOVE)
   async handleGroupUserRemove(payload: TRemoveRecipientToGroupResponse) {
     const { group, recipient } = payload;
     const recipientSocket = this._appGateway._sessions.getUserSocket(

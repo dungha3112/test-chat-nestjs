@@ -182,9 +182,9 @@ export class FriendReuestService implements IFriendRequestService {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (request.receiver.id !== userId)
+    if (request.sender.id !== userId)
       throw new HttpException(
-        'Can not deleted friends request from myself',
+        'Can not deleted friends request or You not sender request',
         HttpStatus.BAD_REQUEST,
       );
     await this._friendRequestRepository.delete({ id });
@@ -194,6 +194,7 @@ export class FriendReuestService implements IFriendRequestService {
   async findfRequestById(id: string): Promise<FriendRequest | undefined> {
     const request = await this._friendRequestRepository.findOne({
       where: { id },
+      relations: ['sender', 'receiver'],
     });
     if (!request)
       throw new HttpException('Friend request not found', HttpStatus.NOT_FOUND);

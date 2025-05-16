@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Routes, ServerGroupEvent, Services } from 'src/utils/constants';
+import { Routes, GroupEvents, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IGroupService } from 'src/utils/interfaces';
 import {
@@ -43,7 +43,7 @@ export class GroupController {
 
     const newGroup = await this._groupService.createGroup(params);
 
-    this._eventEmitter.emit(ServerGroupEvent.GROUP_CREATE, newGroup);
+    this._eventEmitter.emit(GroupEvents.GROUP_CREATE, newGroup);
 
     return newGroup;
   }
@@ -77,7 +77,7 @@ export class GroupController {
       title,
       ownerId,
     });
-    this._eventEmitter.emit(ServerGroupEvent.GROUP_UPDATE, newGroup);
+    this._eventEmitter.emit(GroupEvents.GROUP_UPDATE, newGroup);
 
     return newGroup;
   }
@@ -93,7 +93,7 @@ export class GroupController {
     const params = { ownerId, id, newOwnerId };
 
     const newGroup = await this._groupService.updateOwnerGroup(params);
-    this._eventEmitter.emit(ServerGroupEvent.GROUP_OWNER_UPDATE, newGroup);
+    this._eventEmitter.emit(GroupEvents.GROUP_OWNER_UPDATE, newGroup);
 
     return newGroup;
   }
@@ -107,7 +107,7 @@ export class GroupController {
   ) {
     const params = { id, userId };
     const group = await this._groupService.userLeaveGroup(params);
-    this._eventEmitter.emit(ServerGroupEvent.GROUP_USER_LEAVE, {
+    this._eventEmitter.emit(GroupEvents.GROUP_USER_LEAVE, {
       group,
       userId,
     });

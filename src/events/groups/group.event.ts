@@ -5,7 +5,7 @@ import {
   MessageBody,
   SubscribeMessage,
 } from '@nestjs/websockets';
-import { ServerGroupEvent } from 'src/utils/constants';
+import { GroupEvents } from 'src/utils/constants';
 import { AuthenticatedSocket } from 'src/utils/interfaces';
 import { Group } from 'src/utils/typeorm';
 import { AppGateway } from './../../gateway/gateway';
@@ -15,7 +15,7 @@ export class GroupEvent {
   constructor(private readonly _appGateway: AppGateway) {}
 
   //GROUP_CREATE
-  @OnEvent(ServerGroupEvent.GROUP_CREATE)
+  @OnEvent(GroupEvents.GROUP_CREATE)
   async handleNewGroupCreate(payload: Group) {
     const onwerId = payload.owner.id;
     const socketIds: string[] = [];
@@ -58,8 +58,8 @@ export class GroupEvent {
     client.to(`group-${id}`).emit('userGroupLeave');
   }
 
-  //ServerGroupEvent.GROUP_OWNER_UPDATE
-  @OnEvent(ServerGroupEvent.GROUP_OWNER_UPDATE)
+  //GroupEvents.GROUP_OWNER_UPDATE
+  @OnEvent(GroupEvents.GROUP_OWNER_UPDATE)
   async handleUpdateOwnerGroup(payload: Group) {
     // const onwerId = payload.owner.id;
     // const socketIds: string[] = [];
@@ -83,8 +83,8 @@ export class GroupEvent {
     this._appGateway.server.to(room).emit('onGroupUpdateOwner', payload);
   }
 
-  // ServerGroupEvent.GROUP_UPDATE
-  @OnEvent(ServerGroupEvent.GROUP_UPDATE)
+  // GroupEvents.GROUP_UPDATE
+  @OnEvent(GroupEvents.GROUP_UPDATE)
   async handleUpdateGroup(payload: Group) {
     //    const onwerId = payload.owner.id;
     // const socketIds: string[] = [];
@@ -105,8 +105,8 @@ export class GroupEvent {
     this._appGateway.server.to(room).emit('onGroupUpdate', payload);
   }
 
-  //ServerGroupEvent.GROUP_USER_LEAVE
-  @OnEvent(ServerGroupEvent.GROUP_USER_LEAVE)
+  //GroupEvents.GROUP_USER_LEAVE
+  @OnEvent(GroupEvents.GROUP_USER_LEAVE)
   async handleUserLeaveGroup({
     group,
     userId,

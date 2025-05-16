@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Services } from 'src/utils/constants';
 import { IFriendRequestService, IFriendService } from 'src/utils/interfaces';
-import { Friend } from 'src/utils/typeorm';
+import { Friend, FriendRequest } from 'src/utils/typeorm';
 import {
   TCreateFriendParams,
   TFriendParams,
@@ -17,6 +17,9 @@ export class FriendService implements IFriendService {
   constructor(
     @InjectRepository(Friend)
     private readonly _friendRepository: Repository<Friend>,
+
+    @InjectRepository(FriendRequest)
+    private readonly _friendRequestRepository: Repository<FriendRequest>,
 
     @Inject(Services.FRIEND_REQUEST)
     private readonly _friendRequestService: IFriendRequestService,
@@ -59,11 +62,20 @@ export class FriendService implements IFriendService {
         HttpStatus.NOT_FOUND,
       );
 
-    const paramsDeleteteRequest = {
-      id: request.id,
-      userId: request.receiver.id,
-    };
-    await this._friendRequestService.deleteById(paramsDeleteteRequest);
+    const senderId = friend.sender.id;
+    const receiverId = friend.receiver.id;
+
+    const friendRequest = await this._friendRequestRepository.findOne({
+      where: [
+        { sender: { id: senderId }, receiver: { id: receiverId } },
+        { sender: { id: receiverId }, receiver: { id: senderId } },
+      ],
+      relations: ['sender', 'receiver'],
+    });
+
+    if (!friendRequest)
+      throw new HttpException('Friend request not found', HttpStatus.NOT_FOUND);
+    await this._friendRequestRepository.delete({ id: friendRequest.id });
 
     const deleted = await this._friendRepository.delete({ id: params.id });
 
@@ -129,14 +141,13 @@ export class FriendService implements IFriendService {
       throw new HttpException('Provide a valid query', HttpStatus.BAD_REQUEST);
 
     const statement =
-      '(sender.username LIKE :query OR sender.email LIKE :query OR receiver.username LIKE :query OR receiver.email LIKE :query';
+      '(sender.username LIKE :query OR sender.email LIKE :query OR receiver.username LIKE :query OR receiver.email LIKE :query)';
 
     return await this._friendRepository
       .createQueryBuilder('friend')
       .leftJoinAndSelect('friend.sender', 'sender')
-      .leftJoinAndSelect('receiver.sender', 'sender')
+      .leftJoinAndSelect('friend.receiver', 'receiver')
       .where(statement, { query: `%${query}%` })
-      .limit(10)
       .addSelect([
         'sender.email',
         'sender.username',
@@ -145,6 +156,7 @@ export class FriendService implements IFriendService {
         'receiver.username',
         'receiver.id',
       ])
+      .limit(10)
       .getMany();
   }
 

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { AppGateway } from 'src/gateway/gateway';
-import { ServerGroupMessageEvent, Services } from 'src/utils/constants';
+import { GroupMessageEvents, Services } from 'src/utils/constants';
 import { IGroupService } from 'src/utils/interfaces';
 import { TMessageGroupPayload } from 'src/utils/types';
 
@@ -13,7 +13,7 @@ export class GroupMessageEvent {
     @Inject(Services.GROUP) private readonly _groupService: IGroupService,
   ) {}
 
-  @OnEvent(ServerGroupMessageEvent.GROUP_MESSAGE_CREATE)
+  @OnEvent(GroupMessageEvents.GROUP_MESSAGE_CREATE)
   async handleGroupMessageCreateEvent(payload: TMessageGroupPayload) {
     const group = await this._groupService.findGroupById(payload.groupId);
     if (!group) return;
@@ -43,7 +43,7 @@ export class GroupMessageEvent {
     });
   }
 
-  @OnEvent(ServerGroupMessageEvent.GROUP_MESSAGE_EDIT)
+  @OnEvent(GroupMessageEvents.GROUP_MESSAGE_EDIT)
   async handleGroupMessageEditEvent(payload: TMessageGroupPayload) {
     const group = await this._groupService.findGroupById(payload.groupId);
     if (!group) return;
@@ -72,7 +72,7 @@ export class GroupMessageEvent {
       .emit('onGroupMessageEdit', { group, message: payload.message });
   }
 
-  @OnEvent(ServerGroupMessageEvent.GROUP_MESSAGE_DELETE)
+  @OnEvent(GroupMessageEvents.GROUP_MESSAGE_DELETE)
   async handleGroupMessageDeleteEvent(payload: TMessageGroupPayload) {
     const group = await this._groupService.findGroupById(payload.groupId);
     if (!group) return;

@@ -13,11 +13,7 @@ import {
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import {
-  Routes,
-  ServerConverMessageEvent,
-  Services,
-} from 'src/utils/constants';
+import { Routes, ConverMessageEvents, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IConversationMessageService } from 'src/utils/interfaces';
 import {
@@ -56,10 +52,7 @@ export class ConversationMessageController {
       conversationId: id,
       message: res.message,
     };
-    this._eventEmitter.emit(
-      ServerConverMessageEvent.CONVER_MESSAGE_CREATE,
-      payload,
-    );
+    this._eventEmitter.emit(ConverMessageEvents.CONVER_MESSAGE_CREATE, payload);
 
     return res;
   }
@@ -91,10 +84,7 @@ export class ConversationMessageController {
     const message = await this._converMessageService.editMessage(params);
 
     const payload: TMessageConverPayload = { conversationId: id, message };
-    this._eventEmitter.emit(
-      ServerConverMessageEvent.CONVER_MESSAGE_EDIT,
-      payload,
-    );
+    this._eventEmitter.emit(ConverMessageEvents.CONVER_MESSAGE_EDIT, payload);
 
     return { conversationId: id, message: message };
   }
@@ -116,10 +106,7 @@ export class ConversationMessageController {
       conversationId: id,
       message: message,
     };
-    this._eventEmitter.emit(
-      ServerConverMessageEvent.CONVER_MESSAGE_DELETE,
-      payload,
-    );
+    this._eventEmitter.emit(ConverMessageEvents.CONVER_MESSAGE_DELETE, payload);
 
     return { conversationId: id, message };
   }

@@ -7,6 +7,7 @@ import { ConversationMessageEvent } from './conversations/conversation-message.e
 import { ConversationModule } from 'src/conversation/conversation.module';
 import { GroupMessageEvent } from './groups/group-message.event';
 import { GroupModule } from 'src/group/group.module';
+import { FriendRequestEvent } from './friends/friend-request.event';
 
 @Module({
   imports: [GateWayModule, ConversationModule, GroupModule],
@@ -16,6 +17,8 @@ import { GroupModule } from 'src/group/group.module';
     GroupRecipientEvent,
     ConversationEvent,
     ConversationMessageEvent,
+
+    FriendRequestEvent,
   ],
 })
 export class EventModule {}

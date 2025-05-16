@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { AppGateway } from 'src/gateway/gateway';
-import { ServerConverMessageEvent, Services } from 'src/utils/constants';
+import { ConverMessageEvents, Services } from 'src/utils/constants';
 import { IConversationService } from 'src/utils/interfaces';
 import { TMessageConverPayload } from 'src/utils/types';
 
@@ -13,7 +13,7 @@ export class ConversationMessageEvent {
     private readonly _conversationService: IConversationService,
   ) {}
 
-  @OnEvent(ServerConverMessageEvent.CONVER_MESSAGE_CREATE)
+  @OnEvent(ConverMessageEvents.CONVER_MESSAGE_CREATE)
   async handleConverMessageCreateEvent(payload: TMessageConverPayload) {
     const { conversationId, message } = payload;
     const conversation =
@@ -28,7 +28,7 @@ export class ConversationMessageEvent {
       recipientSocket.emit('onConverMessageCreate', { conversation, message });
   }
 
-  @OnEvent(ServerConverMessageEvent.CONVER_MESSAGE_EDIT)
+  @OnEvent(ConverMessageEvents.CONVER_MESSAGE_EDIT)
   async handleConverMessageEditEvent(payload: TMessageConverPayload) {
     const { conversationId, message } = payload;
     const conversation =
@@ -43,7 +43,7 @@ export class ConversationMessageEvent {
       recipientSocket.emit(`onMessageEdit`, { conversation, message });
   }
 
-  @OnEvent(ServerConverMessageEvent.CONVER_MESSAGE_DELETE)
+  @OnEvent(ConverMessageEvents.CONVER_MESSAGE_DELETE)
   async handleConverMessageDeleteEvent(payload: TMessageConverPayload) {
     const { conversationId, message } = payload;
     const conversation =

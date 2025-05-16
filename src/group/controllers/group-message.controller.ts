@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Routes, ServerGroupMessageEvent, Services } from 'src/utils/constants';
+import { Routes, GroupMessageEvents, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IGroupMessageService } from 'src/utils/interfaces';
 import {
@@ -52,10 +52,7 @@ export class GroupMessageController {
       groupId: res.group.id,
       message: res.message,
     };
-    this._eventEmitter.emit(
-      ServerGroupMessageEvent.GROUP_MESSAGE_CREATE,
-      payload,
-    );
+    this._eventEmitter.emit(GroupMessageEvents.GROUP_MESSAGE_CREATE, payload);
     return res;
   }
 
@@ -86,10 +83,7 @@ export class GroupMessageController {
     const message = await this._groupMessageService.editMessage(params);
 
     const payload: TMessageGroupPayload = { groupId: id, message: message };
-    this._eventEmitter.emit(
-      ServerGroupMessageEvent.GROUP_MESSAGE_EDIT,
-      payload,
-    );
+    this._eventEmitter.emit(GroupMessageEvents.GROUP_MESSAGE_EDIT, payload);
 
     return { groupId: id, message };
   }
@@ -108,10 +102,7 @@ export class GroupMessageController {
       await this._groupMessageService.deleteMessageGroupById(params);
 
     const payload: TMessageGroupPayload = { groupId: id, message };
-    this._eventEmitter.emit(
-      ServerGroupMessageEvent.GROUP_MESSAGE_DELETE,
-      payload,
-    );
+    this._eventEmitter.emit(GroupMessageEvents.GROUP_MESSAGE_DELETE, payload);
 
     return { groupId: id, message };
   }

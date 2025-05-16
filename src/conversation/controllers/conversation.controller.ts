@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Routes, ServerConversationEvent, Services } from 'src/utils/constants';
+import { Routes, ConversationEvents, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IConversationService } from 'src/utils/interfaces';
 import {
@@ -35,7 +35,7 @@ export class ConversationController {
       await this._conversationService.createNewConversation(params);
 
     this._eventEmitter.emit(
-      ServerConversationEvent.CONVERSATION_CREATE,
+      ConversationEvents.CONVERSATION_CREATE,
       newConversation,
     );
 

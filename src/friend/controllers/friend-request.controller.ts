@@ -11,7 +11,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { Routes, Services } from 'src/utils/constants';
+import { FriendRequestEvents, Routes, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IFriendRequestService } from 'src/utils/interfaces/friend-request.interface';
 import { User } from 'src/utils/typeorm';
@@ -25,6 +25,7 @@ import {
   ApiGetFriendsRequestDoc,
   ApiRejectRequestDoc,
 } from 'src/utils/swaggers';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @ApiBearerAuth()
 @ApiTags(Routes.FRIEND_REQUEST)
@@ -33,6 +34,8 @@ export class FriendRequestController {
   constructor(
     @Inject(Services.FRIEND_REQUEST)
     private readonly _friendRequestService: IFriendRequestService,
+
+    private readonly _eventEmitter: EventEmitter2,
   ) {}
 
   @Get()
@@ -56,6 +59,11 @@ export class FriendRequestController {
     const params = { receiverId, sender };
     const newRequest = await this._friendRequestService.create(params);
 
+    this._eventEmitter.emit(
+      FriendRequestEvents.FRIEND_REQUEST_CREATE,
+      newRequest,
+    );
+
     return newRequest;
   }
 
@@ -67,6 +75,7 @@ export class FriendRequestController {
   ) {
     const params = { id, userId };
     const res = await this._friendRequestService.acceptById(params);
+    this._eventEmitter.emit(FriendRequestEvents.FRIEND_REQUEST_ACCEPT, res);
 
     return res;
   }
@@ -81,6 +90,7 @@ export class FriendRequestController {
     const params = { id, userId };
     const res = await this._friendRequestService.deleteById(params);
 
+    this._eventEmitter.emit(FriendRequestEvents.SENDER_DELETE_REQUEST, res);
     return res;
   }
 
@@ -93,6 +103,8 @@ export class FriendRequestController {
     const params = { id, userId };
 
     const res = await this._friendRequestService.rejectById(params);
+    this._eventEmitter.emit(FriendRequestEvents.RECEIVER_REJECT_REQUEST, res);
+
     return res;
   }
 }

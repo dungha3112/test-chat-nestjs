@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { AppGateway } from 'src/gateway/gateway';
-import { ServerConversationEvent } from 'src/utils/constants';
+import { ConversationEvents } from 'src/utils/constants';
 import { Conversation } from 'src/utils/typeorm';
 
 @Injectable()
 export class ConversationEvent {
   constructor(private readonly _appGateway: AppGateway) {}
 
-  @OnEvent(ServerConversationEvent.CONVERSATION_CREATE)
+  @OnEvent(ConversationEvents.CONVERSATION_CREATE)
   handleConversationCreateEvent(payload: Conversation) {
     const recipientSocket = this._appGateway._sessions.getUserSocket(
       payload.recipient.id,

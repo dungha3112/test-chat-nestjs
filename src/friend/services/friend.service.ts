@@ -3,8 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Services } from 'src/utils/constants';
 import { IFriendRequestService, IFriendService } from 'src/utils/interfaces';
 import { Friend } from 'src/utils/typeorm';
-import { TCreateFriendParams, TFriendParams } from 'src/utils/types';
-import { Repository } from 'typeorm';
+import {
+  TCreateFriendParams,
+  TFriendParams,
+  TGetFriendParams,
+  TGetFriendResponse,
+} from 'src/utils/types';
+import { Brackets, Repository } from 'typeorm';
 import { validate as isUUID } from 'uuid';
 
 @Injectable()
@@ -90,7 +95,39 @@ export class FriendService implements IFriendService {
     });
   }
 
+  async getFriends(params: TGetFriendParams): Promise<TGetFriendResponse> {
+    const { limit, userId, page } = params;
+    const [data, total] = await this._friendRepository
+      .createQueryBuilder('friend')
+      .leftJoinAndSelect('friend.sender', 'sender')
+      .leftJoinAndSelect('friend.receiver', 'receiver')
+
+      .where(
+        new Brackets((qb) => {
+          qb.where('sender.id = :userId', { userId }).orWhere(
+            'receiver.id = :userId',
+            { userId },
+          );
+        }),
+      )
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      userId,
+      friends: data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
   async searchFriend(query: string): Promise<Friend[]> {
+    if (!query)
+      throw new HttpException('Provide a valid query', HttpStatus.BAD_REQUEST);
+
     const statement =
       '(sender.username LIKE :query OR sender.email LIKE :query OR receiver.username LIKE :query OR receiver.email LIKE :query';
 

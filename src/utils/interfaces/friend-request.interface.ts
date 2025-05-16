@@ -3,12 +3,18 @@ import {
   TCreateFriendRequestParams,
   TFriendRequestAcceptedRes,
   TFriendRequestParams,
+  TGetFriendRequestParams,
+  TGetFriendsRequestResponse,
 } from '../types';
 
 export interface IFriendRequestService {
   create(params: TCreateFriendRequestParams): Promise<FriendRequest>;
   acceptById(params: TFriendRequestParams): Promise<TFriendRequestAcceptedRes>;
   rejectById(params: TFriendRequestParams): Promise<FriendRequest>;
+
+  getRequests(
+    params: TGetFriendRequestParams,
+  ): Promise<TGetFriendsRequestResponse>;
 
   deleteById(params: TFriendRequestParams): Promise<FriendRequest>;
 

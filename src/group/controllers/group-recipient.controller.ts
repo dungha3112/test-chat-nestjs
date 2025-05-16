@@ -15,8 +15,6 @@ import {
 import { User } from 'src/utils/typeorm';
 import { GroupRecipientAddUserDto } from '../dtos/recipients/group-recipient.add.dto';
 import { GroupRecipientRemoveUserDto } from '../dtos/recipients/group-recipient.remove.dto';
-import { AddUserToGroupResDto, RemoveUserToGroupResDto } from '../dtos';
-import { plainToInstance } from 'class-transformer';
 
 @ApiBearerAuth()
 @ApiTags(Routes.GROUPS_RECIPIENTS)
@@ -35,12 +33,12 @@ export class GroupRecipientController {
     @AuthUser() { id: ownerId }: User,
     @Param('id') id: string,
     @Body() { recipientId }: GroupRecipientAddUserDto,
-  ): Promise<AddUserToGroupResDto> {
+  ) {
     const params = { ownerId, id, recipientId };
 
     const res = await this._groupRecipientService.addRecipientToGroup(params);
     this._eventEmitter.emit(ServerGroupRecipientEvent.GROUP_USER_ADD, res);
-    return plainToInstance(AddUserToGroupResDto, res);
+    return res;
   }
 
   // api/group/:id/recipient
@@ -50,12 +48,12 @@ export class GroupRecipientController {
     @AuthUser() { id: ownerId }: User,
     @Param('id') id: string,
     @Body() { recipientId }: GroupRecipientRemoveUserDto,
-  ): Promise<RemoveUserToGroupResDto> {
+  ) {
     const params = { ownerId, id, recipientId };
     const res =
       await this._groupRecipientService.removeRecipientToGroup(params);
     this._eventEmitter.emit(ServerGroupRecipientEvent.GROUP_USER_REMOVE, res);
 
-    return plainToInstance(RemoveUserToGroupResDto, res);
+    return res;
   }
 }

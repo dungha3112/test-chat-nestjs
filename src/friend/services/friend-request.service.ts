@@ -7,8 +7,10 @@ import {
   TCreateFriendRequestParams,
   TFriendRequestAcceptedRes,
   TFriendRequestParams,
+  TGetFriendRequestParams,
+  TGetFriendsRequestResponse,
 } from 'src/utils/types';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { validate as isUUID } from 'uuid';
 import { IFriendRequestService } from './../../utils/interfaces/friend-request.interface';
 
@@ -22,6 +24,44 @@ export class FriendReuestService implements IFriendRequestService {
 
     @Inject(Services.FRIEND) private readonly _friendService: IFriendService,
   ) {}
+
+  async getRequests(
+    params: TGetFriendRequestParams,
+  ): Promise<TGetFriendsRequestResponse> {
+    const { userId, limit, page, status } = params;
+
+    const query = await this._friendRequestRepository
+      .createQueryBuilder('friendRequest')
+      .leftJoinAndSelect('friendRequest.sender', 'sender')
+      .leftJoinAndSelect('friendRequest.receiver', 'receiver')
+
+      .where(
+        new Brackets((qb) => {
+          qb.where('sender.id = :userId', { userId }).orWhere(
+            'receiver.id = :userId',
+            { userId },
+          );
+        }),
+      );
+
+    if (status) {
+      query.andWhere('friendRequest.status = :status', { status });
+    }
+
+    const [data, total] = await query
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      userId,
+      friendsRequest: data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
 
   async create(params: TCreateFriendRequestParams): Promise<FriendRequest> {
     const { receiverId, sender } = params;

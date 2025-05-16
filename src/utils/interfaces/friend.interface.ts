@@ -1,11 +1,18 @@
 import { Friend } from '../typeorm';
-import { TCreateFriendParams, TFriendParams } from '../types';
+import {
+  TCreateFriendParams,
+  TFriendParams,
+  TGetFriendParams,
+  TGetFriendResponse,
+} from '../types';
 
 export interface IFriendService {
-  createNewFriend(params: TCreateFriendParams): Promise<Friend>;
-  findById(id: string): Promise<Friend | null>;
   deleteFriendById(params: TFriendParams): Promise<Friend>;
   searchFriend(query: string): Promise<Friend[]>;
+  getFriends(params: TGetFriendParams): Promise<TGetFriendResponse>;
+
+  createNewFriend(params: TCreateFriendParams): Promise<Friend>;
+  findById(id: string): Promise<Friend | null>;
 
   isFriend(userId: string, receiverId: string): Promise<Friend | undefined>;
 

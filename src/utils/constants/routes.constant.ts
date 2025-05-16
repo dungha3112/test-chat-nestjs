@@ -9,5 +9,6 @@ export enum Routes {
   CONVERSATION = 'conversation',
   CONVERSATION_MESSAGE = 'conversation/:id/message',
 
+  FRIEND = 'friend',
   FRIEND_REQUEST = 'friend-request',
 }

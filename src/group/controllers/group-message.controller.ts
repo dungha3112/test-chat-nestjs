@@ -26,14 +26,6 @@ import { User } from 'src/utils/typeorm';
 import { TMessageGroupPayload } from 'src/utils/types';
 import { GroupMessageCreateDto } from '../dtos/messages/group-message-create.dto';
 import { GroupMessageEditDto } from '../dtos/messages/group-message-edit.dto';
-import {
-  CreateNewMessageGroupDto,
-  DeleteMessageGroupResDto,
-  GetMessagesGroupResponseDto,
-  MessageGroupResDto,
-  UpdateMessageGroupResDto,
-} from '../dtos';
-import { plainToInstance } from 'class-transformer';
 
 @ApiBearerAuth()
 @ApiTags(Routes.GROUP_MESSAGE)
@@ -51,7 +43,7 @@ export class GroupMessageController {
     @AuthUser() author: User,
     @Param('id') id: string,
     @Body() { content }: GroupMessageCreateDto,
-  ): Promise<CreateNewMessageGroupDto> {
+  ) {
     const params = { author, id, content };
 
     const res = await this._groupMessageService.createMessageGroup(params);
@@ -64,9 +56,7 @@ export class GroupMessageController {
       ServerGroupMessageEvent.GROUP_MESSAGE_CREATE,
       payload,
     );
-
-    const resDto = plainToInstance(CreateNewMessageGroupDto, res);
-    return resDto;
+    return res;
   }
 
   // api/group/:id/message
@@ -76,12 +66,11 @@ export class GroupMessageController {
     @Param('id') id: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-  ): Promise<GetMessagesGroupResponseDto> {
+  ) {
     const params = { id, page, limit };
     const res = await this._groupMessageService.getMessagesByGroupId(params);
 
-    const resDto = plainToInstance(GetMessagesGroupResponseDto, res);
-    return resDto;
+    return res;
   }
 
   // api/group/:id/message/:messageId
@@ -92,7 +81,7 @@ export class GroupMessageController {
     @Param('id') id: string,
     @Param('messageId') messageId: string,
     @Body() { content }: GroupMessageEditDto,
-  ): Promise<UpdateMessageGroupResDto> {
+  ) {
     const params = { authorId, id, messageId, content };
     const message = await this._groupMessageService.editMessage(params);
 
@@ -102,9 +91,7 @@ export class GroupMessageController {
       payload,
     );
 
-    const messageDto = plainToInstance(MessageGroupResDto, message);
-
-    return { groupId: id, message: messageDto };
+    return { groupId: id, message };
   }
 
   // api/group/:id/message/:messageId
@@ -114,7 +101,7 @@ export class GroupMessageController {
     @AuthUser() { id: authorId }: User,
     @Param('id') id: string,
     @Param('messageId') messageId: string,
-  ): Promise<DeleteMessageGroupResDto> {
+  ) {
     const params = { authorId, id, messageId };
 
     const message =
@@ -125,8 +112,7 @@ export class GroupMessageController {
       ServerGroupMessageEvent.GROUP_MESSAGE_DELETE,
       payload,
     );
-    const messageDto = plainToInstance(MessageGroupResDto, message);
 
-    return { groupId: id, message: messageDto };
+    return { groupId: id, message };
   }
 }

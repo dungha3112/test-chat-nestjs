@@ -28,16 +28,7 @@ import {
 } from 'src/utils/swaggers';
 import { User } from 'src/utils/typeorm';
 import { TMessageConverPayload } from 'src/utils/types';
-import {
-  ConverMessageCreateDto,
-  ConverMessageEditDto,
-  CreateConversationResponseDto,
-  DeleteMessageConverResponseDto,
-  GetMessagesConversationResponseDto,
-  MessageConverResDto,
-  UpdateMessageConverResponseDto,
-} from '../dtos';
-import { plainToInstance } from 'class-transformer';
+import { ConverMessageCreateDto, ConverMessageEditDto } from '../dtos';
 
 @ApiBearerAuth()
 @ApiTags(Routes.CONVERSATION_MESSAGE)
@@ -56,7 +47,7 @@ export class ConversationMessageController {
     @AuthUser() author: User,
     @Param('id') id: string,
     @Body() { content }: ConverMessageCreateDto,
-  ): Promise<CreateConversationResponseDto> {
+  ) {
     const params = { author, id, content };
 
     const res = await this._converMessageService.createMessageConver(params);
@@ -70,10 +61,7 @@ export class ConversationMessageController {
       payload,
     );
 
-    const resDto = plainToInstance(CreateConversationResponseDto, res, {
-      excludeExtraneousValues: true,
-    });
-    return resDto;
+    return res;
   }
   // api/conversation/:id/message
   @Get()
@@ -82,15 +70,12 @@ export class ConversationMessageController {
     @Param('id') id: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-  ): Promise<GetMessagesConversationResponseDto> {
+  ) {
     const params = { id, page, limit };
 
     const res = await this._converMessageService.getMessagesByConverId(params);
-    const resDto = plainToInstance(GetMessagesConversationResponseDto, res, {
-      excludeExtraneousValues: true,
-    });
 
-    return resDto;
+    return res;
   }
 
   // api/conversation/:id/message/messageId
@@ -111,11 +96,7 @@ export class ConversationMessageController {
       payload,
     );
 
-    const messageDto = plainToInstance(MessageConverResDto, message, {
-      excludeExtraneousValues: true,
-    });
-
-    return { conversationId: id, message: messageDto };
+    return { conversationId: id, message: message };
   }
 
   // api/conversation/:id/message/messageId
@@ -125,7 +106,7 @@ export class ConversationMessageController {
     @AuthUser() { id: authorId }: User,
     @Param('id') id: string,
     @Param('messageId') messageId: string,
-  ): Promise<DeleteMessageConverResponseDto> {
+  ) {
     const params = { authorId, id, messageId };
 
     const message =
@@ -140,10 +121,6 @@ export class ConversationMessageController {
       payload,
     );
 
-    const messageDto = plainToInstance(MessageConverResDto, message, {
-      excludeExtraneousValues: true,
-    });
-
-    return { conversationId: id, message: messageDto };
+    return { conversationId: id, message };
   }
 }

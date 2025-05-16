@@ -16,3 +16,19 @@ export type TFriendRequestAcceptedRes = {
   friend: Friend;
   friendRequest: FriendRequest;
 };
+
+export type TGetFriendRequestParams = {
+  userId: string;
+  page: number;
+  limit: number;
+  status: TFriendRequestStatusType;
+};
+
+export type TGetFriendsRequestResponse = {
+  userId: string;
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  friendsRequest: FriendRequest[];
+};

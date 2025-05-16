@@ -1,4 +1,4 @@
-import { User } from '../typeorm';
+import { Friend, User } from '../typeorm';
 
 export type TCreateFriendParams = {
   sender: User;
@@ -8,4 +8,19 @@ export type TCreateFriendParams = {
 export type TFriendParams = {
   id: string;
   userId: string;
+};
+
+export type TGetFriendParams = {
+  userId: string;
+  page: number;
+  limit: number;
+};
+
+export type TGetFriendResponse = {
+  userId: string;
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  friends: Friend[];
 };

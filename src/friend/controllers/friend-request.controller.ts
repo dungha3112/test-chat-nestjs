@@ -1,17 +1,22 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
+  Get,
   Inject,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { Routes, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
 import { IFriendRequestService } from 'src/utils/interfaces/friend-request.interface';
 import { User } from 'src/utils/typeorm';
 import { FriendRequestCreateDto } from '../dtos/friend-request';
+import { TFriendRequestStatusType } from 'src/utils/types';
 
 @Controller(Routes.FRIEND_REQUEST)
 export class FriendRequestController {
@@ -19,6 +24,17 @@ export class FriendRequestController {
     @Inject(Services.FRIEND_REQUEST)
     private readonly _friendRequestService: IFriendRequestService,
   ) {}
+
+  @Get()
+  async getFriendsRequest(
+    @AuthUser() { id: userId }: User,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('status') status?: TFriendRequestStatusType,
+  ) {
+    const params = { userId, page, limit, status };
+    return await this._friendRequestService.getRequests(params);
+  }
 
   @Post()
   async createNewRequest(

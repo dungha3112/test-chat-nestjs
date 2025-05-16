@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Headers,
   Inject,
   Post,
   Req,
@@ -8,9 +9,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { plainToInstance } from 'class-transformer';
 import { Request, Response } from 'express';
+import { UserResponseDto } from 'src/user/dtos';
 import { Routes, Services } from 'src/utils/constants';
-import { AuthJwtGuard } from 'src/utils/guards/AuthJwtGuard';
+import { AuthJwtGuard, LocalAuthGuard } from 'src/utils/guards';
 import { IAuthService } from 'src/utils/interfaces';
 import {
   ApiLoginDoc,
@@ -19,14 +22,8 @@ import {
   ApiRegisterDoc,
 } from 'src/utils/swaggers';
 import { AuthenticatedRequest } from 'src/utils/types/user.type';
-import {
-  UserLoginDto,
-  UserLoginResponseDto,
-  UserRefreshTokenResponseDto,
-  UserRegisterDto,
-} from './dtos';
-import { plainToInstance } from 'class-transformer';
-import { UserResponseDto } from 'src/user/dtos';
+import { UserRefreshTokenResponseDto, UserRegisterDto } from './dtos';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
 
 @ApiTags(Routes.AUTH)
 @Controller(Routes.AUTH)
@@ -46,33 +43,54 @@ export class AuthController {
   }
 
   @Post('login')
+  @UseGuards(LocalAuthGuard)
   @ApiLoginDoc()
   async loginUser(
-    @Body() loginDto: UserLoginDto,
+    @Req() request: AuthenticatedRequest,
     @Res({ passthrough: true }) response: Response,
-  ): Promise<UserLoginResponseDto> {
-    const { accessToken, refreshToken, user } =
-      await this._authService.login(loginDto);
+  ) {
+    const user = request.user;
 
-    response.cookie('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-    });
-    const userDto = plainToInstance(UserResponseDto, user, {
-      excludeExtraneousValues: true,
-    });
+    const { accessToken, refreshToken } = await this._authService.loginUser(
+      user,
+      request,
+    );
 
-    return { accessToken, user: userDto };
+    // const isMobile = request.headers['user-agent']?.includes('MyMobileApp');
+    const isMobile = request.headers['x-client-type'] === 'mobile';
+
+    //    headers: {
+    //   'Content-Type': 'application/json',
+    //   'X-Client-Type': 'mobile',
+    // },
+
+    if (isMobile) {
+      return { accessToken, refreshToken, user: request.user };
+    } else {
+      response.cookie('refresh_token', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+      });
+
+      return { accessToken, user: request.user };
+    }
   }
 
   @Post('refresh-token')
   @ApiRefreshTokenDoc()
   async refreshToken(
     @Req() request: Request,
+    @Body() { refreshToken }: RefreshTokenDto,
   ): Promise<UserRefreshTokenResponseDto> {
-    const refresh_token = request.cookies['refresh_token'];
+    let refresh_token: string;
+
+    if (request.headers['x-client-type'] === 'mobile') {
+      refresh_token = refreshToken;
+    } else {
+      refresh_token = request.cookies['refresh_token'];
+    }
 
     const { user, accessToken } =
       await this._authService.refreshToken(refresh_token);
@@ -89,10 +107,22 @@ export class AuthController {
   @UseGuards(AuthJwtGuard)
   async loggout(
     @Req() request: AuthenticatedRequest,
+    @Body() { refreshToken }: RefreshTokenDto,
     @Res() response: Response,
   ) {
+    let refresh_token: string;
+
+    if (request.headers['x-client-type'] === 'mobile') {
+      refresh_token = refreshToken;
+    } else {
+      refresh_token = request.cookies['refresh_token'];
+    }
+
     try {
-      const message = await this._authService.logoutUser(request.user.id);
+      const message = await this._authService.logoutUser(
+        request.user.id,
+        refresh_token,
+      );
 
       response.clearCookie('refresh_token');
 

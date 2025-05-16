@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Request } from 'express';
 import { Services } from 'src/utils/constants';
 import { compareHash, hashPassword } from 'src/utils/helpers';
 import {
@@ -7,19 +8,23 @@ import {
   ICustomJwtService,
   IUserService,
 } from 'src/utils/interfaces';
-import { User } from 'src/utils/typeorm';
+import { User, Sessions } from 'src/utils/typeorm';
 import {
   TLoginParams,
-  TLoginResponse,
+  TLoginTokenResponse,
   TRefreshTokenResponse,
   TRegisterParams,
 } from 'src/utils/types';
 import { Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(
     @InjectRepository(User) private readonly _userRepository: Repository<User>,
+
+    @InjectRepository(Sessions)
+    private readonly _sessionRepository: Repository<Sessions>,
 
     @Inject(Services.USER) private readonly _userService: IUserService,
 
@@ -63,56 +68,78 @@ export class AuthService implements IAuthService {
     return 'Registration successful';
   }
 
-  async login(params: TLoginParams): Promise<TLoginResponse> {
-    const { email, password } = params;
+  async loginUser(user: User, req: Request): Promise<TLoginTokenResponse> {
+    const userId = user.id;
 
+    const jitAccess = uuidv4();
+    const accessToken = await this._customJwtService.generateAccessToken(
+      userId,
+      jitAccess,
+    );
+
+    const jitRefresh = uuidv4();
+    const refreshToken = await this._customJwtService.generateRefreshToken(
+      userId,
+      jitRefresh,
+    );
+
+    const newSession = this._sessionRepository.create({
+      userId,
+      refresh_token: refreshToken,
+      jit: jitRefresh,
+      // deviceName: req.headers['user-agent'],
+      // deviceId: req.ip,
+    });
+
+    await this._sessionRepository.save(newSession);
+
+    return { accessToken, refreshToken };
+  }
+
+  async refreshToken(refreshToken: string): Promise<TRefreshTokenResponse> {
+    const { userId, jit } =
+      await this._customJwtService.verifyRefreshToken(refreshToken);
+
+    const sessionExists = await this._userService.findOneSesstion(userId, jit);
+
+    const user = await this._userService.findOne({
+      options: { selectAll: false },
+      params: { id: userId },
+    });
+
+    const accessToken = await this._customJwtService.generateAccessToken(
+      userId,
+      jit,
+    );
+
+    return { accessToken, user };
+  }
+
+  async logoutUser(userId: string, refreshToken: string): Promise<string> {
+    await this._sessionRepository.delete({
+      userId,
+      refresh_token: refreshToken,
+    });
+    return 'Logout successful';
+  }
+
+  async validateUser(params: TLoginParams): Promise<User> {
+    console.log(`validateUser ...`);
+
+    const { password, email } = params;
     const user = await this._userService.findOne({
       options: { selectAll: true },
       params: { email },
     });
+
     if (!user)
-      throw new HttpException('Invalid username', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Invalid email', HttpStatus.UNAUTHORIZED);
 
     const isPasswordValid = await compareHash(password, user.password);
 
     if (!isPasswordValid)
       throw new HttpException('Invalid password', HttpStatus.UNAUTHORIZED);
 
-    const accessToken = await this._customJwtService.generateAccessToken(
-      user.id,
-    );
-    const refreshToken = await this._customJwtService.generateRefreshToken(
-      user.id,
-    );
-
-    user.refreshToken = refreshToken;
-    await this._userService.saveUser(user);
-
-    return {
-      accessToken,
-      refreshToken,
-      user,
-    };
-  }
-
-  async refreshToken(refreshToken: string): Promise<TRefreshTokenResponse> {
-    const decoded =
-      await this._customJwtService.verifyRefreshToken(refreshToken);
-
-    const accessToken = await this._customJwtService.generateAccessToken(
-      decoded.userId,
-    );
-
-    const user = await this._userService.findOne({
-      options: { selectAll: false },
-      params: { id: decoded.userId },
-    });
-
-    return { accessToken, user };
-  }
-
-  async logoutUser(userId: string): Promise<string> {
-    await this._userRepository.update(userId, { refreshToken: null });
-    return 'Logout successful';
+    return user;
   }
 }

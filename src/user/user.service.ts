@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IUserService } from 'src/utils/interfaces';
-import { User } from 'src/utils/typeorm';
+import { Sessions, User } from 'src/utils/typeorm';
 import { TFindUserDetails } from 'src/utils/types';
 import { Repository } from 'typeorm';
 
@@ -9,6 +9,9 @@ import { Repository } from 'typeorm';
 export class UserService implements IUserService {
   constructor(
     @InjectRepository(User) private readonly _userRepository: Repository<User>,
+
+    @InjectRepository(Sessions)
+    private readonly _sessionRepository: Repository<Sessions>,
   ) {}
 
   async findOne(findUserDetails: TFindUserDetails): Promise<User> {
@@ -16,11 +19,7 @@ export class UserService implements IUserService {
 
     const selections: (keyof User)[] = ['id', 'email', 'username', 'createdAt'];
 
-    const selectionsWithPassword: (keyof User)[] = [
-      ...selections,
-      'password',
-      'refreshToken',
-    ];
+    const selectionsWithPassword: (keyof User)[] = [...selections, 'password'];
 
     const user = await this._userRepository.findOne({
       where: params,
@@ -50,5 +49,21 @@ export class UserService implements IUserService {
     const newUser = await this._userRepository.save(params);
 
     return newUser;
+  }
+
+  async findOneSesstion(userId: string, jit: string): Promise<Sessions> {
+    const session = await this._sessionRepository.findOne({
+      where: { userId, jit },
+    });
+
+    console.log(session);
+
+    if (!session)
+      throw new HttpException(
+        'User loggout with this device',
+        HttpStatus.UNAUTHORIZED,
+      );
+
+    return session;
   }
 }

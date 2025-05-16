@@ -31,23 +31,15 @@ export class WebsocketAdapter extends IoAdapter {
 
     server.use(async (socket: AuthenticatedSocket, next: NextFunction) => {
       try {
-        const { cookie: cookieClient } = socket.handshake.headers;
+        const token = socket.handshake.headers.token as string;
 
-        if (!cookieClient) {
-          console.log('Client has no cookies ?');
+        if (!token) {
+          console.log('Client has no accessToken ?');
           throw new HttpException('UNAUTHORIZED', HttpStatus.UNAUTHORIZED);
         }
 
-        const { refresh_token } = cookie.parse(cookieClient);
-        if (!refresh_token) {
-          console.log('No refresh_token in cookies ?');
-
-          throw new HttpException('No refresh token.', HttpStatus.UNAUTHORIZED);
-        }
-
         //Decode refresh token
-        const decoded =
-          await _customJwtService.verifyRefreshToken(refresh_token);
+        const decoded = await _customJwtService.verifyAccessToken(token);
 
         const user = await _userService.findOne({
           options: { selectAll: false },

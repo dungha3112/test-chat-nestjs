@@ -20,10 +20,6 @@ export class User {
   @Expose()
   password: string;
 
-  @Column({ nullable: true, select: false })
-  @Expose()
-  refreshToken?: string;
-
   @Column({ unique: true })
   username: string;
 

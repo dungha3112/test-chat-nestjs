@@ -1,7 +1,9 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { CustomJwtService } from './custom-jwt.service';
 import { Services } from 'src/utils/constants';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './guards/JwtStrategy';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
@@ -13,8 +15,10 @@ import { JwtModule } from '@nestjs/jwt';
         },
       }),
     }),
+    forwardRef(() => UserModule),
   ],
   providers: [
+    JwtStrategy,
     {
       provide: Services.CUSTOM_JWT,
       useClass: CustomJwtService,
@@ -22,6 +26,7 @@ import { JwtModule } from '@nestjs/jwt';
   ],
 
   exports: [
+    JwtStrategy,
     {
       provide: Services.CUSTOM_JWT,
       useClass: CustomJwtService,

@@ -9,11 +9,12 @@ export type TLoginParams = {
   password: string;
 };
 
-export type TLoginResponse = TRefreshTokenResponse & {
-  refreshToken: string;
-};
-
 export type TRefreshTokenResponse = {
   user: User;
   accessToken: string;
+};
+
+export type TLoginTokenResponse = {
+  accessToken: string;
+  refreshToken: string;
 };

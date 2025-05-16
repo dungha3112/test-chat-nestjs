@@ -1,4 +1,4 @@
-import { User } from '../typeorm';
+import { Sessions, User } from '../typeorm';
 import { TFindUserDetails } from '../types';
 
 export interface IUserService {
@@ -7,4 +7,6 @@ export interface IUserService {
   searchUser(query: string): Promise<User[]>;
 
   saveUser(params: User): Promise<User>;
+
+  findOneSesstion(userId: string, jit: string): Promise<Sessions>;
 }

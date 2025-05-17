@@ -4,3 +4,7 @@ export type TOtpParams = {
   email: string;
   type: TOtpType;
 };
+
+export type TOtpResponse = TOtpParams & {
+  otp: string;
+};

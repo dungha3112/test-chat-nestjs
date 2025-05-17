@@ -23,7 +23,7 @@ export class Otps {
   @Column()
   type: TOtpType;
 
-  @Column({ nullable: true })
+  @Column()
   expiresAt: Date;
 
   @CreateDateColumn({ name: 'created_at' })

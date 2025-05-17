@@ -1,8 +1,6 @@
-## 🧩 WebSocket Group Chat API
+## 🧩 WebSocket Group Chat API – Backend Developer Assignment
 
-## 📌 Objective
-
-    Build a WebSocket-based group chat API that stores messages in a PostgreSQL database and provides an interface accessible by both mobile and web clients. The project is documented with Swagger and containerized using Docker.
+Objective: Develop a WebSocket-based group chat API enabling real-time communication with persistent chat history, accessible from both mobile and web platforms.
 
 ---
 
@@ -22,6 +20,8 @@
 ## 📦 Features
 
     ✅ Real-time group chat via WebSocket
+
+    ✅ JWT Authentication (Access + Refresh Token)
 
     ✅ Real-time one-to-one (1:1) chat
 
@@ -45,37 +45,53 @@ If you've deployed your application to a platform like
 
 ## ⚙️ Local Setup Instructions
 
-### Prerequisites
-
-- Node.js (>= 18)
-- [Docker](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/)
-
----
-
-## 🧪 Run Locally
+# 🧪 Run Locally
 
 ```bash
   git clone https://github.com/dungha3112/test-chat-nestjs
   cd test-chat-nest
   npm i
-  npm run start:dev or npm run start
 ```
 
-## 🌍 Environment Configuration
+# 🌍 Environment Configuration
 
 ```bash
 
-  PORT=3000
-  DATABASE_URL=your_database_connection_string
+PORT=number
+DATABASE_URL=string
 
-  JWT_ACCESS_SECRET=your_jwt_access_secret
-  JWT_ACCESS_EXPIRES_IN=3600  # Token expiration time in seconds (e.g., 1 hour)
+JWT_ACCESS_SECRET=string
+JWT_ACCESS_EXPIRES_IN=1d
 
-  REFRESH_TOKEN_SECRET=your_refresh_token_secret
-  JWT_REFRESH_EXPIRES_IN=604800  # Refresh token expiration time in seconds (e.g., 7 days)
+REFRESH_TOKEN_SECRET=string
+JWT_REFRESH_EXPIRES_IN=7d
+
+
+CRYPTO_KEY=string
+
+EMAIL_APP_ADDRESS=your_email@gmail.com
+EMAIL_APP_PASSWORD=your_password_email
+
+
+BASE_CLIENT_URL=http://locahost_client:
 
 ```
+
+# How to run the project with Docker
+
+- Node.js (>= 20)
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+
+Build and start the container
+
+```bash
+ docker-compose up --build
+```
+
+Access the app: http://localhost:3000
+
+---
 
 ---
 
@@ -87,10 +103,21 @@ Swagger UI: http://localhost:3000/api/
 
 ---
 
-# 📚 Chat API Documentation (v1.0)
+## 📡 Chat API – Documentation Overview
 
-**Specification**: OpenAPI 3.0  
-**Base URL**: `http://localhost:3000`
+# 🔍 Description
+
+This API provides a real-time chat platform supporting both group chat and private 1-1 conversations, designed for both mobile and web clients. Built using WebSockets and RESTful endpoints, the system enables robust communication features including:
+
+User authentication and account management
+
+Real-time group and private messaging
+
+Group creation, user management, and ownership transfer
+
+Friend system with requests, accept/reject flows
+
+Persistent chat history with CRUD operations for messages
 
 ## Architecture Diagram
 
@@ -138,20 +165,23 @@ Swagger UI: http://localhost:3000/api/
 
 ## 🔐 Auth Module (`/api/auth`)
 
-| Method | Endpoint         | Description                                  |
-| ------ | ---------------- | -------------------------------------------- |
-| POST   | `/register`      | Register a new user                          |
-| POST   | `/login`         | Login and receive access + refresh tokens    |
-| POST   | `/refresh-token` | Get a new access token using a refresh token |
-| POST   | `/logout`        | Logout and clear refresh token cookie        |
+| Method | Endpoint           | Description                                |
+| ------ | ------------------ | ------------------------------------------ |
+| POST   | `/register`        | Register account                           |
+| POST   | `/active-account`  | Active account                             |
+| POST   | `/forgot-password` | Forgot password                            |
+| POST   | `/reset-password`  | Reset password                             |
+| POST   | `/login`           | Login user                                 |
+| POST   | `/refresh-token`   | Get new access token using refresh token   |
+| POST   | `/logout`          | Logout user and clear refresh token cookie |
 
 ---
 
 ## 👤 User Module (`/api/user`)
 
-| Method | Endpoint  | Description                   |
-| ------ | --------- | ----------------------------- |
-| GET    | `/search` | Search for a user by username |
+| Method | Endpoint  | Description             |
+| ------ | --------- | ----------------------- |
+| GET    | `/search` | Search user by username |
 
 ---
 
@@ -159,92 +189,73 @@ Swagger UI: http://localhost:3000/api/
 
 ### Group Management
 
-| Method | Endpoint      | Description                    |
-| ------ | ------------- | ------------------------------ |
-| POST   | `/`           | Create a new group             |
-| GET    | `/`           | Get all groups                 |
-| GET    | `/{id}`       | Get group details by ID        |
-| PATCH  | `/{id}`       | Update group info (owner only) |
-| PATCH  | `/{id}/owner` | Transfer group ownership       |
-| DELETE | `/{id}/leave` | Leave the group                |
+| Method | Endpoint      | Description               |
+| ------ | ------------- | ------------------------- |
+| POST   | `/`           | Create new group          |
+| GET    | `/`           | Get list of groups        |
+| GET    | `/{id}`       | Get a group by id         |
+| PATCH  | `/{id}`       | Owner updates group by id |
+| PATCH  | `/{id}/owner` | Transfer ownership        |
+| DELETE | `/{id}/leave` | User leaves group         |
 
 ### Group Members
 
 | Method | Endpoint          | Description            |
 | ------ | ----------------- | ---------------------- |
-| POST   | `/{id}/recipient` | Add user to group      |
+| POST   | `/{id}/recipient` | Add new user to group  |
 | DELETE | `/{id}/recipient` | Remove user from group |
 
 ### Group Messages
 
-| Method | Endpoint                    | Description                  |
-| ------ | --------------------------- | ---------------------------- |
-| POST   | `/{id}/message`             | Send a message to the group  |
-| GET    | `/{id}/message`             | Get all group messages       |
-| PATCH  | `/{id}/message/{messageId}` | Edit a group message by ID   |
-| DELETE | `/{id}/message/{messageId}` | Delete a group message by ID |
+| Method | Endpoint                    | Description                |
+| ------ | --------------------------- | -------------------------- |
+| POST   | `/{id}/message`             | Create a new group message |
+| GET    | `/{id}/message`             | Get messages by group ID   |
+| PATCH  | `/{id}/message/{messageId}` | Update a message by ID     |
+| DELETE | `/{id}/message/{messageId}` | Delete a message by ID     |
 
 ---
 
-## 💬 Direct Conversations (`/api/conversation`)
+## 💬 Conversation Module (`/api/conversation`)
 
 ### Conversations
 
-| Method | Endpoint | Description                       |
-| ------ | -------- | --------------------------------- |
-| POST   | `/`      | Create a new conversation         |
-| GET    | `/`      | Get all conversations             |
-| GET    | `/{id}`  | Get a specific conversation by ID |
+| Method | Endpoint | Description               |
+| ------ | -------- | ------------------------- |
+| POST   | `/`      | Create a new conversation |
+| GET    | `/`      | Get conversations         |
+| GET    | `/{id}`  | Get a conversation by id  |
 
 ### Conversation Messages
 
 | Method | Endpoint                    | Description                         |
 | ------ | --------------------------- | ----------------------------------- |
-| POST   | `/{id}/message`             | Send a message in conversation      |
-| GET    | `/{id}/message`             | Get all messages in conversation    |
+| POST   | `/{id}/message`             | Create a new conversation message   |
+| GET    | `/{id}/message`             | Get messages by conversation ID     |
 | PATCH  | `/{id}/message/{messageId}` | Edit a conversation message by ID   |
 | DELETE | `/{id}/message/{messageId}` | Delete a conversation message by ID |
 
 ---
 
-## 🧬 Schemas (DTOs)
+## 🤝 Friend Module (`/api/friend`)
 
-### ✅ Auth DTOs
+| Method | Endpoint       | Description     |
+| ------ | -------------- | --------------- |
+| GET    | `/`            | Get friends     |
+| GET    | `/search`      | Search friends  |
+| DELETE | `/{id}/delete` | Delete a friend |
 
-- `UserRegisterDto`
-- `UserLoginDto`
-- `UserResponseDto`
-- `UserLoginResponseDto`
-- `UserRefreshTokenResponseDto`
+---
 
-### ✅ Group DTOs
+## 🤝 Friend Request Module (`/api/friend-request`)
 
-- `GroupCreateDto`
-- `GroupEditDto`
-- `GroupResDto`
-- `GroupMessageCreateDto`
-- `GroupMessageEditDto`
-- `MessageGroupResDto`
-- `CreateNewMessageGroupDto`
-- `GroupRecipientAddUserDto`
-- `GroupRecipientRemoveUserDto`
-- `AddUserToGroupResDto`
-- `RemoveUserToGroupResDto`
-- `GetMessagesGroupResponseDto`
-- `UpdateMessageGroupResDto`
-- `DeleteMessageGroupResDto`
-
-### ✅ Conversation DTOs
-
-- `ConversationCreateDto`
-- `ConverstionResDto`
-- `ConverMessageCreateDto`
-- `ConverMessageEditDto`
-- `MessageConverResDto`
-- `CreateConversationResponseDto`
-- `GetMessagesConversationResponseDto`
-- `UpdateMessageConverResponseDto`
-- `DeleteMessageConverResponseDto`
+| Method | Endpoint       | Description                 |
+| ------ | -------------- | --------------------------- |
+| GET    | `/`            | Get list of friend requests |
+| POST   | `/`            | Create new friend request   |
+| PATCH  | `/{id}/accept` | Accept friend request       |
+| PATCH  | `/{id}/reject` | Reject friend request       |
+| DELETE | `/{id}/delete` | Delete friend request       |
 
 ---
 
@@ -261,6 +272,10 @@ You can test the API directly at:
 This WebSocket gateway handles real-time communication for two main features:
 
 1-on-1 conversations
+
+Send request friend, accept, reject, delete friend
+
+Create new conversation
 
 Group chats
 
@@ -310,6 +325,18 @@ To receive real-time updates, the client must join the appropriate room after au
 
 ```bash
 
+  const socket = io('http://localhost:3000', {
+    auth: {
+      token: 'your_jwt_token'
+    }
+  });
+
+```
+
+Users must send a valid JWT token in the auth.token field during WebSocket connection.
+
+```bash
+
   socket.emit("onGroupJoin", {id: "groupId"})
 
 ```
@@ -331,7 +358,50 @@ JWT authentication is expected during WebSocket connection handshake.
 
 ---
 
-## 🧱 Database Schema Overview
+## 🗃️ Database Entities Overview
+
+### 📄 Users (`users`)
+
+- `id`, `email`, `username`, `password`, `isVerify`, `createdAt`
+
+### 📄 Sessions (`sessions`)
+
+- Stores refresh tokens, device info, and expiry times
+
+### 📄 OTPs (`otps`)
+
+- For email verification / authentication
+- Fields: `email`, `otp`, `type`, `expiresAt`
+
+### 📄 Friend Requests (`friend_requests`)
+
+- Sender, receiver, status (`pending`, `accepted`, `rejected`)
+
+### 📄 Friends (`friends`)
+
+- Represents accepted friend connections
+
+### 📄 Conversations (`conversations`)
+
+- 1-on-1 chats between two users
+- Fields: `creator`, `recipient`, `lastMessageSent`, `lastMessageSentAt`
+
+### 📄 Conversation Messages (`conversation_messages`)
+
+- Messages inside a 1-on-1 conversation
+- Inherits from `BaseMessage` (which has `id`, `content`, `createdAt`, `author`)
+
+### 📄 Groups (`groups`)
+
+- Group chats with multiple users
+- Fields: `title`, `users[]`, `owner`, `lastMessageSent`, `lastMessageSentAt`
+
+### 📄 Group Messages (`group_messages`)
+
+- Messages inside a group chat
+- Inherits from `BaseMessage`
+
+---
 
 ![](./neondb.png)
 
@@ -339,7 +409,7 @@ JWT authentication is expected during WebSocket connection handshake.
 
 ```bash
 
-src/
+src
 │   app.module.ts
 │   main.ts
 │
@@ -348,10 +418,15 @@ src/
 │   │   auth.module.ts
 │   │   auth.service.ts
 │   │
-│   └───dtos
-│           index.dto.ts
-│           user-login.dto.ts
-│           user-register.dto.ts
+│   ├───dtos
+│   │       active-account.dto.ts
+│   │       index.ts
+│   │       refresh-token.dto.ts
+│   │       user-login.dto.ts
+│   │       user-register.dto.ts
+│   │
+│   └───guards
+│           LocalStrategy.ts
 │
 ├───conversation
 │   │   conversation.module.ts
@@ -361,10 +436,14 @@ src/
 │   │       conversation.controller.ts
 │   │
 │   ├───dtos
-│   │       conversation-create.dto.ts
-│   │       conversation-message-edit.dto.ts
-│   │       conversation-message.create.ts
-│   │       index.ts
+│   │   │   index.ts
+│   │   │
+│   │   ├───conversations
+│   │   │       conversation-create.dto.ts
+│   │   │
+│   │   └───messages
+│   │           conversation-message-edit.dto.ts
+│   │           conversation-message.create.dto.ts
 │   │
 │   ├───middlewares
 │   │       conversation.middleware.ts
@@ -374,11 +453,18 @@ src/
 │           conversation.service.ts
 │
 ├───custom-jwt
-│       custom-jwt.module.ts
-│       custom-jwt.service.ts
+│   │   custom-jwt.module.ts
+│   │   custom-jwt.service.ts
+│   │
+│   └───guards
+│           JwtStrategy.ts
 │
 ├───database
 │       database.module.ts
+│
+├───email
+│       emai.service.ts
+│       email.module.ts
 │
 ├───events
 │   │   events.module.ts
@@ -387,10 +473,33 @@ src/
 │   │       conversation-message.event.ts
 │   │       conversation.event.ts
 │   │
+│   ├───friends
+│   │       friend-request.event.ts
+│   │       friend.event.ts
+│   │
 │   └───groups
 │           group-message.event.ts
 │           group-recipient.event.ts
 │           group.event.ts
+│
+├───friend
+│   │   friend.module.ts
+│   │
+│   ├───controllers
+│   │       friend-request.controller.ts
+│   │       friend.controller.ts
+│   │
+│   ├───dtos
+│   │   ├───friend-request
+│   │   │       friend-request.dto.ts
+│   │   │       index.ts
+│   │   │
+│   │   └───friends
+│   │           index.ts
+│   │
+│   └───services
+│           friend-request.service.ts
+│           friend.service.ts
 │
 ├───gateway
 │       gateway.adapter.ts
@@ -407,14 +516,20 @@ src/
 │   │       group.controller.ts
 │   │
 │   ├───dtos
-│   │       group-add-user.dto.ts
-│   │       group-create.dto.ts
-│   │       group-edit.dto.ts
-│   │       group-message-create.dto.ts
-│   │       group-message-edit.dto.ts
-│   │       group-recipient.add.dto.ts
-│   │       group-recipient.remove.dto.ts
-│   │       index.ts
+│   │   │   index.ts
+│   │   │
+│   │   ├───groups
+│   │   │       group-add-user.dto.ts
+│   │   │       group-create.dto.ts
+│   │   │       group-edit.dto.ts
+│   │   │
+│   │   ├───messages
+│   │   │       group-message-create.dto.ts
+│   │   │       group-message-edit.dto.ts
+│   │   │
+│   │   └───recipients
+│   │           group-recipient.add.dto.ts
+│   │           group-recipient.remove.dto.ts
 │   │
 │   ├───middlewares
 │   │       group.middleware.ts
@@ -424,6 +539,11 @@ src/
 │           group-recipients.service.ts
 │           group.service.ts
 │
+├───otp
+│   │   otp.module.ts
+│   │   otp.service.ts
+│   │
+│   └───dtos
 ├───user
 │   │   user.controller.ts
 │   │   user.module.ts
@@ -431,13 +551,12 @@ src/
 │   │
 │   └───dtos
 │           index.ts
-│           user-response.dto.ts
 │
 └───utils
     ├───constants
+    │       event.constant.ts
     │       index.ts
     │       routes.constant.ts
-    │       server-event.constant.ts
     │       services.constant.ts
     │
     ├───decorators
@@ -447,9 +566,11 @@ src/
     ├───guards
     │       AuthJwtGuard.ts
     │       index.ts
+    │       LocalAuthGuard.ts
     │
     ├───helpers
     │       index.ts
+    │       otp.helper.ts
     │       password.helper.ts
     │
     ├───interfaces
@@ -457,15 +578,30 @@ src/
     │       conversation-message.interface.ts
     │       conversation.interface.ts
     │       custom-jwt.interface.ts
+    │       email.interface.ts
+    │       friend-request.interface.ts
+    │       friend.interface.ts
     │       gateway.interface.ts
     │       group-message.interface.ts
     │       group-recipients.interface.ts
     │       group.interface.ts
     │       index.ts
+    │       otp.interface.ts
     │       user.interface.ts
     │
     ├───middlewares
     │       auth.middeware.ts
+    │       index.ts
+    │
+    ├───swaggers
+    │       auth.swagger.ts
+    │       conversation-message.swagger.ts
+    │       conversation.swagger.ts
+    │       friend-request.swagger.ts
+    │       friend.swagger.ts
+    │       group-message.swagger.ts
+    │       group-recipient.swagger.ts
+    │       group.swagger.ts
     │       index.ts
     │
     ├───typeorm
@@ -475,9 +611,13 @@ src/
     │           base-message.entity.ts
     │           conversation-message.entity.ts
     │           conversation.entity.ts
+    │           friend-request.entity.ts
+    │           friend.entity.ts
     │           group-message.entity.ts
     │           group.entity.ts
     │           index.ts
+    │           otp.entity.ts
+    │           session.entity.ts
     │           user.entity.ts
     │
     └───types
@@ -485,11 +625,14 @@ src/
             conversation-message.type.ts
             conversation.type.ts
             custom-jwt.type.ts
+            friend-request.type.ts
+            friend.type.ts
             group-message.type.ts
             group-recipients.type.ts
             group.type.ts
             index.ts
             message.type.ts
+            otp.type.ts
             user.type.ts
 
 ```
@@ -514,10 +657,6 @@ ws://localhost:3000
 👉 [https://test-chat-nestjs.onrender.com/api](https://test-chat-nestjs.onrender.com/api)
 
 ## 📤 Future Enhancements
-
-Verify otp
-
-Request, Request Friend
 
 Add file/image messaging support
 

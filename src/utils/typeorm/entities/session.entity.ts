@@ -26,7 +26,7 @@ export class Sessions {
   @Column({ nullable: true })
   deviceId: string;
 
-  @Column({ nullable: true })
+  @Column()
   expiresAt: Date;
 
   @CreateDateColumn({ name: 'created_at' })

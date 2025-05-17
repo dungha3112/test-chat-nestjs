@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { decryptOtp, encryptOtp, generateOtpCode } from 'src/utils/helpers';
 import { IOtpService } from 'src/utils/interfaces';
@@ -17,7 +17,7 @@ export class OtpService implements IOtpService {
 
     if (existing && existing.expiresAt > new Date()) {
       const originalOtp = decryptOtp(existing.otp);
-      return { ...params, otp: originalOtp };
+      return { otp: originalOtp, otpHash: existing.otp, type: params.type };
     }
 
     const otp = generateOtpCode();
@@ -25,12 +25,13 @@ export class OtpService implements IOtpService {
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getMinutes() + 10);
 
+    /////////////////////////
     if (existing) {
       existing.otp = hashedOtp;
       existing.expiresAt = expiresAt;
       await this.saveOtp(existing);
 
-      return { ...params, otp };
+      return { otp, otpHash: hashedOtp, type: params.type };
     } else {
       const newOtp = this._otpRepository.create({
         email: params.email,
@@ -40,7 +41,7 @@ export class OtpService implements IOtpService {
       });
       await this.saveOtp(newOtp);
 
-      return { ...params, otp };
+      return { otp, otpHash: hashedOtp, type: params.type };
     }
   }
 
@@ -50,5 +51,15 @@ export class OtpService implements IOtpService {
 
   async findOneByParam(params: TOtpParams): Promise<Otps> {
     return await this._otpRepository.findOne({ where: params });
+  }
+
+  async deleteById(id: string): Promise<Otps> {
+    const otp = await this._otpRepository.findOne({ where: { id } });
+    if (!otp)
+      throw new HttpException('Otp not found with id', HttpStatus.NOT_FOUND);
+
+    await this._otpRepository.delete({ id });
+
+    return otp;
   }
 }

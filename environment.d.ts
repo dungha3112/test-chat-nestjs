@@ -10,8 +10,14 @@ declare namespace NodeJS {
     JWT_REFRESH_EXPIRES_IN: string;
 
     CRYPTO_KEY: string;
-    // REDIS_HOST: string;
-    // REDIS_PORT: number;
-    // REDIS_PASSWORD: string;
+
+    EMAIL_APP_ADDRESS: string;
+    EMAIL_APP_PASSWORD: string;
+
+    BASE_CLIENT_URL: string;
+
+    REDIS_HOST: string;
+    REDIS_PORT: number;
+    REDIS_PASSWORD: string;
   }
 }

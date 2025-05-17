@@ -6,14 +6,18 @@ import { compareHash, hashPassword } from 'src/utils/helpers';
 import {
   IAuthService,
   ICustomJwtService,
+  IEmailService,
+  IOtpService,
   IUserService,
 } from 'src/utils/interfaces';
 import { User, Sessions } from 'src/utils/typeorm';
 import {
+  TActiveAccountParams,
   TLoginParams,
   TLoginTokenResponse,
   TRefreshTokenResponse,
   TRegisterParams,
+  TRestetPasswordParams,
 } from 'src/utils/types';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
@@ -30,42 +34,92 @@ export class AuthService implements IAuthService {
 
     @Inject(Services.CUSTOM_JWT)
     private readonly _customJwtService: ICustomJwtService,
+
+    @Inject(Services.OTP) private readonly _otpService: IOtpService,
+
+    @Inject(Services.EMAIL) private readonly _emailService: IEmailService,
   ) {}
 
   async register(params: TRegisterParams): Promise<string> {
     const { email, password, username } = params;
 
     const emailExists = await this._userService.findOne({
-      options: { selectAll: false },
+      options: { selectAll: true },
       params: { email },
     });
-    if (emailExists)
-      throw new HttpException(
-        'User already exists with the email',
-        HttpStatus.CONFLICT,
-      );
-
-    const usernameExists = await this._userService.findOne({
-      options: { selectAll: false },
-      params: { username },
-    });
-    if (usernameExists)
-      throw new HttpException(
-        'User already exists with the username',
-        HttpStatus.CONFLICT,
-      );
 
     const passwordHash = await hashPassword(password);
-
-    const newUser = this._userRepository.create({
+    const { otp, otpHash, type } = await this._otpService.createOtp({
       email,
-      username,
-      password: passwordHash,
+      type: 'verify_email',
     });
 
-    await this._userRepository.save(newUser);
+    if (emailExists) {
+      if (emailExists.isVerify) {
+        throw new HttpException(
+          'The account has been activated. You can login now',
+          HttpStatus.BAD_REQUEST,
+        );
+      } else {
+        emailExists.username = username;
+        emailExists.password = passwordHash;
+        await this._userService.saveUser(emailExists);
+      }
+    } else {
+      const newUser = this._userRepository.create({
+        email,
+        username,
+        password: passwordHash,
+      });
 
-    return 'Registration successful';
+      await this._userRepository.save(newUser);
+    }
+
+    // sendMailToken
+    await this._emailService.sendMailToken(email, otpHash, type);
+    return `Please check ${email}`;
+  }
+
+  async activeAccount(params: TActiveAccountParams): Promise<string> {
+    const { email, url } = params;
+
+    const user = await this._userService.findOne({
+      options: { selectAll: true },
+      params: { email },
+    });
+
+    if (!user)
+      throw new HttpException(
+        'Account not found with email',
+        HttpStatus.UNAUTHORIZED,
+      );
+
+    if (user.isVerify)
+      throw new HttpException(
+        'The account has been activated. You can login now',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const otpExist = await this._otpService.findOneByParam({
+      email,
+      type: 'verify_email',
+    });
+    if (!otpExist)
+      throw new HttpException(
+        'This url is not valid for this action',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (otpExist.expiresAt < new Date())
+      throw new HttpException('Invalid or expired otp', HttpStatus.BAD_REQUEST);
+    if (otpExist.otp !== url)
+      throw new HttpException('Invalid or expired otp', HttpStatus.BAD_REQUEST);
+
+    user.isVerify = true;
+    await this._userService.saveUser(user);
+
+    await this._otpService.deleteById(otpExist.id);
+    return 'Account verification successful.';
   }
 
   async loginUser(user: User, req: Request): Promise<TLoginTokenResponse> {
@@ -141,6 +195,75 @@ export class AuthService implements IAuthService {
     return 'Logout successful';
   }
 
+  async forgotPassword(email: string): Promise<string> {
+    const user = await this._userService.findOne({
+      options: { selectAll: true },
+      params: { email },
+    });
+    if (!user)
+      throw new HttpException(
+        `Account not found with ${email}`,
+        HttpStatus.NOT_FOUND,
+      );
+    if (!user.isVerify)
+      throw new HttpException(
+        'User has not authenticated account, Can not use forgot password method',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const { otpHash, type } = await this._otpService.createOtp({
+      email,
+      type: 'reset_password',
+    });
+
+    // sendMailToken
+    await this._emailService.sendMailToken(email, otpHash, type);
+
+    return `Please check ${email}`;
+  }
+
+  async restetPassword(params: TRestetPasswordParams): Promise<string> {
+    const { email, password, url } = params;
+
+    const user = await this._userService.findOne({
+      options: { selectAll: true },
+      params: { email },
+    });
+    if (!user)
+      throw new HttpException(
+        `Account not found with ${email}`,
+        HttpStatus.NOT_FOUND,
+      );
+    if (!user.isVerify)
+      throw new HttpException(
+        'Account not verified. Forgot password unavailable.',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const hashPass = await hashPassword(password);
+
+    const otpExist = await this._otpService.findOneByParam({
+      email,
+      type: 'reset_password',
+    });
+    if (!otpExist)
+      throw new HttpException(
+        'Password cannot be reset without request.',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (otpExist.expiresAt < new Date())
+      throw new HttpException('Invalid or expired otp', HttpStatus.BAD_REQUEST);
+    if (otpExist.otp !== url)
+      throw new HttpException('Invalid or expired otp', HttpStatus.BAD_REQUEST);
+
+    user.password = hashPass;
+    await this._userService.saveUser(user);
+    await this._otpService.deleteById(otpExist.id);
+
+    return `Reset password successfully. You can login now!`;
+  }
+
   async validateUser(params: TLoginParams): Promise<User> {
     console.log(`validateUser ...`);
 
@@ -152,6 +275,12 @@ export class AuthService implements IAuthService {
 
     if (!user)
       throw new HttpException('Invalid email', HttpStatus.UNAUTHORIZED);
+
+    if (!user.isVerify)
+      throw new HttpException(
+        'User has not authenticated account',
+        HttpStatus.BAD_REQUEST,
+      );
 
     const isPasswordValid = await compareHash(password, user.password);
 

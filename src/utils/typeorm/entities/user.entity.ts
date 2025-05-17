@@ -20,9 +20,13 @@ export class User {
   @Expose()
   password: string;
 
-  @Column({ unique: true })
+  @Column()
   username: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
+
+  @Column({ type: Boolean, default: false, select: false })
+  @Expose()
+  isVerify: boolean;
 }

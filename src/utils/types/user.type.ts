@@ -3,7 +3,6 @@ import { User } from '../typeorm';
 
 type TFindUserParams = Partial<{
   id: string;
-  username: string;
   email: string;
 }>;
 

@@ -19,7 +19,11 @@ export class UserService implements IUserService {
 
     const selections: (keyof User)[] = ['id', 'email', 'username', 'createdAt'];
 
-    const selectionsWithPassword: (keyof User)[] = [...selections, 'password'];
+    const selectionsWithPassword: (keyof User)[] = [
+      ...selections,
+      'password',
+      'isVerify',
+    ];
 
     const user = await this._userRepository.findOne({
       where: params,

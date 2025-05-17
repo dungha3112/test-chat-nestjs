@@ -22,6 +22,8 @@ import { FriendService } from './services/friend.service';
 
     { provide: Services.FRIEND, useClass: FriendService },
   ],
+
+  exports: [{ provide: Services.FRIEND, useClass: FriendService }],
 })
 export class FriendModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -5,6 +5,8 @@ export type TOtpParams = {
   type: TOtpType;
 };
 
-export type TOtpResponse = TOtpParams & {
+export type TOtpResponse = {
   otp: string;
+  type: TOtpType;
+  otpHash: string;
 };

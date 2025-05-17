@@ -8,6 +8,8 @@ import { UserModule } from 'src/user/user.module';
 import { CustomJwtModule } from 'src/custom-jwt/custom-jwt.module';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './guards/LocalStrategy';
+import { OtpModule } from 'src/otp/otp.module';
+import { EmailModule } from 'src/email/email.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { LocalStrategy } from './guards/LocalStrategy';
     CustomJwtModule,
     // using to user login
     PassportModule,
+    OtpModule,
+    EmailModule,
   ],
   controllers: [AuthController],
   providers: [

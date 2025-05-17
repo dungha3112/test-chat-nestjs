@@ -10,12 +10,14 @@ import { CustomJwtModule } from 'src/custom-jwt/custom-jwt.module';
 import { ConversationMiddleware } from './middlewares/conversation.middleware';
 import { ConversationMessageService } from './services/conversation-mesage.service';
 import { ConversationMessageController } from './controllers/conversation-message.controller';
+import { FriendModule } from 'src/friend/friend.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Conversation, ConversationMessage]),
     UserModule,
     CustomJwtModule,
+    FriendModule,
   ],
   controllers: [ConversationController, ConversationMessageController],
   providers: [

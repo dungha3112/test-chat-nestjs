@@ -13,6 +13,7 @@ import { EventModule } from './events/events.module';
 import { ConversationModule } from './conversation/conversation.module';
 import { FriendModule } from './friend/friend.module';
 import { OtpModule } from './otp/otp.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { OtpModule } from './otp/otp.module';
     ConversationModule,
     FriendModule,
     OtpModule,
+    EmailModule,
   ],
   providers: [
     {

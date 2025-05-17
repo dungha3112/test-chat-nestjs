@@ -3,6 +3,8 @@ import { UserResponseDto } from 'src/user/dtos';
 
 export * from './user-login.dto';
 export * from './user-register.dto';
+export * from './refresh-token.dto';
+export * from './active-account.dto';
 
 export class UserLoginResponseDto {
   @ApiProperty({

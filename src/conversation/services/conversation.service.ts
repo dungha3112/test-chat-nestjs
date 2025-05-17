@@ -1,7 +1,11 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Services } from 'src/utils/constants';
-import { IConversationService, IUserService } from 'src/utils/interfaces';
+import {
+  IConversationService,
+  IFriendService,
+  IUserService,
+} from 'src/utils/interfaces';
 import { Conversation, ConversationMessage } from 'src/utils/typeorm';
 import {
   TAccessConversationParams,
@@ -21,6 +25,8 @@ export class ConversationService implements IConversationService {
     private readonly _messageRepository: Repository<ConversationMessage>,
 
     @Inject(Services.USER) private readonly _userService: IUserService,
+
+    @Inject(Services.FRIEND) private readonly _friendService: IFriendService,
   ) {}
 
   async userGetConversations(id: string): Promise<Conversation[]> {
@@ -91,6 +97,16 @@ export class ConversationService implements IConversationService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    const isFriend = await this._friendService.isFriend(
+      creator.id,
+      recipient.id,
+    );
+    if (!isFriend)
+      throw new HttpException(
+        'Can not create new chat with strangers',
+        HttpStatus.NOT_FOUND,
+      );
 
     const existsConversation = await this.isCreated(creator.id, recipient.id);
     if (existsConversation)

@@ -9,3 +9,4 @@ export * from './conversation.interface';
 export * from './conversation-message.interface';
 export * from './friend.interface';
 export * from './friend-request.interface';
+export * from './otp.interface';

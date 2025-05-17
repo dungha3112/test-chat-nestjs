@@ -4,6 +4,7 @@ import { Services } from 'src/utils/constants';
 import {
   IConversationMessageService,
   IConversationService,
+  IFriendService,
 } from 'src/utils/interfaces';
 import { ConversationMessage } from 'src/utils/typeorm';
 import {
@@ -24,6 +25,8 @@ export class ConversationMessageService implements IConversationMessageService {
 
     @Inject(Services.CONVERSATION)
     private readonly _conversationService: IConversationService,
+
+    @Inject(Services.FRIEND) private readonly _friendService: IFriendService,
   ) {}
 
   async createMessageConver(
@@ -38,6 +41,16 @@ export class ConversationMessageService implements IConversationMessageService {
       throw new HttpException(
         'You are neither creator nor recipient of the conversation',
         HttpStatus.FORBIDDEN,
+      );
+
+    const isFriend = await this._friendService.isFriend(
+      creator.id,
+      recipient.id,
+    );
+    if (!isFriend)
+      throw new HttpException(
+        'Can not send message to strangers',
+        HttpStatus.NOT_FOUND,
       );
 
     const newMessage = this._messageConverRepository.create({

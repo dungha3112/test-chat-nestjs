@@ -9,6 +9,7 @@ import {
   UserLoginResponseDto,
   UserRefreshTokenResponseDto,
 } from 'src/auth/dtos';
+import { RefreshTokenDto } from 'src/auth/dtos/refresh-token.dto';
 import { UserLoginDto } from 'src/auth/dtos/user-login.dto';
 import { UserRegisterDto } from 'src/auth/dtos/user-register.dto';
 
@@ -41,6 +42,7 @@ export function ApiLoginDoc() {
 export function ApiRefreshTokenDoc() {
   return applyDecorators(
     ApiOperation({ summary: 'Get new access token using refresh token' }),
+    ApiBody({ type: RefreshTokenDto }),
     ApiResponse({
       status: 200,
       description: 'Token refreshed successfully',
@@ -56,6 +58,7 @@ export function ApiRefreshTokenDoc() {
 export function ApiLogoutDoc() {
   return applyDecorators(
     ApiOperation({ summary: 'Logout user and clear refresh token cookie' }),
+    ApiBody({ type: RefreshTokenDto }),
     ApiResponse({
       status: 200,
       description: 'User logged out successfully',

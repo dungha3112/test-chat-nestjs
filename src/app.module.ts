@@ -12,6 +12,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EventModule } from './events/events.module';
 import { ConversationModule } from './conversation/conversation.module';
 import { FriendModule } from './friend/friend.module';
+import { OtpModule } from './otp/otp.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { FriendModule } from './friend/friend.module';
     EventModule,
     ConversationModule,
     FriendModule,
+    OtpModule,
   ],
   providers: [
     {

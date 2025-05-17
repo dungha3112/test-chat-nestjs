@@ -1,3 +1,4 @@
+import { TOtpType } from 'src/utils/types/otp.type';
 import {
   Column,
   CreateDateColumn,
@@ -20,7 +21,7 @@ export class Otps {
   otp: string;
 
   @Column()
-  type: string;
+  type: TOtpType;
 
   @Column({ nullable: true })
   expiresAt: Date;

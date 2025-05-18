@@ -13,11 +13,13 @@ export class OtpService implements IOtpService {
   ) {}
 
   async createOtp(params: TOtpParams): Promise<TOtpResponse> {
+    const { email, type } = params;
+
     const existing = await this.findOneByParam(params);
 
     if (existing && existing.expiresAt > new Date()) {
       const originalOtp = decryptOtp(existing.otp);
-      return { otp: originalOtp, otpHash: existing.otp, type: params.type };
+      return { otp: originalOtp, otpHash: existing.otp, type };
     }
 
     const otp = generateOtpCode();
@@ -29,19 +31,21 @@ export class OtpService implements IOtpService {
     if (existing) {
       existing.otp = hashedOtp;
       existing.expiresAt = expiresAt;
+      existing.type = type;
+
       await this.saveOtp(existing);
 
-      return { otp, otpHash: hashedOtp, type: params.type };
+      return { otp, otpHash: hashedOtp, type };
     } else {
       const newOtp = this._otpRepository.create({
-        email: params.email,
-        type: params.type,
+        email: email,
+        type,
         otp: hashedOtp,
         expiresAt,
       });
       await this.saveOtp(newOtp);
 
-      return { otp, otpHash: hashedOtp, type: params.type };
+      return { otp, otpHash: hashedOtp, type };
     }
   }
 
@@ -50,7 +54,8 @@ export class OtpService implements IOtpService {
   }
 
   async findOneByParam(params: TOtpParams): Promise<Otps> {
-    return await this._otpRepository.findOne({ where: params });
+    const { email, type } = params;
+    return await this._otpRepository.findOne({ where: { email, type } });
   }
 
   async deleteById(id: string): Promise<Otps> {

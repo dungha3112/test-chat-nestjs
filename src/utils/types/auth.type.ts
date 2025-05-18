@@ -6,12 +6,14 @@ export type TRegisterParams = TLoginParams & {
 
 export type TActiveAccountParams = {
   email: string;
-  url: string;
+  // url: string;
+  otp: string;
 };
 
 export type TRestetPasswordParams = {
   email: string;
-  url: string;
+  // url: string;
+  otp: string;
   password: string;
 };
 

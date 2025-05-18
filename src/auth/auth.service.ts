@@ -2,7 +2,12 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Request } from 'express';
 import { Services } from 'src/utils/constants';
-import { compareHash, hashPassword } from 'src/utils/helpers';
+import {
+  compareHash,
+  compareOtp,
+  decryptOtp,
+  hashPassword,
+} from 'src/utils/helpers';
 import {
   IAuthService,
   ICustomJwtService,
@@ -10,7 +15,7 @@ import {
   IOtpService,
   IUserService,
 } from 'src/utils/interfaces';
-import { User, Sessions } from 'src/utils/typeorm';
+import { Sessions, User } from 'src/utils/typeorm';
 import {
   TActiveAccountParams,
   TLoginParams,
@@ -49,10 +54,6 @@ export class AuthService implements IAuthService {
     });
 
     const passwordHash = await hashPassword(password);
-    const { otp, otpHash, type } = await this._otpService.createOtp({
-      email,
-      type: 'verify_email',
-    });
 
     if (emailExists) {
       if (emailExists.isVerify) {
@@ -75,13 +76,21 @@ export class AuthService implements IAuthService {
       await this._userRepository.save(newUser);
     }
 
+    const { otp, otpHash, type } = await this._otpService.createOtp({
+      email,
+      type: 'verify_email',
+    });
+
     // sendMailToken
-    await this._emailService.sendMailToken(email, otpHash, type);
+    // await this._emailService.sendMailToken(email, otpHash, type);
+
+    // sendMailOtp
+    await this._emailService.sendMailOTP(email, otp, type);
     return `Please check ${email}`;
   }
 
   async activeAccount(params: TActiveAccountParams): Promise<string> {
-    const { email, url } = params;
+    const { email, otp } = params;
 
     const user = await this._userService.findOne({
       options: { selectAll: true },
@@ -106,14 +115,16 @@ export class AuthService implements IAuthService {
     });
     if (!otpExist)
       throw new HttpException(
-        'This url is not valid for this action',
+        'This email is not valid for this action',
         HttpStatus.BAD_REQUEST,
       );
 
     if (otpExist.expiresAt < new Date())
-      throw new HttpException('Invalid or expired otp', HttpStatus.BAD_REQUEST);
-    if (otpExist.otp !== url)
-      throw new HttpException('Invalid or expired otp', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Expired otp', HttpStatus.BAD_REQUEST);
+
+    const isMatch = compareOtp(otp, otpExist.otp);
+    if (!isMatch)
+      throw new HttpException('Invalid otp', HttpStatus.BAD_REQUEST);
 
     user.isVerify = true;
     await this._userService.saveUser(user);
@@ -211,19 +222,22 @@ export class AuthService implements IAuthService {
         HttpStatus.BAD_REQUEST,
       );
 
-    const { otpHash, type } = await this._otpService.createOtp({
+    const { otpHash, otp, type } = await this._otpService.createOtp({
       email,
       type: 'reset_password',
     });
 
     // sendMailToken
-    await this._emailService.sendMailToken(email, otpHash, type);
+    // await this._emailService.sendMailToken(email, otpHash, type);
+
+    // sendMailOTP
+    await this._emailService.sendMailOTP(email, otp, type);
 
     return `Please check ${email}`;
   }
 
   async restetPassword(params: TRestetPasswordParams): Promise<string> {
-    const { email, password, url } = params;
+    const { email, password, otp } = params;
 
     const user = await this._userService.findOne({
       options: { selectAll: true },
@@ -253,9 +267,11 @@ export class AuthService implements IAuthService {
       );
 
     if (otpExist.expiresAt < new Date())
-      throw new HttpException('Invalid or expired otp', HttpStatus.BAD_REQUEST);
-    if (otpExist.otp !== url)
-      throw new HttpException('Invalid or expired otp', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Expired otp', HttpStatus.BAD_REQUEST);
+
+    const isMatch = compareOtp(otp, otpExist.otp);
+    if (!isMatch)
+      throw new HttpException('Invalid otp', HttpStatus.BAD_REQUEST);
 
     user.password = hashPass;
     await this._userService.saveUser(user);

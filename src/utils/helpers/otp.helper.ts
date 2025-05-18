@@ -21,3 +21,7 @@ export const decryptOtp = (ciphertext: string) => {
   const bytes = CryptoJS.AES.decrypt(ciphertext, key);
   return bytes.toString(CryptoJS.enc.Utf8);
 };
+
+export const compareOtp = (otpOrigin: string, otpHash: string) => {
+  return otpOrigin === decryptOtp(otpHash);
+};

@@ -1,5 +1,5 @@
-import { Otps } from '../typeorm';
-import { TOtpParams, TOtpResponse } from '../types/otp.type';
+import { Otps } from '../utils/typeorm';
+import { TOtpParams, TOtpResponse } from './otp.type';
 
 export interface IOtpService {
   createOtp(params: TOtpParams): Promise<TOtpResponse>;

@@ -1,5 +1,4 @@
 import { Request } from 'express';
-import { User } from '../typeorm';
 import {
   TActiveAccountParams,
   TLoginParams,
@@ -7,7 +6,8 @@ import {
   TRefreshTokenResponse,
   TRegisterParams,
   TRestetPasswordParams,
-} from '../types';
+} from './auth.type';
+import { User } from 'src/utils/typeorm';
 
 export interface IAuthService {
   register(params: TRegisterParams): Promise<string>;
@@ -23,5 +23,5 @@ export interface IAuthService {
 
   refreshToken(token: string): Promise<TRefreshTokenResponse>;
 
-  logoutUser(userId: string, refreshToken: string): Promise<string>;
+  logoutUser(refreshToken: string): Promise<string>;
 }

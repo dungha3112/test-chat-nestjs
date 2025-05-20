@@ -1,4 +1,4 @@
-import { Group, User } from '../typeorm';
+import { Group, User } from '../../utils/typeorm';
 import {
   TCheckUserInGroupParams,
   TCreateGroupParams,
@@ -6,7 +6,7 @@ import {
   TUpdateLastMessageGroupParams,
   TUpdateOwnerGroupPrams,
   TUserLeaveGroup,
-} from '../types';
+} from '../types/group.type';
 
 export interface IGroupService {
   createGroup(params: TCreateGroupParams): Promise<Group>;

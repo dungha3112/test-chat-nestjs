@@ -1,25 +1,28 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { Services } from 'src/utils/constants';
-import { Sessions, User } from 'src/utils/typeorm';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from 'src/user/user.module';
-import { CustomJwtModule } from 'src/custom-jwt/custom-jwt.module';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './guards/LocalStrategy';
-import { OtpModule } from 'src/otp/otp.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CustomJwtModule } from 'src/custom-jwt/custom-jwt.module';
 import { EmailModule } from 'src/email/email.module';
+import { OtpModule } from 'src/otp/otp.module';
+import { SessionsModule } from 'src/sessions/sessions.module';
+import { UserModule } from 'src/user/user.module';
+import { Services } from 'src/utils/constants';
+import { User } from 'src/utils/typeorm';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { LocalStrategy } from './guards/LocalStrategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Sessions]),
+    TypeOrmModule.forFeature([User]),
     UserModule,
     CustomJwtModule,
     // using to user login
     PassportModule,
     OtpModule,
     EmailModule,
+
+    SessionsModule,
   ],
   controllers: [AuthController],
   providers: [

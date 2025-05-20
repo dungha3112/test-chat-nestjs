@@ -15,7 +15,6 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Routes, GroupMessageEvents, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
-import { IGroupMessageService } from 'src/utils/interfaces';
 import {
   ApiDeleteGroupMessageByGroupIdAndMessageIdDoc,
   ApiGroupMessageCreateDoc,
@@ -23,9 +22,10 @@ import {
   ApiUpdateGroupMessageByGroupIdAndMessageIdDoc,
 } from 'src/utils/swaggers';
 import { User } from 'src/utils/typeorm';
-import { TMessageGroupPayload } from 'src/utils/types';
 import { GroupMessageCreateDto } from '../dtos/messages/group-message-create.dto';
 import { GroupMessageEditDto } from '../dtos/messages/group-message-edit.dto';
+import { IGroupMessageService } from '../interfaces/group-message.interface';
+import { TMessageGroupPayload } from '../types/group-message.type';
 
 @ApiBearerAuth()
 @ApiTags(Routes.GROUP_MESSAGE)

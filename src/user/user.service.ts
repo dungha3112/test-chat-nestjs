@@ -1,17 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IUserService } from 'src/utils/interfaces';
-import { Sessions, User } from 'src/utils/typeorm';
-import { TFindUserDetails } from 'src/utils/types';
+import { User } from 'src/utils/typeorm';
 import { Repository } from 'typeorm';
+import { IUserService } from './user.interface';
+import { TFindUserDetails } from './user.type';
 
 @Injectable()
 export class UserService implements IUserService {
   constructor(
     @InjectRepository(User) private readonly _userRepository: Repository<User>,
-
-    @InjectRepository(Sessions)
-    private readonly _sessionRepository: Repository<Sessions>,
   ) {}
 
   async findOne(findUserDetails: TFindUserDetails): Promise<User> {
@@ -53,22 +50,5 @@ export class UserService implements IUserService {
     const newUser = await this._userRepository.save(params);
 
     return newUser;
-  }
-
-  async findOneSesstion(
-    userId: string,
-    refresh_token: string,
-  ): Promise<Sessions> {
-    const session = await this._sessionRepository.findOne({
-      where: { userId, refresh_token },
-    });
-
-    if (!session)
-      throw new HttpException(
-        'User logged out from this device',
-        HttpStatus.UNAUTHORIZED,
-      );
-
-    return session;
   }
 }

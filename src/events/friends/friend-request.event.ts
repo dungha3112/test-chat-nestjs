@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+import { TFriendRequestAcceptedRes } from 'src/friend/types/friend-request.type';
 import { AppGateway } from 'src/gateway/gateway';
 import { FriendRequestEvents } from 'src/utils/constants';
 import { FriendRequest } from 'src/utils/typeorm';
-import { TFriendRequestAcceptedRes } from 'src/utils/types';
 
 @Injectable()
 export class FriendRequestEvent {

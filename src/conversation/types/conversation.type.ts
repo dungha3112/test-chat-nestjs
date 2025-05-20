@@ -1,4 +1,4 @@
-import { ConversationMessage, User } from '../typeorm';
+import { ConversationMessage, User } from '../../utils/typeorm';
 
 export type TConversationCreateParams = {
   creator: User;

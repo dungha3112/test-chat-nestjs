@@ -1,4 +1,4 @@
-import { Friend, FriendRequest, User } from '../typeorm';
+import { Friend, FriendRequest, User } from '../../utils/typeorm';
 
 export type TFriendRequestStatusType = 'pending' | 'accepted' | 'rejected';
 

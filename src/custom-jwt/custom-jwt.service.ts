@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ICustomJwtService } from 'src/utils/interfaces';
-import { TJwtPayload } from 'src/utils/types';
+import { ICustomJwtService } from './custom-jwt.interface';
+import { TJwtPayload } from './custom-jwt.type';
 
 @Injectable()
 export class CustomJwtService implements ICustomJwtService {
   constructor(private readonly _jwtService: JwtService) {}
 
-  async generateAccessToken(userId: string): Promise<string> {
-    const accessToken = await this._jwtService.signAsync({ userId });
+  async generateAccessToken(userId: string, jit: string): Promise<string> {
+    const accessToken = await this._jwtService.signAsync({ userId, jit });
     return accessToken;
   }
 
@@ -20,22 +20,22 @@ export class CustomJwtService implements ICustomJwtService {
     return payload;
   }
 
-  //   async generateRefreshToken(userId: string, jit: string): Promise<string> {
-  //   const refreshToken = await this._jwtService.signAsync(
-  //     { userId, jit },
-  //     {
-  //       secret: process.env.REFRESH_TOKEN_SECRET,
-  //       expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
-  //     },
-  //   );
-  //   return refreshToken;
-  // }
+  async generateRefreshToken(userId: string, jit: string): Promise<string> {
+    const refreshToken = await this._jwtService.signAsync(
+      { userId, jit },
+      {
+        secret: process.env.REFRESH_TOKEN_SECRET,
+        expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
+      },
+    );
+    return refreshToken;
+  }
 
-  // async verifyRefreshToken(token: string): Promise<TJwtPayload> {
-  //   const payload = await this._jwtService.verifyAsync(token, {
-  //     secret: process.env.REFRESH_TOKEN_SECRET,
-  //   });
+  async verifyRefreshToken(token: string): Promise<TJwtPayload> {
+    const payload = await this._jwtService.verifyAsync(token, {
+      secret: process.env.REFRESH_TOKEN_SECRET,
+    });
 
-  //   return payload;
-  // }
+    return payload;
+  }
 }

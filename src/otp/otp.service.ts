@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { decryptOtp, encryptOtp, generateOtpCode } from 'src/utils/helpers';
-import { IOtpService } from 'src/utils/interfaces';
 import { Otps } from 'src/utils/typeorm';
-import { TOtpParams, TOtpResponse } from 'src/utils/types/otp.type';
+import { TOtpParams, TOtpResponse } from 'src/otp/otp.type';
 import { Repository } from 'typeorm';
+import { IOtpService } from './otp.interface';
 
 @Injectable()
 export class OtpService implements IOtpService {

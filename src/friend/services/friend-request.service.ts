@@ -7,18 +7,20 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Services } from 'src/utils/constants';
-import { IFriendService, IUserService } from 'src/utils/interfaces';
 import { FriendRequest } from 'src/utils/typeorm';
+
+import { Brackets, Repository } from 'typeorm';
+import { validate as isUUID } from 'uuid';
+import { IFriendRequestService } from '../interfaces/friend-request.interface';
+import { IUserService } from 'src/user/user.interface';
+import { IFriendService } from '../interfaces/friend.interface';
 import {
   TCreateFriendRequestParams,
   TFriendRequestAcceptedRes,
   TFriendRequestParams,
   TGetFriendRequestParams,
   TGetFriendsRequestResponse,
-} from 'src/utils/types';
-import { Brackets, Repository } from 'typeorm';
-import { validate as isUUID } from 'uuid';
-import { IFriendRequestService } from './../../utils/interfaces/friend-request.interface';
+} from '../types/friend-request.type';
 
 @Injectable()
 export class FriendReuestService implements IFriendRequestService {

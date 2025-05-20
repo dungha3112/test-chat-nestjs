@@ -1,4 +1,4 @@
-import { TOtpType } from '../types/otp.type';
+import { TOtpType } from 'src/otp/otp.type';
 
 export interface IEmailService {
   sendMailOTP(to: string, otp: string, type: TOtpType);

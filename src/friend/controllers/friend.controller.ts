@@ -12,13 +12,14 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { FriendEvents, Routes, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
-import { IFriendService } from 'src/utils/interfaces';
+
 import {
   ApiDeleteFriendDoc,
   ApiGetFriendsDoc,
   ApiSearchFriendsDoc,
 } from 'src/utils/swaggers';
 import { User } from 'src/utils/typeorm';
+import { IFriendService } from '../interfaces/friend.interface';
 
 @ApiBearerAuth()
 @ApiTags(Routes.FRIEND)

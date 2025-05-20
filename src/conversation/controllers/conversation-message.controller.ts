@@ -15,7 +15,6 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Routes, ConverMessageEvents, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
-import { IConversationMessageService } from 'src/utils/interfaces';
 import {
   ApiConverMessageCreateDoc,
   ApiDeleteConverMessageByConverIdAndMessageIdDoc,
@@ -23,8 +22,9 @@ import {
   ApiPatchConverMessageByConverIdAndMessageIdDoc,
 } from 'src/utils/swaggers';
 import { User } from 'src/utils/typeorm';
-import { TMessageConverPayload } from 'src/utils/types';
 import { ConverMessageCreateDto, ConverMessageEditDto } from '../dtos';
+import { IConversationMessageService } from '../interfaces/conversation-message.interface';
+import { TMessageConverPayload } from '../types/conversation-message.type';
 
 @ApiBearerAuth()
 @ApiTags(Routes.CONVERSATION_MESSAGE)

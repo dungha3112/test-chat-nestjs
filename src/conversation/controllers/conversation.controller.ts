@@ -3,7 +3,6 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Routes, ConversationEvents, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
-import { IConversationService } from 'src/utils/interfaces';
 import {
   ApiConversationCreateDoc,
   ApiFindConversationById,
@@ -12,6 +11,7 @@ import {
 import { User } from 'src/utils/typeorm';
 import { ConversationCreateDto } from '../dtos/conversations/conversation-create.dto';
 import { ConverstionResDto } from '../dtos';
+import { IConversationService } from '../interfaces/conversation.interface';
 
 @ApiBearerAuth()
 @ApiTags(Routes.CONVERSATION)

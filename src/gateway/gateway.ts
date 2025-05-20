@@ -9,8 +9,8 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { Services } from 'src/utils/constants';
-import { AuthenticatedSocket } from 'src/utils/interfaces';
 import { IGatewaySessionManager } from './gateway.session';
+import { AuthenticatedSocket } from './gateway.interface';
 
 @WebSocketGateway({
   cors: {

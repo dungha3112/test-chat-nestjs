@@ -6,9 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Index('IDX_userId', ['userId'])
-@Index('IDX_refresh_token', ['refresh_token'])
-@Index('IDX_userId_refresh_token', ['userId', 'refresh_token'])
+@Index(['userId', 'jit'], { unique: true })
 @Entity({ name: 'sessions' })
 export class Sessions {
   @PrimaryGeneratedColumn('uuid')
@@ -17,8 +15,8 @@ export class Sessions {
   @Column({ type: 'uuid', nullable: true })
   userId: string;
 
-  @Column({ unique: true })
-  refresh_token: string;
+  @Column({ type: 'uuid', unique: true, nullable: true })
+  jit: string;
 
   @Column({ nullable: true })
   deviceName: string;

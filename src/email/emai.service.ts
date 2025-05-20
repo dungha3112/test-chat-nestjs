@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { IEmailService } from 'src/utils/interfaces';
 import * as nodemailer from 'nodemailer';
-import { TOtpType } from 'src/utils/types/otp.type';
+import { TOtpType } from 'src/otp/otp.type';
+import { IEmailService } from './email.interface';
 
 @Injectable()
 export class EmailService implements IEmailService {

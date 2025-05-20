@@ -1,8 +1,12 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Services } from 'src/utils/constants';
-import { IGroupService, IUserService } from 'src/utils/interfaces';
 import { Group, GroupMessage, User } from 'src/utils/typeorm';
+
+import { Repository } from 'typeorm';
+import { validate as isUUID } from 'uuid';
+import { IGroupService } from '../interfaces/group.interface';
+import { IUserService } from 'src/user/user.interface';
 import {
   TCheckUserInGroupParams,
   TCreateGroupParams,
@@ -10,9 +14,7 @@ import {
   TUpdateLastMessageGroupParams,
   TUpdateOwnerGroupPrams,
   TUserLeaveGroup,
-} from 'src/utils/types';
-import { Repository } from 'typeorm';
-import { validate as isUUID } from 'uuid';
+} from '../types/group.type';
 
 @Injectable()
 export class GroupService implements IGroupService {

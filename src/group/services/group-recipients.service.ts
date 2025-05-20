@@ -1,17 +1,16 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { Services } from 'src/utils/constants';
-import {
-  IGroupRecipientsService,
-  IGroupService,
-  IUserService,
-} from 'src/utils/interfaces';
+
+import { validate as isUUID } from 'uuid';
+import { IGroupRecipientsService } from '../interfaces/group-recipients.interface';
+import { IGroupService } from '../interfaces/group.interface';
+import { IUserService } from 'src/user/user.interface';
 import {
   TAddRecipientToGroupParams,
   TAddRecipientToGroupResponse,
   TRemoveRecipientToGroupParams,
   TRemoveRecipientToGroupResponse,
-} from 'src/utils/types';
-import { validate as isUUID } from 'uuid';
+} from '../types/group-recipients.type';
 
 @Injectable()
 export class GroupRecipientsService implements IGroupRecipientsService {

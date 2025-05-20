@@ -1,4 +1,4 @@
-import { User } from '../typeorm';
+import { User } from 'src/utils/typeorm';
 
 export type TRegisterParams = TLoginParams & {
   username: string;

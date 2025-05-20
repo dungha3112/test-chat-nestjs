@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { AppGateway } from 'src/gateway/gateway';
+import { IGroupService } from 'src/group/interfaces/group.interface';
+import { TMessageGroupPayload } from 'src/group/types/group-message.type';
 import { GroupMessageEvents, Services } from 'src/utils/constants';
-import { IGroupService } from 'src/utils/interfaces';
-import { TMessageGroupPayload } from 'src/utils/types';
 
 @Injectable()
 export class GroupMessageEvent {

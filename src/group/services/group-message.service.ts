@@ -1,17 +1,21 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Services } from 'src/utils/constants';
-import { IGroupMessageService, IGroupService } from 'src/utils/interfaces';
-import { Group, GroupMessage } from 'src/utils/typeorm';
+import { GroupMessage } from 'src/utils/typeorm';
+
 import {
-  TCreateGroupMessageResponse,
   TCreateMessageParams,
   TDeleteMessageParams,
   TEditMessageParams,
-  TGetMessagesGroupResponse,
   TGetMessagesParams,
-} from 'src/utils/types';
+} from 'src/utils/types/message.type';
 import { Repository } from 'typeorm';
+import { IGroupMessageService } from '../interfaces/group-message.interface';
+import { IGroupService } from '../interfaces/group.interface';
+import {
+  TCreateGroupMessageResponse,
+  TGetMessagesGroupResponse,
+} from '../types/group-message.type';
 
 @Injectable()
 export class GroupMessageService implements IGroupMessageService {

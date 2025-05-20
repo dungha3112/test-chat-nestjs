@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { NextFunction, Response } from 'express';
 import { Services } from 'src/utils/constants';
-import { IGroupService } from 'src/utils/interfaces';
-import { AuthenticatedRequest } from 'src/utils/types';
+import { IGroupService } from '../interfaces/group.interface';
+import { AuthenticatedRequest } from 'src/user/user.type';
 
 export class GroupMiddleware implements NestMiddleware {
   constructor(

@@ -1,11 +1,11 @@
-import { FriendRequest } from '../typeorm';
+import { FriendRequest } from '../../utils/typeorm';
 import {
   TCreateFriendRequestParams,
   TFriendRequestAcceptedRes,
   TFriendRequestParams,
   TGetFriendRequestParams,
   TGetFriendsRequestResponse,
-} from '../types';
+} from '../types/friend-request.type';
 
 export interface IFriendRequestService {
   create(params: TCreateFriendRequestParams): Promise<FriendRequest>;

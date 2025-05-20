@@ -1,5 +1,5 @@
-import { Group, GroupMessage } from '../typeorm';
-import { TGetMessagesResponse } from './message.type';
+import { Group, GroupMessage } from '../../utils/typeorm';
+import { TGetMessagesResponse } from '../../utils/types/message.type';
 
 export type TCreateGroupMessageResponse = {
   message: GroupMessage;

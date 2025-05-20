@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+import { IConversationService } from 'src/conversation/interfaces/conversation.interface';
+import { TMessageConverPayload } from 'src/conversation/types/conversation-message.type';
 import { AppGateway } from 'src/gateway/gateway';
 import { ConverMessageEvents, Services } from 'src/utils/constants';
-import { IConversationService } from 'src/utils/interfaces';
-import { TMessageConverPayload } from 'src/utils/types';
 
 @Injectable()
 export class ConversationMessageEvent {

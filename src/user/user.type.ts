@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { User } from '../typeorm';
+import { User } from '../utils/typeorm';
 
 type TFindUserParams = Partial<{
   id: string;

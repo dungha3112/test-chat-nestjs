@@ -1,4 +1,4 @@
-import { GroupMessage, User } from '../typeorm';
+import { GroupMessage, User } from '../../utils/typeorm';
 
 export type TCreateGroupParams = {
   users: string[];

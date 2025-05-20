@@ -1,9 +1,9 @@
-import { Conversation } from '../typeorm';
+import { Conversation } from '../../utils/typeorm';
 import {
   TAccessConversationParams,
   TConversationCreateParams,
   TUpdateLastMessageConverParams,
-} from '../types';
+} from '../types/conversation.type';
 
 export interface IConversationService {
   createNewConversation(

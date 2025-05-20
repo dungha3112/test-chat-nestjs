@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { AppGateway } from 'src/gateway/gateway';
-import { GroupRecipientEvents } from 'src/utils/constants';
 import {
   TAddRecipientToGroupResponse,
   TRemoveRecipientToGroupResponse,
-} from 'src/utils/types';
+} from 'src/group/types/group-recipients.type';
+import { GroupRecipientEvents } from 'src/utils/constants';
 
 @Injectable()
 export class GroupRecipientEvent {

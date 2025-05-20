@@ -1,4 +1,4 @@
-import { Group, User } from '../typeorm';
+import { Group, User } from '../../utils/typeorm';
 
 export type TAddRecipientToGroupParams = {
   recipientId: string;

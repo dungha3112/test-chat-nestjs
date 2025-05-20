@@ -12,7 +12,6 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Routes, GroupEvents, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
-import { IGroupService } from 'src/utils/interfaces';
 import {
   ApiGetGroupByIdDoc,
   ApiGroupCreateDoc,
@@ -25,6 +24,7 @@ import { User } from 'src/utils/typeorm';
 import { GroupAddUserDto } from '../dtos/groups/group-add-user.dto';
 import { GroupCreateDto } from '../dtos/groups/group-create.dto';
 import { GroupEditDto } from '../dtos/groups/group-edit.dto';
+import { IGroupService } from '../interfaces/group.interface';
 
 @ApiBearerAuth()
 @ApiTags(Routes.GROUP)

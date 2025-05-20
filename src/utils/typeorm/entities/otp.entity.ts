@@ -1,4 +1,4 @@
-import { TOtpType } from 'src/utils/types/otp.type';
+import { TOtpType } from 'src/otp/otp.type';
 import {
   Column,
   CreateDateColumn,

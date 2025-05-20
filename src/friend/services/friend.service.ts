@@ -1,16 +1,18 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Services } from 'src/utils/constants';
-import { IFriendRequestService, IFriendService } from 'src/utils/interfaces';
 import { Friend, FriendRequest } from 'src/utils/typeorm';
+
+import { Brackets, Repository } from 'typeorm';
+import { validate as isUUID } from 'uuid';
+import { IFriendService } from '../interfaces/friend.interface';
+import { IFriendRequestService } from '../interfaces/friend-request.interface';
 import {
   TCreateFriendParams,
   TFriendParams,
   TGetFriendParams,
   TGetFriendResponse,
-} from 'src/utils/types';
-import { Brackets, Repository } from 'typeorm';
-import { validate as isUUID } from 'uuid';
+} from '../types/friend.type';
 
 @Injectable()
 export class FriendService implements IFriendService {

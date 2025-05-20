@@ -1,12 +1,14 @@
-import { GroupMessage } from '../typeorm';
 import {
-  TCreateGroupMessageResponse,
   TCreateMessageParams,
-  TGetMessagesParams,
-  TGetMessagesGroupResponse,
   TDeleteMessageParams,
   TEditMessageParams,
-} from '../types';
+  TGetMessagesParams,
+} from 'src/utils/types/message.type';
+import { GroupMessage } from '../../utils/typeorm';
+import {
+  TCreateGroupMessageResponse,
+  TGetMessagesGroupResponse,
+} from '../types/group-message.type';
 
 export interface IGroupMessageService {
   createMessageGroup(

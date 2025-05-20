@@ -13,10 +13,10 @@ import {
 } from '@nestjs/common';
 import { FriendRequestEvents, Routes, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
-import { IFriendRequestService } from 'src/utils/interfaces/friend-request.interface';
+import { IFriendRequestService } from 'src/friend/interfaces/friend-request.interface';
 import { User } from 'src/utils/typeorm';
 import { FriendRequestCreateDto } from '../dtos/friend-request';
-import { TFriendRequestStatusType } from 'src/utils/types';
+
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   ApiAcceptRequestDoc,
@@ -26,6 +26,7 @@ import {
   ApiRejectRequestDoc,
 } from 'src/utils/swaggers';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { TFriendRequestStatusType } from '../types/friend-request.type';
 
 @ApiBearerAuth()
 @ApiTags(Routes.FRIEND_REQUEST)

@@ -415,8 +415,10 @@ src
 │
 ├───auth
 │   │   auth.controller.ts
+│   │   auth.interface.ts
 │   │   auth.module.ts
 │   │   auth.service.ts
+│   │   auth.type.ts
 │   │
 │   ├───dtos
 │   │       active-account.dto.ts
@@ -445,16 +447,26 @@ src
 │   │           conversation-message-edit.dto.ts
 │   │           conversation-message.create.dto.ts
 │   │
+│   ├───interfaces
+│   │       conversation-message.interface.ts
+│   │       conversation.interface.ts
+│   │
 │   ├───middlewares
 │   │       conversation.middleware.ts
 │   │
-│   └───services
-│           conversation-mesage.service.ts
-│           conversation.service.ts
+│   ├───services
+│   │       conversation-mesage.service.ts
+│   │       conversation.service.ts
+│   │
+│   └───types
+│           conversation-message.type.ts
+│           conversation.type.ts
 │
 ├───custom-jwt
+│   │   custom-jwt.interface.ts
 │   │   custom-jwt.module.ts
 │   │   custom-jwt.service.ts
+│   │   custom-jwt.type.ts
 │   │
 │   └───guards
 │           JwtStrategy.ts
@@ -464,6 +476,7 @@ src
 │
 ├───email
 │       emai.service.ts
+│       email.interface.ts
 │       email.module.ts
 │
 ├───events
@@ -497,12 +510,21 @@ src
 │   │   └───friends
 │   │           index.ts
 │   │
-│   └───services
-│           friend-request.service.ts
-│           friend.service.ts
+│   ├───interfaces
+│   │       friend-request.interface.ts
+│   │       friend.interface.ts
+│   │
+│   ├───services
+│   │       friend-request.service.ts
+│   │       friend.service.ts
+│   │
+│   └───types
+│           friend-request.type.ts
+│           friend.type.ts
 │
 ├───gateway
 │       gateway.adapter.ts
+│       gateway.interface.ts
 │       gateway.module.ts
 │       gateway.session.ts
 │       gateway.ts
@@ -531,23 +553,42 @@ src
 │   │           group-recipient.add.dto.ts
 │   │           group-recipient.remove.dto.ts
 │   │
+│   ├───interfaces
+│   │       group-message.interface.ts
+│   │       group-recipients.interface.ts
+│   │       group.interface.ts
+│   │
 │   ├───middlewares
 │   │       group.middleware.ts
 │   │
-│   └───services
-│           group-message.service.ts
-│           group-recipients.service.ts
-│           group.service.ts
+│   ├───services
+│   │       group-message.service.ts
+│   │       group-recipients.service.ts
+│   │       group.service.ts
+│   │
+│   └───types
+│           group-message.type.ts
+│           group-recipients.type.ts
+│           group.type.ts
 │
 ├───otp
-│   │   otp.module.ts
-│   │   otp.service.ts
-│   │
-│   └───dtos
+│       otp.interface.ts
+│       otp.module.ts
+│       otp.service.ts
+│       otp.type.ts
+│
+├───sessions
+│       sessions.interface.ts
+│       sessions.module.ts
+│       sessions.service.ts
+│       sessions.type.ts
+│
 ├───user
 │   │   user.controller.ts
+│   │   user.interface.ts
 │   │   user.module.ts
 │   │   user.service.ts
+│   │   user.type.ts
 │   │
 │   └───dtos
 │           index.ts
@@ -572,22 +613,6 @@ src
     │       index.ts
     │       otp.helper.ts
     │       password.helper.ts
-    │
-    ├───interfaces
-    │       auth.interface.ts
-    │       conversation-message.interface.ts
-    │       conversation.interface.ts
-    │       custom-jwt.interface.ts
-    │       email.interface.ts
-    │       friend-request.interface.ts
-    │       friend.interface.ts
-    │       gateway.interface.ts
-    │       group-message.interface.ts
-    │       group-recipients.interface.ts
-    │       group.interface.ts
-    │       index.ts
-    │       otp.interface.ts
-    │       user.interface.ts
     │
     ├───middlewares
     │       auth.middeware.ts
@@ -621,19 +646,7 @@ src
     │           user.entity.ts
     │
     └───types
-            auth.type.ts
-            conversation-message.type.ts
-            conversation.type.ts
-            custom-jwt.type.ts
-            friend-request.type.ts
-            friend.type.ts
-            group-message.type.ts
-            group-recipients.type.ts
-            group.type.ts
-            index.ts
             message.type.ts
-            otp.type.ts
-            user.type.ts
 
 ```
 

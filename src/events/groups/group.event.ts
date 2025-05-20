@@ -6,9 +6,9 @@ import {
   SubscribeMessage,
 } from '@nestjs/websockets';
 import { GroupEvents } from 'src/utils/constants';
-import { AuthenticatedSocket } from 'src/utils/interfaces';
 import { Group } from 'src/utils/typeorm';
 import { AppGateway } from './../../gateway/gateway';
+import { AuthenticatedSocket } from 'src/gateway/gateway.interface';
 
 @Injectable()
 export class GroupEvent {

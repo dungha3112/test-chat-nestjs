@@ -1,21 +1,23 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Services } from 'src/utils/constants';
-import {
-  IConversationMessageService,
-  IConversationService,
-  IFriendService,
-} from 'src/utils/interfaces';
+
 import { ConversationMessage } from 'src/utils/typeorm';
+
+import { Repository } from 'typeorm';
+import { IConversationMessageService } from '../interfaces/conversation-message.interface';
+import { IConversationService } from '../interfaces/conversation.interface';
+import { IFriendService } from 'src/friend/interfaces/friend.interface';
 import {
   TCreateMessageParams,
-  TCreateConversationResponse,
-  TGetMessagesParams,
-  TGetMessagesConversationResponse,
-  TEditMessageParams,
   TDeleteMessageParams,
-} from 'src/utils/types';
-import { Repository } from 'typeorm';
+  TEditMessageParams,
+  TGetMessagesParams,
+} from 'src/utils/types/message.type';
+import {
+  TCreateConversationResponse,
+  TGetMessagesConversationResponse,
+} from '../types/conversation-message.type';
 
 @Injectable()
 export class ConversationMessageService implements IConversationMessageService {

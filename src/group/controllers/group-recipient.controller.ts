@@ -3,7 +3,6 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Routes, GroupRecipientEvents, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators/auth-user.decorator';
-import { IGroupRecipientsService } from 'src/utils/interfaces';
 import {
   ApiOwnerAddUserToGroupDoc,
   ApiOwnerRemoveUserToGroupDoc,
@@ -11,6 +10,7 @@ import {
 import { User } from 'src/utils/typeorm';
 import { GroupRecipientAddUserDto } from '../dtos/recipients/group-recipient.add.dto';
 import { GroupRecipientRemoveUserDto } from '../dtos/recipients/group-recipient.remove.dto';
+import { IGroupRecipientsService } from '../interfaces/group-recipients.interface';
 
 @ApiBearerAuth()
 @ApiTags(Routes.GROUPS_RECIPIENTS)

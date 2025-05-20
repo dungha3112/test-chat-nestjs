@@ -1,6 +1,6 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthenticatedRequest } from '../types';
+import { AuthenticatedRequest } from 'src/user/user.type';
 
 // tryc cach route api/auth/login
 @Injectable()

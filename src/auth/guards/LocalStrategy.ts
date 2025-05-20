@@ -4,7 +4,7 @@ import { plainToInstance } from 'class-transformer';
 import { Strategy } from 'passport-local';
 import { UserResponseDto } from 'src/user/dtos';
 import { Services } from 'src/utils/constants';
-import { IAuthService } from 'src/utils/interfaces';
+import { IAuthService } from '../auth.interface';
 
 // when user login & validate
 @Injectable()

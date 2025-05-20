@@ -1,4 +1,4 @@
-import { Friend, User } from '../typeorm';
+import { Friend, User } from '../../utils/typeorm';
 
 export type TCreateFriendParams = {
   sender: User;

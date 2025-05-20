@@ -14,6 +14,7 @@ import { ConversationModule } from './conversation/conversation.module';
 import { FriendModule } from './friend/friend.module';
 import { OtpModule } from './otp/otp.module';
 import { EmailModule } from './email/email.module';
+import { SessionsModule } from './sessions/sessions.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { EmailModule } from './email/email.module';
     FriendModule,
     OtpModule,
     EmailModule,
+    SessionsModule,
   ],
   providers: [
     {

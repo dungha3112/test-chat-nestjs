@@ -7,9 +7,11 @@ import {
 } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { Services } from '../constants';
-import { ICustomJwtService, IUserService } from '../interfaces';
+
 import { plainToInstance } from 'class-transformer';
 import { UserResponseDto } from 'src/user/dtos';
+import { ICustomJwtService } from 'src/custom-jwt/custom-jwt.interface';
+import { IUserService } from 'src/user/user.interface';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {

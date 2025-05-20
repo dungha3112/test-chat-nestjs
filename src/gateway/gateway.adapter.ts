@@ -8,12 +8,10 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 import * as cookie from 'cookie';
 import { NextFunction } from 'express';
 import { ServerOptions } from 'socket.io';
+import { ICustomJwtService } from 'src/custom-jwt/custom-jwt.interface';
+import { IUserService } from 'src/user/user.interface';
 import { Services } from 'src/utils/constants';
-import {
-  AuthenticatedSocket,
-  ICustomJwtService,
-  IUserService,
-} from 'src/utils/interfaces';
+import { AuthenticatedSocket } from './gateway.interface';
 
 @Injectable()
 export class WebsocketAdapter extends IoAdapter {

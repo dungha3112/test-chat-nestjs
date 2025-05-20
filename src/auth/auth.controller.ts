@@ -14,7 +14,6 @@ import e, { Request, Response } from 'express';
 import { UserResponseDto } from 'src/user/dtos';
 import { Routes, Services } from 'src/utils/constants';
 import { AuthJwtGuard, LocalAuthGuard } from 'src/utils/guards';
-import { IAuthService } from 'src/utils/interfaces';
 import {
   ApiActiveAccountDoc,
   ApiForgotPasswordDoc,
@@ -24,7 +23,7 @@ import {
   ApiRegisterDoc,
   ApiResetPasswordDoc,
 } from 'src/utils/swaggers';
-import { AuthenticatedRequest } from 'src/utils/types/user.type';
+import { AuthenticatedRequest } from 'src/user/user.type';
 import {
   ActiveAccountDto,
   ForgotPasswordDto,
@@ -33,6 +32,7 @@ import {
   UserRefreshTokenResponseDto,
   UserRegisterDto,
 } from './dtos';
+import { IAuthService } from './auth.interface';
 
 @ApiTags(Routes.AUTH)
 @Controller(Routes.AUTH)
@@ -108,15 +108,11 @@ export class AuthController {
   @ApiLogoutDoc()
   @UseGuards(AuthJwtGuard)
   async loggout(
-    @Req() request: AuthenticatedRequest,
     @Body() { refreshToken }: RefreshTokenDto,
     @Res() response: Response,
   ) {
     try {
-      const message = await this._authService.logoutUser(
-        request.user.id,
-        refreshToken,
-      );
+      const message = await this._authService.logoutUser(refreshToken);
 
       response.clearCookie('refresh_token');
 

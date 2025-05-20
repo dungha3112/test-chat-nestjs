@@ -1,12 +1,14 @@
-import { ConversationMessage } from '../typeorm';
 import {
-  TCreateConversationResponse,
   TCreateMessageParams,
   TDeleteMessageParams,
   TEditMessageParams,
-  TGetMessagesConversationResponse,
   TGetMessagesParams,
-} from '../types';
+} from 'src/utils/types/message.type';
+import { ConversationMessage } from '../../utils/typeorm';
+import {
+  TCreateConversationResponse,
+  TGetMessagesConversationResponse,
+} from '../types/conversation-message.type';
 
 export interface IConversationMessageService {
   createMessageConver(

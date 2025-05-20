@@ -3,7 +3,7 @@ import {
   TAddRecipientToGroupResponse,
   TRemoveRecipientToGroupParams,
   TRemoveRecipientToGroupResponse,
-} from '../types';
+} from '../types/group-recipients.type';
 
 export interface IGroupRecipientsService {
   addRecipientToGroup(

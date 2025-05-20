@@ -1,10 +1,10 @@
-import { Friend } from '../typeorm';
+import { Friend } from '../../utils/typeorm';
 import {
   TCreateFriendParams,
   TFriendParams,
   TGetFriendParams,
   TGetFriendResponse,
-} from '../types';
+} from '../types/friend.type';
 
 export interface IFriendService {
   deleteFriendById(params: TFriendParams): Promise<Friend>;

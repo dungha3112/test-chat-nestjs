@@ -7,8 +7,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Routes, Services } from 'src/utils/constants';
-import { IUserService } from 'src/utils/interfaces';
 import { UserResponseDto } from './dtos';
+import { IUserService } from './user.interface';
 
 @ApiTags(Routes.USER)
 @ApiBearerAuth()

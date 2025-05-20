@@ -9,7 +9,7 @@ import {
   Relation,
 } from 'typeorm';
 import { User } from './user.entity';
-import { TFriendRequestStatusType } from 'src/utils/types';
+import { TFriendRequestStatusType } from 'src/friend/types/friend-request.type';
 
 @Entity({ name: 'friend_requests' })
 @Index(['sender.id', 'receiver.id'], { unique: true })

@@ -1,5 +1,5 @@
-import { Conversation, ConversationMessage } from '../typeorm';
-import { TGetMessagesResponse } from './message.type';
+import { Conversation, ConversationMessage } from 'src/utils/typeorm';
+import { TGetMessagesResponse } from 'src/utils/types/message.type';
 
 export type TCreateConversationResponse = {
   message: ConversationMessage;

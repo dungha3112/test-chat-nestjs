@@ -8,7 +8,8 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { Services } from '../constants';
-import { ICustomJwtService, IUserService } from '../interfaces';
+import { ICustomJwtService } from 'src/custom-jwt/custom-jwt.interface';
+import { IUserService } from 'src/user/user.interface';
 
 @Injectable()
 export class AuthJwtGuard implements CanActivate {

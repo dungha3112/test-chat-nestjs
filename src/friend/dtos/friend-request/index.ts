@@ -1,8 +1,8 @@
-import { TFriendRequestStatusType } from 'src/utils/types';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { UserResponseDto } from 'src/user/dtos';
 import { FriendResDto } from '../friends';
+import { TFriendRequestStatusType } from 'src/friend/types/friend-request.type';
 
 export * from './friend-request.dto';
 

@@ -2,20 +2,12 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Request } from 'express';
 import { Services } from 'src/utils/constants';
-import {
-  compareHash,
-  compareOtp,
-  decryptOtp,
-  hashPassword,
-} from 'src/utils/helpers';
-import {
-  IAuthService,
-  ICustomJwtService,
-  IEmailService,
-  IOtpService,
-  IUserService,
-} from 'src/utils/interfaces';
+import { compareHash, compareOtp, hashPassword } from 'src/utils/helpers';
+
 import { Sessions, User } from 'src/utils/typeorm';
+import { Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
+import { IAuthService } from './auth.interface';
 import {
   TActiveAccountParams,
   TLoginParams,
@@ -23,17 +15,19 @@ import {
   TRefreshTokenResponse,
   TRegisterParams,
   TRestetPasswordParams,
-} from 'src/utils/types';
-import { Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
+} from './auth.type';
+import { IUserService } from 'src/user/user.interface';
+import { ICustomJwtService } from 'src/custom-jwt/custom-jwt.interface';
+import { IOtpService } from 'src/otp/otp.interface';
+import { IEmailService } from 'src/email/email.interface';
+import { ISessionService } from 'src/sessions/sessions.interface';
 
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(
     @InjectRepository(User) private readonly _userRepository: Repository<User>,
 
-    @InjectRepository(Sessions)
-    private readonly _sessionRepository: Repository<Sessions>,
+    @Inject(Services.SESSION) private readonly _sessionService: ISessionService,
 
     @Inject(Services.USER) private readonly _userService: IUserService,
 
@@ -136,23 +130,22 @@ export class AuthService implements IAuthService {
   async loginUser(user: User, req: Request): Promise<TLoginTokenResponse> {
     const userId = user.id;
 
-    const accessToken =
-      await this._customJwtService.generateAccessToken(userId);
-
-    const refreshToken = `${uuidv4()}-${uuidv4()}`;
-
-    const expiresIn = new Date();
-    expiresIn.setDate(expiresIn.getDate() + 7);
-
-    const newSession = this._sessionRepository.create({
+    const accessToken = await this._customJwtService.generateAccessToken(
       userId,
-      refresh_token: refreshToken,
-      expiresAt: expiresIn,
-      // deviceName: req.headers['user-agent'],
-      // deviceId: req.ip,
-    });
+      uuidv4(),
+    );
 
-    await this._sessionRepository.save(newSession);
+    const jit = uuidv4();
+    const refreshToken = await this._customJwtService.generateRefreshToken(
+      userId,
+      jit,
+    );
+
+    const paramsSesions = {
+      userId,
+      jit,
+    };
+    await this._sessionService.createNewSession(paramsSesions);
 
     return { accessToken, refreshToken };
   }
@@ -164,16 +157,15 @@ export class AuthService implements IAuthService {
         HttpStatus.BAD_REQUEST,
       );
 
-    const sessionExists = await this._sessionRepository.findOne({
-      where: { refresh_token: refreshToken },
-    });
-    if (!sessionExists)
-      throw new HttpException(
-        'User logged out from this device',
-        HttpStatus.UNAUTHORIZED,
-      );
+    const { jit, userId } =
+      await this._customJwtService.verifyRefreshToken(refreshToken);
 
-    if (!sessionExists || sessionExists.expiresAt < new Date()) {
+    const sessionExists = await this._sessionService.findOneByParams({
+      userId,
+      jit,
+    });
+
+    if (sessionExists.expiresAt < new Date()) {
       throw new HttpException(
         'Invalid or expired refresh token',
         HttpStatus.UNAUTHORIZED,
@@ -187,21 +179,17 @@ export class AuthService implements IAuthService {
 
     const accessToken = await this._customJwtService.generateAccessToken(
       sessionExists.userId,
+      uuidv4(),
     );
 
     return { accessToken, user };
   }
 
-  async logoutUser(userId: string, refreshToken: string): Promise<string> {
-    const sessionExists = await this._userService.findOneSesstion(
-      userId,
-      refreshToken,
-    );
+  async logoutUser(refreshToken: string): Promise<string> {
+    const { jit, userId } =
+      await this._customJwtService.verifyRefreshToken(refreshToken);
 
-    await this._sessionRepository.delete({
-      userId,
-      refresh_token: refreshToken,
-    });
+    await this._sessionService.deleteSessionByParams({ userId, jit });
 
     return 'Logout successful';
   }
